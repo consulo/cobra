@@ -21,21 +21,9 @@
 
 package org.cobraparser.html.style;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.eclipse.jdt.annotation.NonNull;
+import cz.vutbr.web.css.*;
+import cz.vutbr.web.csskit.RuleFactoryImpl;
+import cz.vutbr.web.csskit.antlr4.CSSParserFactory;
 import org.cobraparser.html.domimpl.HTMLDocumentImpl;
 import org.cobraparser.html.domimpl.HTMLElementImpl;
 import org.cobraparser.ua.NetworkRequest;
@@ -45,18 +33,19 @@ import org.cobraparser.ua.UserAgentContext.RequestKind;
 import org.cobraparser.util.SecurityUtil;
 import org.cobraparser.util.Strings;
 import org.cobraparser.util.Urls;
+import org.eclipse.jdt.annotation.NonNull;
 import org.w3c.css.sac.InputSource;
 import org.w3c.dom.stylesheets.MediaList;
 
-import cz.vutbr.web.css.CSSException;
-import cz.vutbr.web.css.CSSFactory;
-import cz.vutbr.web.css.MediaSpec;
-import cz.vutbr.web.css.NetworkProcessor;
-import cz.vutbr.web.css.RuleFactory;
-import cz.vutbr.web.css.StyleSheet;
-import cz.vutbr.web.csskit.RuleFactoryImpl;
-import cz.vutbr.web.csskit.antlr.CSSParserFactory;
-import cz.vutbr.web.csskit.antlr.CSSParserFactory.SourceType;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CSSUtilities {
   private static final Logger logger = Logger.getLogger(CSSUtilities.class.getName());
@@ -150,7 +139,7 @@ public class CSSUtilities {
     try {
       final URL base = new URL(cssURI);
       CSSFactory.setAutoImportMedia(new MediaSpec("screen"));
-      return CSSParserFactory.getInstance().parse(processedText, new SafeNetworkProcessor(bcontext), "utf-8", SourceType.EMBEDDED, base);
+      return CSSParserFactory.getInstance().parse(processedText, new SafeNetworkProcessor(bcontext), "utf-8", CSSParserFactory.SourceType.EMBEDDED, base);
     } catch (IOException | CSSException e) {
       logger.log(Level.SEVERE, "Unable to parse CSS. URI=[" + cssURI + "].", e);
       return getEmptyStyleSheet();
@@ -192,7 +181,7 @@ public class CSSUtilities {
   public static StyleSheet jParseInlineStyle(final String style, final String encoding,
       final HTMLElementImpl element, final boolean inlinePriority) {
     try {
-      return CSSParserFactory.getInstance().parse(style, new SafeNetworkProcessor(null), null, SourceType.INLINE, element, inlinePriority, element.getDocumentURL());
+      return CSSParserFactory.getInstance().parse(style, new SafeNetworkProcessor(null), null, CSSParserFactory.SourceType.INLINE, element, inlinePriority, element.getDocumentURL());
     } catch (IOException | CSSException e) {
       logger.log(Level.SEVERE, "Unable to parse CSS. CSS=[" + style + "].", e);
       return getEmptyStyleSheet();

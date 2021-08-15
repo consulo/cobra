@@ -22,37 +22,19 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-
-import org.eclipse.jdt.annotation.NonNull;
+import cz.vutbr.web.css.CSSException;
+import cz.vutbr.web.css.ElementMatcher;
+import cz.vutbr.web.css.MediaSpec;
+import cz.vutbr.web.css.StyleSheet;
+import cz.vutbr.web.csskit.ElementMatcherSafeCS;
+import cz.vutbr.web.csskit.ElementMatcherSafeStd;
+import cz.vutbr.web.csskit.antlr4.CSSParserFactory;
+import cz.vutbr.web.domassign.Analyzer.Holder;
+import cz.vutbr.web.domassign.AnalyzerUtil;
+import org.cobraparser.css.domimpl.JStyleSheetWrapper;
+import org.cobraparser.css.domimpl.StyleSheetBridge;
 import org.cobraparser.html.HtmlRendererContext;
-import org.cobraparser.html.domimpl.NodeFilter.AnchorFilter;
-import org.cobraparser.html.domimpl.NodeFilter.AppletFilter;
-import org.cobraparser.html.domimpl.NodeFilter.ElementFilter;
-import org.cobraparser.html.domimpl.NodeFilter.ElementNameFilter;
-import org.cobraparser.html.domimpl.NodeFilter.FormFilter;
-import org.cobraparser.html.domimpl.NodeFilter.FrameFilter;
-import org.cobraparser.html.domimpl.NodeFilter.ImageFilter;
-import org.cobraparser.html.domimpl.NodeFilter.LinkFilter;
-import org.cobraparser.html.domimpl.NodeFilter.TagNameFilter;
+import org.cobraparser.html.domimpl.NodeFilter.*;
 import org.cobraparser.html.io.WritableLineReader;
 import org.cobraparser.html.js.Event;
 import org.cobraparser.html.js.EventTargetManager;
@@ -65,7 +47,6 @@ import org.cobraparser.html.style.RenderState;
 import org.cobraparser.html.style.StyleElements;
 import org.cobraparser.html.style.StyleSheetRenderState;
 import org.cobraparser.js.HideFromJS;
-import org.cobraparser.validation.DomainValidation;
 import org.cobraparser.ua.ImageResponse;
 import org.cobraparser.ua.NetworkRequest;
 import org.cobraparser.ua.UserAgentContext;
@@ -75,22 +56,10 @@ import org.cobraparser.util.SecurityUtil;
 import org.cobraparser.util.Urls;
 import org.cobraparser.util.WeakValueHashMap;
 import org.cobraparser.util.io.EmptyReader;
+import org.cobraparser.validation.DomainValidation;
+import org.eclipse.jdt.annotation.NonNull;
 import org.mozilla.javascript.Function;
-import org.w3c.dom.Attr;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Comment;
-import org.w3c.dom.DOMConfiguration;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Element;
-import org.w3c.dom.EntityReference;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.Text;
-import org.w3c.dom.UserDataHandler;
+import org.w3c.dom.*;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.events.EventException;
 import org.w3c.dom.events.EventListener;
@@ -107,18 +76,14 @@ import org.w3c.dom.views.DocumentView;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
-import org.cobraparser.css.domimpl.JStyleSheetWrapper;
-import org.cobraparser.css.domimpl.StyleSheetBridge;
-import cz.vutbr.web.css.CSSException;
-import cz.vutbr.web.css.ElementMatcher;
-import cz.vutbr.web.css.MediaSpec;
-import cz.vutbr.web.css.StyleSheet;
-import cz.vutbr.web.csskit.ElementMatcherSafeCS;
-import cz.vutbr.web.csskit.ElementMatcherSafeStd;
-import cz.vutbr.web.csskit.antlr.CSSParserFactory;
-import cz.vutbr.web.csskit.antlr.CSSParserFactory.SourceType;
-import cz.vutbr.web.domassign.Analyzer.Holder;
-import cz.vutbr.web.domassign.AnalyzerUtil;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 
 /**
  * Implementation of the W3C <code>HTMLDocument</code> interface.
@@ -1496,7 +1461,7 @@ public class HTMLDocumentImpl extends NodeImpl implements HTMLDocument, Document
 
   private static StyleSheet parseStyle(final String cssdata, final StyleSheet.Origin origin, final boolean isXML) {
     try {
-      final StyleSheet newsheet = CSSParserFactory.getInstance().parse(cssdata, null, null, SourceType.EMBEDDED, null);
+      final StyleSheet newsheet = CSSParserFactory.getInstance().parse(cssdata, null, null, CSSParserFactory.SourceType.EMBEDDED, null);
       newsheet.setOrigin(origin);
       return newsheet;
     } catch (IOException | CSSException e) {
