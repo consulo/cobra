@@ -7,7 +7,7 @@ module cobra.core {
     requires java.xml;
     requires jdk.xml.dom;
 
-    requires slf4j.api;
+    requires org.slf4j;
 
     requires static net.sf.cssbox.jstyleparser;
     requires static sac;

@@ -8,7 +8,7 @@ module cobra.rhino.js {
     requires java.desktop;
     requires jdk.xml.dom;
 
-    requires slf4j.api;
+    requires org.slf4j;
 
     requires rhino;
 
