@@ -23,67 +23,69 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.cobraparser.js.AbstractScriptableDelegate;
-import org.cobraparser.js.JavaScript;
+import org.cobraparser.js.JavaScriptEngine;
 import org.cobraparser.util.Objects;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 // TODO: This needs to be live (dynamic) not a static store of nodes.
 public class NodeListImpl extends AbstractScriptableDelegate implements NodeList {
-  // Note: class must be public for reflection to work.
-  private final ArrayList<Node> nodeList;
+    // Note: class must be public for reflection to work.
+    private final ArrayList<Node> nodeList;
 
-  // TODO: Add more constructors that take arrays for example
-  public NodeListImpl(final Collection<Node> collection) {
-    super();
-    nodeList = new ArrayList<>(collection);
-  }
-
-  public int getLength() {
-    return this.nodeList.size();
-  }
-
-  public Node item(final int index) {
-    try {
-      return this.nodeList.get(index);
-    } catch (final IndexOutOfBoundsException iob) {
-      return null;
+    // TODO: Add more constructors that take arrays for example
+    public NodeListImpl(final Collection<Node> collection) {
+        super();
+        nodeList = new ArrayList<>(collection);
     }
-  }
 
-  // TODO: This needs to be handled in a general fashion. GH #123
-  public boolean hasOwnProperty(final Object obj) {
-    if (Objects.isAssignableOrBox(obj, Integer.TYPE)) {
-      final Integer i = (Integer) JavaScript.getInstance().getJavaObject(obj, Integer.TYPE);
-      return i < getLength();
-    } else {
-      return false;
+    public int getLength() {
+        return this.nodeList.size();
     }
-  }
 
-  /* Described here: http://www.w3.org/TR/dom/#dom-htmlcollection-nameditem. This actually needs to be in a separate class that implements HTMLCollection */
-  public Node namedItem(final String key) {
-    final int length = getLength();
-    for (int i = 0; i < length; i++) {
-      final Node n = item(0);
-      if (n instanceof Element) {
-        final Element element = (Element) n;
-        if (key.equals(element.getAttribute("id")) || key.equals(element.getAttribute("name"))) {
-          return n;
+    public Node item(final int index) {
+        try {
+            return this.nodeList.get(index);
         }
-      }
-
+        catch (final IndexOutOfBoundsException iob) {
+            return null;
+        }
     }
-    return null;
-  }
 
-  @Override
-  public String toString() {
-    return nodeList.toString();
-  }
+    // TODO: This needs to be handled in a general fashion. GH #123
+    public boolean hasOwnProperty(final Object obj) {
+        if (Objects.isAssignableOrBox(obj, Integer.TYPE)) {
+            final Integer i = (Integer) JavaScriptEngine.get().getJavaObject(obj, Integer.TYPE);
+            return i < getLength();
+        }
+        else {
+            return false;
+        }
+    }
+
+    /* Described here: http://www.w3.org/TR/dom/#dom-htmlcollection-nameditem. This actually needs to be in a separate class that implements HTMLCollection */
+    public Node namedItem(final String key) {
+        final int length = getLength();
+        for (int i = 0; i < length; i++) {
+            final Node n = item(0);
+            if (n instanceof Element) {
+                final Element element = (Element) n;
+                if (key.equals(element.getAttribute("id")) || key.equals(element.getAttribute("name"))) {
+                    return n;
+                }
+            }
+
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return nodeList.toString();
+    }
 }

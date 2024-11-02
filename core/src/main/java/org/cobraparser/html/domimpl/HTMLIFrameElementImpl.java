@@ -1,16 +1,14 @@
 package org.cobraparser.html.domimpl;
 
 import org.cobraparser.html.BrowserFrame;
-import org.cobraparser.html.js.Event;
-import org.cobraparser.html.js.Executor;
+import org.cobraparser.html.js.JSRunnableTask;
 import org.cobraparser.html.js.Window;
-import org.cobraparser.html.js.Window.JSRunnableTask;
 import org.cobraparser.html.style.IFrameRenderState;
 import org.cobraparser.html.style.RenderState;
 import org.cobraparser.js.HideFromJS;
+import org.cobraparser.js.JavaScriptEngine;
 import org.cobraparser.ua.UserAgentContext.Request;
 import org.cobraparser.ua.UserAgentContext.RequestKind;
-import org.mozilla.javascript.Function;
 import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLIFrameElement;
 
@@ -57,11 +55,11 @@ public class HTMLIFrameElementImpl extends HTMLAbstractUIElement implements HTML
           // TODO: onload event object?
           final Window window = ((HTMLDocumentImpl) document).getWindow();
           window.addJSTask(new JSRunnableTask(0, "IFrame onload handler", () -> {
-            Executor.executeFunction(HTMLIFrameElementImpl.this, onload, new Event("load", HTMLIFrameElementImpl.this), window.getContextFactory());
+            JavaScriptEngine.get().executeFunction(HTMLIFrameElementImpl.this, onload, JavaScriptEngine.get().createEvent("load", HTMLIFrameElementImpl.this), window);
           }));
         }
 
-        dispatchEvent(new Event("load", this));
+        dispatchEvent(JavaScriptEngine.get().createEvent("load", this));
       }
     }
   }
@@ -116,7 +114,7 @@ public class HTMLIFrameElementImpl extends HTMLAbstractUIElement implements HTML
       // Not loaded yet
       return null;
     }
-    return Window.getWindow(frame.getHtmlRendererContext());
+    return JavaScriptEngine.get().getWindow(frame.getHtmlRendererContext());
   }
 
   public String getFrameBorder() {
@@ -213,13 +211,13 @@ public class HTMLIFrameElementImpl extends HTMLAbstractUIElement implements HTML
     }
   }
 
-  private Function onload;
+  private Object onload;
 
-  public Function getOnload() {
+  public Object getOnload() {
     return this.getEventFunction(this.onload, "onload");
   }
 
-  public void setOnload(final Function onload) {
+  public void setOnload(final Object onload) {
     this.onload = onload;
   }
 

@@ -18,7 +18,7 @@
 
     Contact info: lobochief@users.sourceforge.net
  */
-package org.cobraparser.js;
+package org.cobraparser.js.rhinojs;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.EcmaError;

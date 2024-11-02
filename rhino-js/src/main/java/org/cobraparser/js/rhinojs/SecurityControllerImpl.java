@@ -18,22 +18,11 @@
 
     Contact info: lobochief@users.sourceforge.net
  */
-package org.cobraparser.html.js;
+package org.cobraparser.js.rhinojs;
 
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.CodeSource;
-import java.security.PermissionCollection;
-import java.security.Policy;
-import java.security.PrivilegedAction;
-import java.security.ProtectionDomain;
-import java.security.SecureClassLoader;
+import org.mozilla.javascript.*;
 
-import org.mozilla.javascript.Callable;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.GeneratedClassLoader;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.SecurityController;
+import java.security.*;
 
 public class SecurityControllerImpl extends SecurityController {
   private final java.net.URL url;

@@ -18,7 +18,7 @@
 
     Contact info: lobochief@users.sourceforge.net
  */
-package org.cobraparser.js;
+package org.cobraparser.js.rhinojs;
 
 import org.cobraparser.util.Objects;
 import org.mozilla.javascript.*;
@@ -171,7 +171,7 @@ public class JavaFunctionObject extends ScriptableObject implements Function {
   }
 
   private static Object[] convertArgs(final Object[] args, final int numConvert, final Class<?>[] actualArgTypes) {
-    final JavaScript manager = JavaScript.getInstance();
+    final RhinoJavaScript manager = RhinoJavaScript.getInstance();
     final Object[] actualArgs = args == null ? new Object[0] : new Object[numConvert];
     if (args != null) {
       for (int i = 0; i < numConvert; i++) {
@@ -188,7 +188,7 @@ public class JavaFunctionObject extends ScriptableObject implements Function {
       throw new EvaluatorException("No method matching " + this.methodName + " with " + (args == null ? 0 : args.length) + " arguments in "
           + className + " .");
     }
-    final JavaScript manager = JavaScript.getInstance();
+    final RhinoJavaScript manager = RhinoJavaScript.getInstance();
     try {
       if (thisObj instanceof JavaObjectWrapper) {
         final JavaObjectWrapper jcw = (JavaObjectWrapper) thisObj;

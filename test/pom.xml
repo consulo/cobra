@@ -6,7 +6,7 @@
 
     <groupId>consulo.internal.org.cobraparser</groupId>
     <artifactId>cobra-test</artifactId>
-    <version>2.4-SNAPSHOT</version>
+    <version>2.5-SNAPSHOT</version>
     
     <build>
         <plugins>
@@ -46,6 +46,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cobra-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cobra-rhino-js</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

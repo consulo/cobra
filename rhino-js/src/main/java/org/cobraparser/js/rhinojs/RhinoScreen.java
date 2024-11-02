@@ -1,18 +1,18 @@
-package org.cobraparser.html.js;
+package org.cobraparser.js.rhinojs;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
 import org.cobraparser.js.AbstractScriptableDelegate;
 
-public class Screen extends AbstractScriptableDelegate {
+public class RhinoScreen extends AbstractScriptableDelegate {
   private final GraphicsEnvironment graphicsEnvironment;
   private final GraphicsDevice graphicsDevice;
 
   /**
    * @param context
    */
-  Screen() {
+  RhinoScreen() {
     super();
     if (GraphicsEnvironment.isHeadless()) {
       this.graphicsEnvironment = null;

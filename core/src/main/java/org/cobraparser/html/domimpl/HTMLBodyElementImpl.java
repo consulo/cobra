@@ -25,7 +25,6 @@ package org.cobraparser.html.domimpl;
 
 import org.cobraparser.html.style.BodyRenderState;
 import org.cobraparser.html.style.RenderState;
-import org.mozilla.javascript.Function;
 import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLBodyElement;
 import org.w3c.dom.html.HTMLDocument;
@@ -104,7 +103,7 @@ public class HTMLBodyElementImpl extends HTMLAbstractUIElement implements HTMLBo
     return new BodyRenderState(prevRenderState, this);
   }
 
-  public Function getOnload() {
+  public Object getOnload() {
     final Object document = this.document;
     if (document instanceof HTMLDocumentImpl) {
       return ((HTMLDocumentImpl) document).getOnloadHandler();
@@ -113,7 +112,7 @@ public class HTMLBodyElementImpl extends HTMLAbstractUIElement implements HTMLBo
     }
   }
 
-  public void setOnload(final Function onload) {
+  public void setOnload(final Object onload) {
     final Object document = this.document;
     if (document instanceof HTMLDocumentImpl) {
       // Note that body.onload overrides
@@ -139,7 +138,7 @@ public class HTMLBodyElementImpl extends HTMLAbstractUIElement implements HTMLBo
   protected void handleAttributeChanged(String name, String oldValue, String newValue) {
     super.handleAttributeChanged(name, oldValue, newValue);
     if ("onload".equals(name)) {
-      final Function onload = this.getEventFunction(null, name);
+      final Object onload = this.getEventFunction(null, name);
       if (onload != null) {
         this.setOnload(onload);
       }

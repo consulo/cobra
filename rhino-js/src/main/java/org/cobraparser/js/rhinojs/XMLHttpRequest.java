@@ -1,8 +1,9 @@
-package org.cobraparser.html.js;
+package org.cobraparser.js.rhinojs;
 
-import org.cobraparser.html.js.Window.JSRunnableTask;
+import org.cobraparser.html.js.JSRunnableTask;
+import org.cobraparser.html.js.NotGetterSetter;
+import org.cobraparser.html.js.Window;
 import org.cobraparser.js.AbstractScriptableDelegate;
-import org.cobraparser.js.JavaScript;
 import org.cobraparser.ua.NetworkRequest;
 import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.ua.UserAgentContext.Request;
@@ -235,9 +236,9 @@ public class XMLHttpRequest extends AbstractScriptableDelegate {
       final Function f = XMLHttpRequest.this.getOnreadystatechange();
       if (f != null) {
         window.addJSTask(new JSRunnableTask(0, "xhr ready state changed: " + request.getReadyState(), () -> {
-        final Context ctx = Executor.createContext(this.codeSource, this.pcontext, window.getContextFactory());
+        final Context ctx = Executor.createContext(this.codeSource, this.pcontext, ((RhinoWindow) window).getContextFactory());
         try {
-          final Scriptable newScope = (Scriptable) JavaScript.getInstance().getJavascriptObject(XMLHttpRequest.this, this.scope);
+          final Scriptable newScope = (Scriptable) RhinoJavaScript.getInstance().getJavascriptObject(XMLHttpRequest.this, this.scope);
           f.call(ctx, newScope, newScope, new Object[0]);
         } finally {
           Context.exit();
@@ -254,9 +255,9 @@ public class XMLHttpRequest extends AbstractScriptableDelegate {
         final Function f = this.onLoad;
         if (f != null) {
           window.addJSTaskUnchecked(new JSRunnableTask(0, "xhr on load : ", () -> {
-            final Context ctx = Executor.createContext(this.codeSource, this.pcontext, window.getContextFactory());
+            final Context ctx = Executor.createContext(this.codeSource, this.pcontext, ((RhinoWindow) window).getContextFactory());
             try {
-              final Scriptable newScope = (Scriptable) JavaScript.getInstance().getJavascriptObject(XMLHttpRequest.this, this.scope);
+              final Scriptable newScope = (Scriptable) RhinoJavaScript.getInstance().getJavascriptObject(XMLHttpRequest.this, this.scope);
               f.call(ctx, newScope, newScope, new Object[0]);
             } finally {
               Context.exit();

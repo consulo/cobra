@@ -18,11 +18,10 @@
 
     Contact info: lobochief@users.sourceforge.net
  */
-package org.cobraparser.html.js;
+package org.cobraparser.js.rhinojs;
 
 import org.cobraparser.html.domimpl.HTMLDocumentImpl;
 import org.cobraparser.html.domimpl.NodeImpl;
-import org.cobraparser.js.JavaScript;
 import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.ua.UserAgentContext.Request;
 import org.cobraparser.ua.UserAgentContext.RequestKind;
@@ -79,11 +78,11 @@ public class Executor {
       final Context ctx = createContext(element.getDocumentURL(), element.getUserAgentContext(), contextFactory);
       // ctx.setGenerateObserverCount(true);
       try {
-        final Scriptable scope = ((HTMLDocumentImpl) doc).getWindow().getWindowScope();
+        final Scriptable scope = ((RhinoWindow) ((HTMLDocumentImpl) doc).getWindow()).getWindowScope();
         if (scope == null) {
           throw new IllegalStateException("Scriptable (scope) instance is null");
         }
-        final JavaScript js = JavaScript.getInstance();
+        final RhinoJavaScript js = RhinoJavaScript.getInstance();
         final Scriptable thisScope = (Scriptable) js.getJavascriptObject(thisObject, scope);
         try {
           // final Scriptable eventScriptable = (Scriptable) js.getJavascriptObject(event, thisScope);

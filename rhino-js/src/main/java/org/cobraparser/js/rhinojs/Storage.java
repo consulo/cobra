@@ -1,4 +1,4 @@
-package org.cobraparser.html.js;
+package org.cobraparser.js.rhinojs;
 
 /** Dummy implementation of Storage API */
 final public class Storage {

@@ -18,7 +18,7 @@
 
     Contact info: lobochief@users.sourceforge.net
  */
-package org.cobraparser.js;
+package org.cobraparser.js.rhinojs;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;

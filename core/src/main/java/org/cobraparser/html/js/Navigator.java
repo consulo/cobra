@@ -30,7 +30,7 @@ public class Navigator extends AbstractScriptableDelegate {
   /**
    * @param context
    */
-  Navigator(final UserAgentContext context) {
+  public Navigator(final UserAgentContext context) {
     super();
     this.context = context;
   }

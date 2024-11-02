@@ -1,7 +1,6 @@
 package org.cobraparser.html.domimpl;
 
 import org.cobraparser.html.FormInput;
-import org.mozilla.javascript.Function;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.html.HTMLCollection;
 import org.w3c.dom.html.HTMLElement;
@@ -160,13 +159,13 @@ public class HTMLSelectElementImpl extends HTMLBaseInputElement implements HTMLS
     ic.setSelectedIndex(this.deferredSelectedIndex);
   }
 
-  private Function onchange;
+  private Object onchange;
 
-  public Function getOnchange() {
+  public Object getOnchange() {
     return this.getEventFunction(this.onchange, "onchange");
   }
 
-  public void setOnchange(final Function value) {
+  public void setOnchange(final Object value) {
     this.onchange = value;
   }
 }

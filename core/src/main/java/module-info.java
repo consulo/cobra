@@ -2,7 +2,7 @@
  * @author VISTALL
  * @since 2024-11-02
  */
-module consulo.internal.cobra {
+module cobra.core {
     requires java.desktop;
     requires java.xml;
     requires jdk.xml.dom;
@@ -11,7 +11,6 @@ module consulo.internal.cobra {
 
     requires static net.sf.cssbox.jstyleparser;
     requires static sac;
-    requires static rhino;
 
     exports org.cobraparser.html;
     exports org.cobraparser.html.parser;
@@ -19,4 +18,9 @@ module consulo.internal.cobra {
     exports org.cobraparser.html.gui;
     exports org.cobraparser.html.renderer;
     exports org.cobraparser.ua;
+    exports org.cobraparser.util;
+    exports org.cobraparser.js;
+    exports org.cobraparser.html.js;
+
+    uses org.cobraparser.js.JavaScriptEngine;
 }

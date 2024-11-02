@@ -33,7 +33,6 @@ import org.cobraparser.js.HideFromJS;
 import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.util.Strings;
 import org.cobraparser.util.Urls;
-import org.mozilla.javascript.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
@@ -1459,18 +1458,18 @@ public abstract class NodeImpl extends AbstractScriptableDelegate implements Nod
     return false;
   }*/
 
-  public void addEventListener(final String type, final Function listener) {
+  public void addEventListener(final String type, final Object listener) {
     addEventListener(type, listener, false);
   }
 
-  public void addEventListener(final String type, final Function listener, final boolean useCapture) {
+  public void addEventListener(final String type, final Object listener, final boolean useCapture) {
     // TODO
     System.out.println("node by name: " + getNodeName() + " adding Event listener of type: " + type);
     // System.out.println("  txt content: " + getInnerText());
     ((HTMLDocumentImpl) getOwnerDocument()).getEventTargetManager().addEventListener(this, type, listener);
   }
 
-  public void removeEventListener(final String type, final Function listener, final boolean useCapture) {
+  public void removeEventListener(final String type, final Object listener, final boolean useCapture) {
     // TODO
     System.out.println("node remove Event listener: " + type);
     ((HTMLDocumentImpl) getOwnerDocument()).getEventTargetManager().removeEventListener(this, type, listener, useCapture);

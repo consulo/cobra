@@ -23,17 +23,16 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.util.ArrayList;
-
-import org.cobraparser.html.js.Executor;
 import org.cobraparser.html.js.Window;
 import org.cobraparser.html.style.ImageRenderState;
 import org.cobraparser.html.style.RenderState;
+import org.cobraparser.js.JavaScriptEngine;
 import org.cobraparser.ua.ImageResponse;
 import org.cobraparser.ua.ImageResponse.State;
-import org.mozilla.javascript.Function;
 import org.w3c.dom.UserDataHandler;
 import org.w3c.dom.html.HTMLImageElement;
+
+import java.util.ArrayList;
 
 public class HTMLImageElementImpl extends HTMLAbstractUIElement implements HTMLImageElement {
   public HTMLImageElementImpl() {
@@ -192,13 +191,13 @@ public class HTMLImageElementImpl extends HTMLAbstractUIElement implements HTMLI
     }
   }
 
-  private Function onload;
+  private Object onload;
 
-  public Function getOnload() {
+  public Object getOnload() {
     return this.getEventFunction(this.onload, "onload");
   }
 
-  public void setOnload(final Function onload) {
+  public void setOnload(final Object onload) {
     this.onload = onload;
   }
 
@@ -276,11 +275,11 @@ public class HTMLImageElementImpl extends HTMLAbstractUIElement implements HTMLI
       // Inform listener, holding no lock.
       listenerArray[i].imageLoaded(event);
     }
-    final Function onload = this.getOnload();
+    final Object onload = this.getOnload();
     if (onload != null) {
       // TODO: onload event object?
       final Window window = ((HTMLDocumentImpl) document).getWindow();
-      Executor.executeFunction(HTMLImageElementImpl.this, onload, null, window.getContextFactory());
+      JavaScriptEngine.get().executeFunction(HTMLImageElementImpl.this, onload, null, window);
     }
   }
 

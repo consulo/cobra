@@ -18,15 +18,15 @@
 
     Contact info: lobochief@users.sourceforge.net
  */
-package org.cobraparser.html.js;
+package org.cobraparser.js.rhinojs;
 
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.js.AbstractScriptableDelegate;
 
-public class History extends AbstractScriptableDelegate {
-  private final Window window;
+public class RhinoHistory extends AbstractScriptableDelegate {
+  private final RhinoWindow window;
 
-  History(final Window window) {
+  RhinoHistory(final RhinoWindow window) {
     this.window = window;
   }
 

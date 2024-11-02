@@ -20,32 +20,23 @@
 
 package org.cobraparser.html.domimpl;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.LinearGradientPaint;
-import java.awt.Paint;
-import java.awt.RenderingHints;
-import java.awt.Shape;
+import org.cobraparser.CobraParser;
+import org.cobraparser.html.js.NotGetterSetter;
+import org.cobraparser.js.HideFromJS;
+import org.cobraparser.util.gui.ColorFactory;
+import org.w3c.dom.html.HTMLElement;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Stack;
-
-import javax.imageio.ImageIO;
-
-import org.cobraparser.CobraParser;
-import org.cobraparser.html.js.NotGetterSetter;
-import org.cobraparser.js.HideFromJS;
-import org.cobraparser.util.gui.ColorFactory;
-import org.mozilla.javascript.typedarrays.NativeUint8ClampedArray;
-import org.w3c.dom.html.HTMLElement;
 
 public class HTMLCanvasElementImpl extends HTMLAbstractUIElement implements HTMLElement {
 
@@ -562,22 +553,22 @@ public class HTMLCanvasElementImpl extends HTMLAbstractUIElement implements HTML
     }
 
     public ImageData createImageData(final int width, final int height) {
-      final NativeUint8ClampedArray data = new NativeUint8ClampedArray(width * height * 4);
+      final ByteBuffer data = ByteBuffer.allocateDirect(width * height * 4);
       return new ImageData(width, height, data);
     }
 
     public ImageData createImageData(final ImageData imgdata) {
       final int width = imgdata.getWidth();
       final int height = imgdata.getHeight();
-      final NativeUint8ClampedArray data = new NativeUint8ClampedArray(width * height * 4);
+      final ByteBuffer data = ByteBuffer.allocateDirect(width * height * 4);
       return new ImageData(width, height, data);
     }
 
     public ImageData getImageData(final int x, final int y, final int width, final int height) {
       final int[] argbArray = new int[width * height];
       image.getRGB(x, y, width, height, argbArray, 0, width);
-      final NativeUint8ClampedArray clampedBuffer = new NativeUint8ClampedArray(width * height * 4);
-      final byte[] clampedByteBuffer = clampedBuffer.getBuffer().getBuffer();
+      final ByteBuffer clampedBuffer = ByteBuffer.allocateDirect(width * height * 4);
+      final byte[] clampedByteBuffer = clampedBuffer.array();
       for (int i = 0, j = 0; i < argbArray.length; i++, j += 4) {
         final int argb = argbArray[i];
         clampedByteBuffer[j    ] = (byte) ((argb >> 16) & 0xff);
@@ -595,7 +586,7 @@ public class HTMLCanvasElementImpl extends HTMLAbstractUIElement implements HTML
     public void putImageData(final ImageData imgData, final int x, final int y, final int width, final int height) {
       System.out.println("putImageData(imgData, x, y, width, height)" + java.util.Arrays.toString(new Object[] { x, y, width, height }));
       if (x >= 0 && y >= 0) {
-        final byte[] dataBytes = imgData.getData().getBuffer().getBuffer();
+        final byte[] dataBytes = imgData.getData().array();
         final int[] argbArray = new int[imgData.width * imgData.height];
         for (int i = 0, j = 0; i < argbArray.length; i++, j += 4) {
           argbArray[i] = packBytes2Int(
@@ -716,9 +707,9 @@ public class HTMLCanvasElementImpl extends HTMLAbstractUIElement implements HTML
 
     final private int width;
     final private int height;
-    final private NativeUint8ClampedArray dataInternal;
+    final private ByteBuffer dataInternal;
 
-    public ImageData(final int width, final int height, final NativeUint8ClampedArray data) {
+    public ImageData(final int width, final int height, final ByteBuffer data) {
       this.width = width;
       this.height = height;
 
@@ -733,7 +724,7 @@ public class HTMLCanvasElementImpl extends HTMLAbstractUIElement implements HTML
       return height;
     }
 
-    public NativeUint8ClampedArray getData() {
+    public ByteBuffer getData() {
       return dataInternal;
     }
   }

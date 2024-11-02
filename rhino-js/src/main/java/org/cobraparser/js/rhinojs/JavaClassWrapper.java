@@ -18,7 +18,13 @@
 
     Contact info: lobochief@users.sourceforge.net
  */
-package org.cobraparser.js;
+package org.cobraparser.js.rhinojs;
+
+import org.cobraparser.html.js.NotGetterSetter;
+import org.cobraparser.html.js.PropertyName;
+import org.cobraparser.js.HideFromJS;
+import org.mozilla.javascript.Function;
+import org.mozilla.javascript.Scriptable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,11 +32,6 @@ import java.lang.reflect.Modifier;
 import java.security.AccessControlException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.cobraparser.html.js.NotGetterSetter;
-import org.cobraparser.html.js.PropertyName;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.Scriptable;
 
 public class JavaClassWrapper {
   private final Class<?> javaClass;

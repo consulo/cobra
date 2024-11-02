@@ -20,16 +20,16 @@
  */
 package org.cobraparser.js;
 
-import org.mozilla.javascript.Scriptable;
-
 public abstract class AbstractScriptableDelegate implements ScriptableDelegate {
-  private Scriptable scriptable;
+  private Object scriptable;
 
-  public Scriptable getScriptable() {
+  @Override
+  public Object getScriptable() {
     return this.scriptable;
   }
 
-  public void setScriptable(final Scriptable scriptable) {
+  @Override
+  public void setScriptable(final Object scriptable) {
     this.scriptable = scriptable;
   }
 }

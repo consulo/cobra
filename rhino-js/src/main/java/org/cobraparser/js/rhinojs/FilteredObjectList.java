@@ -21,12 +21,13 @@
 /*
  * Created on Oct 9, 2005
  */
-package org.cobraparser.html.js;
+package org.cobraparser.js.rhinojs;
+
+import org.cobraparser.html.js.ObjectFilter;
+import org.cobraparser.js.AbstractScriptableDelegate;
 
 import java.util.Collection;
 import java.util.Iterator;
-
-import org.cobraparser.js.AbstractScriptableDelegate;
 
 // TODO: Remove if not used
 public class FilteredObjectList extends AbstractScriptableDelegate {

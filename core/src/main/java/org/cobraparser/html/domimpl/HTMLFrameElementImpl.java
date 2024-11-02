@@ -25,6 +25,7 @@ package org.cobraparser.html.domimpl;
 
 import org.cobraparser.html.BrowserFrame;
 import org.cobraparser.html.js.Window;
+import org.cobraparser.js.JavaScriptEngine;
 import org.cobraparser.ua.UserAgentContext.Request;
 import org.cobraparser.ua.UserAgentContext.RequestKind;
 import org.w3c.dom.Document;
@@ -147,7 +148,7 @@ public class HTMLFrameElementImpl extends HTMLElementImpl implements HTMLFrameEl
       // Not loaded yet
       return null;
     }
-    return Window.getWindow(frame.getHtmlRendererContext());
+    return JavaScriptEngine.get().getWindow(frame.getHtmlRendererContext());
   }
 
 }

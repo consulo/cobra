@@ -24,11 +24,10 @@
 package org.cobraparser.html.domimpl;
 
 import org.cobraparser.html.FormInput;
-import org.cobraparser.html.js.Event;
 import org.cobraparser.html.js.NotGetterSetter;
+import org.cobraparser.js.JavaScriptEngine;
 import org.cobraparser.ua.ImageResponse;
 import org.cobraparser.ua.ImageResponse.State;
-import org.mozilla.javascript.Function;
 import org.w3c.dom.Node;
 import org.w3c.dom.html.HTMLFormElement;
 
@@ -315,13 +314,13 @@ public abstract class HTMLBaseInputElement extends HTMLAbstractUIElement {
     }
   }
 
-  private Function onload;
+  private Object onload;
 
-  public Function getOnload() {
+  public Object getOnload() {
     return this.getEventFunction(this.onload, "onload");
   }
 
-  public void setOnload(final Function onload) {
+  public void setOnload(final Object onload) {
     this.onload = onload;
   }
 
@@ -397,7 +396,7 @@ public abstract class HTMLBaseInputElement extends HTMLAbstractUIElement {
     }
 
     // TODO: With this change, setOnLoad method should add a listener with dispatch mechanism. Best implemented in a parent class.
-    dispatchEvent(new Event("load", this));
+    dispatchEvent(JavaScriptEngine.get().createEvent("load", this));
 
     /*
     final Function onload = this.getOnload();

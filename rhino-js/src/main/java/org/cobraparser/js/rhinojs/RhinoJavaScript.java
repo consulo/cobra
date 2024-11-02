@@ -18,25 +18,27 @@
 
     Contact info: lobochief@users.sourceforge.net
  */
-package org.cobraparser.js;
+package org.cobraparser.js.rhinojs;
+
+import org.cobraparser.js.ScriptableDelegate;
+import org.cobraparser.util.Objects;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ContextFactory;
+import org.mozilla.javascript.ScriptRuntime;
+import org.mozilla.javascript.Scriptable;
 
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
-import org.cobraparser.util.Objects;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.ContextFactory;
-import org.mozilla.javascript.Scriptable;
-
-public class JavaScript {
+public class RhinoJavaScript {
   // TODO: Should the instance be specific to thread? GH #122
-  private static JavaScript instance = new JavaScript();
+  private static RhinoJavaScript instance = new RhinoJavaScript();
   // objectMap must be a map that uses weak keys
   // and refers to values using weak references.
   // Keys are java objects other than ScriptableDelegate instances.
   private final WeakHashMap<Object, WeakReference<JavaObjectWrapper>> javaObjectToWrapper = new WeakHashMap<>();
 
-  public static JavaScript getInstance() {
+  public static RhinoJavaScript getInstance() {
     return instance;
   }
 
@@ -70,7 +72,7 @@ public class JavaScript {
       // be done with weak hash maps and without leaking.
       synchronized (this) {
         final ScriptableDelegate delegate = (ScriptableDelegate) raw;
-        Scriptable javascriptObject = delegate.getScriptable();
+        Scriptable javascriptObject = (Scriptable) delegate.getScriptable();
         if (javascriptObject == null) {
           final JavaObjectWrapper jow = new JavaObjectWrapper(JavaClassWrapperFactory.getInstance().getClassWrapper(raw.getClass()), raw);
           javascriptObject = jow;
@@ -186,6 +188,6 @@ public class JavaScript {
 
   // Convenience method; useful when debugging
   public static String getStackTrace() {
-    return org.mozilla.javascript.ScriptRuntime.constructError("", "").getScriptStackTrace();
+    return ScriptRuntime.constructError("", "").getScriptStackTrace();
   }
 }

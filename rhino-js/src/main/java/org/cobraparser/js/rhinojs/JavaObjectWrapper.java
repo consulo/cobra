@@ -18,9 +18,8 @@
 
     Contact info: lobochief@users.sourceforge.net
  */
-package org.cobraparser.js;
+package org.cobraparser.js.rhinojs;
 
-import org.cobraparser.html.js.Window;
 import org.mozilla.javascript.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +38,7 @@ public class JavaObjectWrapper extends ScriptableObject {
   @Override
   public void setParentScope(final Scriptable m) {
     // Don't allow Window's parent scope to be changed. Fixes GH #29
-    if (classWrapper.getCanonicalClassName().equals(Window.class.getCanonicalName())) {
+    if (classWrapper.getCanonicalClassName().equals(RhinoWindow.class.getCanonicalName())) {
       return;
     }
 
@@ -112,7 +111,7 @@ public class JavaObjectWrapper extends ScriptableObject {
             return org.mozilla.javascript.Undefined.instance;
           }
           try {
-            final Object result = JavaScript.getInstance().getJavascriptObject(
+            final Object result = RhinoJavaScript.getInstance().getJavascriptObject(
                 integerIndexer.getGetter().invoke(delegate, new Object[] { index }), null);
             return result;
           } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -207,7 +206,7 @@ public class JavaObjectWrapper extends ScriptableObject {
           }
         }
       });
-      return JavaScript.getInstance().getJavascriptObject(val, start.getParentScope());
+      return RhinoJavaScript.getInstance().getJavascriptObject(val, start.getParentScope());
     } else {
       final Function f = this.classWrapper.getFunction(name);
       if (f != null) {
@@ -235,7 +234,7 @@ public class JavaObjectWrapper extends ScriptableObject {
                 // There might not be an indexer setter.
                 return super.get(name, start);
               } else {
-                return JavaScript.getInstance().getJavascriptObject(val, start.getParentScope());
+                return RhinoJavaScript.getInstance().getJavascriptObject(val, start.getParentScope());
               }
             } catch (final Exception err) {
               throw new WrappedException(err);
@@ -259,7 +258,7 @@ public class JavaObjectWrapper extends ScriptableObject {
           throw new EvaluatorException("Indexer is read-only");
         }
         Object actualValue;
-        actualValue = JavaScript.getInstance().getJavaObject(value, pinfo.getPropertyType());
+        actualValue = RhinoJavaScript.getInstance().getJavaObject(value, pinfo.getPropertyType());
         setter.invoke(this.getJavaObject(), new Object[] { new Integer(index), actualValue });
       } catch (final Exception err) {
         throw new WrappedException(err);
@@ -279,7 +278,7 @@ public class JavaObjectWrapper extends ScriptableObject {
           throw new EvaluatorException("Property '" + name + "' is not settable in " + this.classWrapper.getClassName() + ".");
         }
         try {
-          final Object actualValue = JavaScript.getInstance().getJavaObject(value, pinfo.getPropertyType());
+          final Object actualValue = RhinoJavaScript.getInstance().getJavaObject(value, pinfo.getPropertyType());
           setter.invoke(this.getJavaObject(), new Object[] { actualValue });
         } catch (final IllegalArgumentException iae) {
           final Exception newException = new IllegalArgumentException("Property named '" + name + "' could not be set with value " + value
@@ -296,7 +295,7 @@ public class JavaObjectWrapper extends ScriptableObject {
           if (setter != null) {
             try {
               Object actualValue;
-              actualValue = JavaScript.getInstance().getJavaObject(value, ni.getPropertyType());
+              actualValue = RhinoJavaScript.getInstance().getJavaObject(value, ni.getPropertyType());
               setter.invoke(this.getJavaObject(), new Object[] { name, actualValue });
             } catch (final Exception err) {
               throw new WrappedException(err);
