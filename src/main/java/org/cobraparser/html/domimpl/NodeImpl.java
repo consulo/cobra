@@ -394,7 +394,7 @@ public abstract class NodeImpl extends AbstractScriptableDelegate implements Nod
     }
   }
 
-  void visit(final NodeVisitor visitor) {
+  public void visit(final NodeVisitor visitor) {
     synchronized (this.treeLock) {
       this.visitImpl(visitor);
     }

@@ -6,7 +6,7 @@
 
     <groupId>consulo.internal.org.cobraparser</groupId>
     <artifactId>Cobra</artifactId>
-    <version>2.2-SNAPSHOT</version>
+    <version>2.3-SNAPSHOT</version>
 
     <name>Cobra</name>
     <description>Cobra is the rendering engine designed for LoboBrowser</description>
