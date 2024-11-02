@@ -1,8 +1,5 @@
 package org.cobraparser.html.renderer;
 
-import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-
 import org.cobraparser.html.domimpl.ModelNode;
 import org.cobraparser.ua.UserAgentContext;
 
