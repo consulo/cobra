@@ -20,10 +20,7 @@
 
 package org.cobraparser.html.style;
 
-import cz.vutbr.web.css.CSSProperty;
-import cz.vutbr.web.css.NodeData;
-import cz.vutbr.web.css.Term;
-import cz.vutbr.web.csskit.TermURIImpl;
+import cz.vutbr.web.css.*;
 import org.cobraparser.js.AbstractScriptableDelegate;
 import org.cobraparser.js.HideFromJS;
 import org.cobraparser.util.Urls;
@@ -70,15 +67,29 @@ abstract public class JStyleProperties extends AbstractScriptableDelegate implem
 
     @Override
     public String getBackgroundImage() {
+        Term<?> term = getNodeData().getValue("background-image", false);
+
+        TermURI termURI = null;
+
+        if (term instanceof TermURI tr) {
+            termURI = tr;
+        } else if (term instanceof TermList terms) {
+            for (Term<?> child : terms) {
+                if (child instanceof TermURI tr) {
+                    termURI = tr;
+                    break;
+                }
+            }
+        }
+
         // TODO
         // need to check if upstream can provide the absolute url of
         //  the image so that it can directly be passed.
         String quotedUri = null;
-        final TermURIImpl t = (TermURIImpl) getNodeData().getValue("background-image", false);
-        if (t != null) {
+        if (termURI != null) {
             URL finalUrl = null;
             try {
-                finalUrl = Urls.createURL(t.getBase(), t.getValue());
+                finalUrl = Urls.createURL(termURI.getBase(), termURI.getValue());
             }
             catch (final MalformedURLException e) {
                 e.printStackTrace();
