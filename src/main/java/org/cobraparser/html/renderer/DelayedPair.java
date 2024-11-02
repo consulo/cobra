@@ -20,16 +20,15 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.Insets;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.style.HtmlValues;
 import org.cobraparser.html.style.RenderState;
+
+import java.awt.*;
 
 public class DelayedPair {
   public final RenderableContainer containingBlock;
   private final RenderableContainer immediateContainingBlock;
-  public final @NonNull BoundableRenderable child;
+  public final BoundableRenderable child;
   private final String left;
   private final String top;
   private final String bottom;
@@ -45,7 +44,7 @@ public class DelayedPair {
   private boolean isAdded = false;
 
   public DelayedPair(final RenderableContainer immediateContainingBlock, final RenderableContainer containingBlock,
-      final @NonNull BoundableRenderable child, final String left, final String right, final String top, final String bottom,
+      final BoundableRenderable child, final String left, final String right, final String top, final String bottom,
       final String width, final String height,
       final RenderState rs,
       final int initX, final int initY, final int position) {
@@ -97,7 +96,7 @@ public class DelayedPair {
     return helperGetPixelSize(bottom, rs, 0, containingBlock.getInnerHeight());
   }
 
-  public @NonNull BoundableRenderable positionPairChild() {
+  public BoundableRenderable positionPairChild() {
     final RenderableContainer parent = this.containingBlock;
     if (isRelative) {
       final RElement rChild = (RElement) this.child;

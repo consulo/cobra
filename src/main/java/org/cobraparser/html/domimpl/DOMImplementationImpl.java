@@ -23,17 +23,11 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
-import org.cobraparser.html.parser.HtmlParser;
 import org.cobraparser.ua.UserAgentContext;
-import org.unbescape.xml.XmlEscape;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
-import org.xml.sax.SAXException;
 
 public class DOMImplementationImpl implements DOMImplementation {
   private final UserAgentContext context;
@@ -66,19 +60,4 @@ public class DOMImplementationImpl implements DOMImplementation {
       return null;
     }
   }
-
-  public Document createHTMLDocument(final String title) throws DOMException {
-    // TODO: Should a new context / null context be used?
-    final HTMLDocumentImpl doc = new HTMLDocumentImpl(this.context);
-    final HtmlParser parser = new HtmlParser(context, doc);
-    final String escapedTitle = XmlEscape.escapeXml11(title);
-    final String initString = "<html><head><title>" + escapedTitle + "</title><body></body></html>";
-    try {
-      parser.parse(new ByteArrayInputStream(initString.getBytes()));
-    } catch (IOException | SAXException e) {
-      throw new RuntimeException("Couldn't create HTML Document", e);
-    }
-    return doc;
-  }
-
 }

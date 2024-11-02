@@ -23,18 +23,6 @@
  */
 package org.cobraparser.html.gui;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.logging.Logger;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-
 import org.cobraparser.html.BrowserFrame;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.FrameNode;
@@ -43,6 +31,13 @@ import org.cobraparser.html.domimpl.NodeImpl;
 import org.cobraparser.html.renderer.NodeRenderer;
 import org.cobraparser.html.style.HtmlLength;
 import org.cobraparser.util.gui.WrapperLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  * A Swing panel used to render FRAMESETs only. It is used by {@link HtmlPanel}
@@ -53,7 +48,7 @@ import org.cobraparser.util.gui.WrapperLayout;
  */
 public class FrameSetPanel extends JComponent implements NodeRenderer {
   private static final long serialVersionUID = 5048031593959987324L;
-  private static final Logger logger = Logger.getLogger(FrameSetPanel.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(FrameSetPanel.class.getName());
 
   public FrameSetPanel() {
     super();
@@ -73,7 +68,7 @@ public class FrameSetPanel extends JComponent implements NodeRenderer {
       try {
         lengths.add(new HtmlLength(token));
       } catch (final Exception err) {
-        logger.warning("Frame rows or cols value [" + spec + "] is invalid.");
+        logger.warn("Frame rows or cols value [" + spec + "] is invalid.");
       }
     }
     return lengths.toArray(HtmlLength.EMPTY_ARRAY);

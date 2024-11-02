@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.HTMLElementImpl;
 import org.cobraparser.html.domimpl.ModelNode;
@@ -53,7 +52,7 @@ class RTable extends BaseBlockyRenderable {
   private static final int MAX_CACHE_SIZE = 10;
   private final Map<LayoutKey, LayoutValue> cachedLayout = new HashMap<>(5);
   private final TableMatrix tableMatrix;
-  private SortedSet<@NonNull PositionedRenderable> positionedRenderables;
+  private SortedSet<PositionedRenderable> positionedRenderables;
   private int otherOrdinal;
   private LayoutKey lastLayoutKey = null;
   private LayoutValue lastLayoutValue = null;
@@ -313,22 +312,22 @@ class RTable extends BaseBlockyRenderable {
    *
    * @see org.xamjwg.html.renderer.RCollection#getRenderables()
    */
-  public Iterator<@NonNull ? extends Renderable> getRenderables(final boolean topFirst) {
-    final Collection<@NonNull PositionedRenderable> prs = this.positionedRenderables;
+  public Iterator<? extends Renderable> getRenderables(final boolean topFirst) {
+    final Collection<PositionedRenderable> prs = this.positionedRenderables;
     if (prs != null) {
-      final List<@NonNull Renderable> c = new java.util.LinkedList<>();
-      final Iterator<@NonNull PositionedRenderable> i = prs.iterator();
+      final List<Renderable> c = new java.util.LinkedList<>();
+      final Iterator<PositionedRenderable> i = prs.iterator();
       while (i.hasNext()) {
         final PositionedRenderable pr = i.next();
         final BoundableRenderable r = pr.renderable;
         c.add(r);
       }
-      final Iterator<@NonNull RAbstractCell> i2 = this.tableMatrix.getCells();
+      final Iterator<RAbstractCell> i2 = this.tableMatrix.getCells();
       while (i2.hasNext()) {
         c.add(i2.next());
       }
 
-      final Iterator<@NonNull RTableRowGroup> i3 = this.tableMatrix.getRowGroups();
+      final Iterator<RTableRowGroup> i3 = this.tableMatrix.getRowGroups();
       while (i3.hasNext()) {
         c.add(i3.next());
       }
@@ -339,7 +338,7 @@ class RTable extends BaseBlockyRenderable {
 
       return c.iterator();
     } else {
-      final Iterator<@NonNull Renderable>[] rs = new Iterator[] {this.tableMatrix.getCells(), this.tableMatrix.getRowGroups()};
+      final Iterator<Renderable>[] rs = new Iterator[] {this.tableMatrix.getCells(), this.tableMatrix.getRowGroups()};
       return CollectionUtilities.iteratorUnion(rs);
     }
   }
@@ -357,9 +356,9 @@ class RTable extends BaseBlockyRenderable {
     return this.container.getPaintedBackgroundColor();
   }
 
-  private final void addPositionedRenderable(final @NonNull BoundableRenderable renderable, final boolean verticalAlignable, final boolean isFloat, final boolean isFixed) {
+  private final void addPositionedRenderable(final BoundableRenderable renderable, final boolean verticalAlignable, final boolean isFloat, final boolean isFixed) {
     // Expected to be called only in GUI thread.
-    SortedSet<@NonNull PositionedRenderable> others = this.positionedRenderables;
+    SortedSet<PositionedRenderable> others = this.positionedRenderables;
     if (others == null) {
       others = new TreeSet<>(new ZIndexComparator());
       this.positionedRenderables = others;

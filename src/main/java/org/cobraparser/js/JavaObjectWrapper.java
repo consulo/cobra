@@ -20,25 +20,19 @@
  */
 package org.cobraparser.js;
 
+import org.cobraparser.html.js.Window;
+import org.mozilla.javascript.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.cobraparser.html.js.Window;
-import org.mozilla.javascript.EvaluatorException;
-import org.mozilla.javascript.ExternalArrayData;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-import org.mozilla.javascript.WrappedException;
 
 public class JavaObjectWrapper extends ScriptableObject {
   private static final long serialVersionUID = -2669458528000105312L;
-  private static final Logger logger = Logger.getLogger(JavaObjectWrapper.class.getName());
-  private static final boolean loggableInfo = logger.isLoggable(Level.INFO);
+  private static final Logger logger = LoggerFactory.getLogger(JavaObjectWrapper.class.getName());
   private final Object delegate;
   private final JavaClassWrapper classWrapper;
 
@@ -328,8 +322,8 @@ public class JavaObjectWrapper extends ScriptableObject {
 
   @Override
   public Object getDefaultValue(final Class<?> hint) {
-    if (loggableInfo) {
-      logger.info("getDefaultValue(): hint=" + hint + ",this=" + this.getJavaObject());
+    if (logger.isDebugEnabled()) {
+      logger.debug("getDefaultValue(): hint=" + hint + ",this=" + this.getJavaObject());
     }
     if ((hint == null) || String.class.equals(hint)) {
       final Object javaObject = this.getJavaObject();

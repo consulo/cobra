@@ -23,14 +23,14 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.net.MalformedURLException;
-
 import org.cobraparser.html.BrowserFrame;
 import org.cobraparser.html.js.Window;
 import org.cobraparser.ua.UserAgentContext.Request;
 import org.cobraparser.ua.UserAgentContext.RequestKind;
 import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLFrameElement;
+
+import java.net.MalformedURLException;
 
 public class HTMLFrameElementImpl extends HTMLElementImpl implements HTMLFrameElement, FrameNode {
   private volatile BrowserFrame browserFrame;
@@ -57,7 +57,7 @@ public class HTMLFrameElementImpl extends HTMLElementImpl implements HTMLFrameEl
           browserFrame.loadURL(fullURL);
         }
       } catch (final MalformedURLException mfu) {
-        logger.warning("Frame URI=[" + src + "] is malformed.");
+        logger.warn("Frame URI=[" + src + "] is malformed.");
       }
     }
   }

@@ -25,7 +25,6 @@ package org.cobraparser.html.domimpl;
 
 import java.util.ArrayList;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.js.Executor;
 import org.cobraparser.html.js.Window;
 import org.cobraparser.html.style.ImageRenderState;
@@ -203,7 +202,7 @@ public class HTMLImageElementImpl extends HTMLAbstractUIElement implements HTMLI
     this.onload = onload;
   }
 
-  private @NonNull ImageResponse imageResponse = new ImageResponse();
+  private ImageResponse imageResponse = new ImageResponse();
   private String imageSrc;
 
   private void loadImage(final String src) {
@@ -286,7 +285,7 @@ public class HTMLImageElementImpl extends HTMLAbstractUIElement implements HTMLI
   }
 
   @Override
-  protected @NonNull RenderState createRenderState(final RenderState prevRenderState) {
+  protected RenderState createRenderState(final RenderState prevRenderState) {
     return new ImageRenderState(prevRenderState, this);
   }
 

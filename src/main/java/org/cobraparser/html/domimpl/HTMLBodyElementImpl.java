@@ -23,7 +23,6 @@
  */
 package org.cobraparser.html.domimpl;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.style.BodyRenderState;
 import org.cobraparser.html.style.RenderState;
 import org.mozilla.javascript.Function;
@@ -101,7 +100,7 @@ public class HTMLBodyElementImpl extends HTMLAbstractUIElement implements HTMLBo
   }
 
   @Override
-  protected @NonNull RenderState createRenderState(final RenderState prevRenderState) {
+  protected RenderState createRenderState(final RenderState prevRenderState) {
     return new BodyRenderState(prevRenderState, this);
   }
 

@@ -23,22 +23,6 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.Adjustable;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.MouseEvent;
-import java.util.Iterator;
-
-import javax.swing.JScrollBar;
-
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.ModelNode;
 import org.cobraparser.html.domimpl.NodeImpl;
@@ -48,6 +32,13 @@ import org.cobraparser.html.style.RenderThreadState;
 import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.util.CollectionUtilities;
 import org.w3c.dom.html.HTMLHtmlElement;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.MouseEvent;
+import java.util.Iterator;
 
 /**
  * Represents a HTML block in a rendered document, typically a DIV. The root
@@ -62,7 +53,7 @@ public class RBlock extends BaseBlockyRenderable {
   protected final FrameContext frameContext;
   protected final int listNesting;
   // protected final HtmlRendererContext rendererContext;
-  protected final @NonNull RBlockViewport bodyLayout;
+  protected final RBlockViewport bodyLayout;
 
   // Used for relative positioning
   // private int relativeOffsetX = 0;
@@ -1437,7 +1428,7 @@ public class RBlock extends BaseBlockyRenderable {
    *
    * @see org.xamjwg.html.renderer.RCollection#getRenderables()
    */
-  public Iterator<@NonNull Renderable> getRenderables(final boolean topFirst) {
+  public Iterator<Renderable> getRenderables(final boolean topFirst) {
     return CollectionUtilities.singletonIterator(this.bodyLayout);
   }
 
@@ -1829,7 +1820,7 @@ public class RBlock extends BaseBlockyRenderable {
         if (r instanceof RCollection) {
           final RCollection rCollection = (RCollection) r;
           if ((!condense) || !rCollection.isDelegated()) {
-            final Iterator<@NonNull ? extends Renderable> rnds = rCollection.getRenderables();
+            final Iterator<? extends Renderable> rnds = rCollection.getRenderables();
             if (rnds == null) {
               System.out.println(indentStr + selfIndentStr + " [empty]");
             } else {
@@ -1863,8 +1854,8 @@ public class RBlock extends BaseBlockyRenderable {
 
   private boolean collapseTopMargin = false;
   private boolean collapseBottomMargin = false;
-  private @Nullable Integer marginTopOriginal = null;
-  private @Nullable Integer marginBottomOriginal = null;
+  private Integer marginTopOriginal = null;
+  private Integer marginBottomOriginal = null;
 
   void setCollapseTop(final boolean set) {
     collapseTopMargin = set;
@@ -1874,11 +1865,11 @@ public class RBlock extends BaseBlockyRenderable {
     collapseBottomMargin = set;
   }
 
-  @Nullable Integer getMarginTopOriginal() {
+  Integer getMarginTopOriginal() {
     return marginTopOriginal;
   }
 
-  @Nullable Integer getMarginBottomOriginal() {
+  Integer getMarginBottomOriginal() {
     return marginBottomOriginal;
   }
 
@@ -1898,7 +1889,7 @@ public class RBlock extends BaseBlockyRenderable {
     }
   }
 
-  void absorbMarginTopChild(@Nullable Integer marginTopChild) {
+  void absorbMarginTopChild(Integer marginTopChild) {
     if (marginTopChild != null) {
       // System.out.println("In: " + this);
       // System.out.println("  Absorbing: " + marginTopChild);
@@ -1919,7 +1910,7 @@ public class RBlock extends BaseBlockyRenderable {
     }
   }
 
-  void absorbMarginBottomChild(@Nullable Integer marginBottomChild) {
+  void absorbMarginBottomChild(Integer marginBottomChild) {
     if (marginBottomChild != null) {
       final Insets mi = this.marginInsets;
       if (mi != null) {

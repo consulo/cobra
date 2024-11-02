@@ -36,8 +36,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +44,8 @@ import org.cobraparser.html.domimpl.HTMLDocumentImpl;
 import org.cobraparser.html.io.WritableLineReader;
 import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.util.ArrayUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,7 +60,7 @@ import org.xml.sax.SAXException;
  * may be used directly when a different DOM implementation is preferred.
  */
 public class HtmlParser {
-  private static final Logger logger = Logger.getLogger(HtmlParser.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(HtmlParser.class.getName());
   private final Document document;
   private final UserAgentContext ucontext;
   private final ErrorHandler errorHandler;
@@ -806,7 +806,7 @@ public class HtmlParser {
         safeAppendChild(parent, textNode);
       } catch (final DOMException de) {
         if ((parent.getNodeType() != Node.DOCUMENT_NODE) || (de.code != DOMException.HIERARCHY_REQUEST_ERR)) {
-          logger.log(Level.WARNING, "parseToken(): Unable to append child to " + parent + ".", de);
+          logger.warn("parseToken(): Unable to append child to " + parent + ".", de);
         }
       }
     }
@@ -1229,7 +1229,7 @@ public class HtmlParser {
             parent.appendChild(textNode);
           } catch (final DOMException de) {
             if ((parent.getNodeType() != Node.DOCUMENT_NODE) || (de.code != DOMException.HIERARCHY_REQUEST_ERR)) {
-              logger.log(Level.WARNING, "parseToken(): Unable to append child to " + parent + ".", de);
+              logger.warn("parseToken(): Unable to append child to " + parent + ".", de);
             }
           }
           if (chInt == -1) {
@@ -1238,7 +1238,7 @@ public class HtmlParser {
             continue LOOP;
           }
         } else if (Character.isWhitespace(ch)) {
-          final StringBuffer ltText = new StringBuffer();
+          final StringBuilder ltText = new StringBuilder();
           ltText.append('<');
           ltText.append(ch);
           while ((chInt = reader.read()) != -1) {
@@ -1255,7 +1255,7 @@ public class HtmlParser {
             parent.appendChild(textNode);
           } catch (final DOMException de) {
             if ((parent.getNodeType() != Node.DOCUMENT_NODE) || (de.code != DOMException.HIERARCHY_REQUEST_ERR)) {
-              logger.log(Level.WARNING, "parseToken(): Unable to append child to " + parent + ".", de);
+              logger.warn("parseToken(): Unable to append child to " + parent + ".", de);
             }
           }
           if (chInt == -1) {
@@ -1649,7 +1649,7 @@ public class HtmlParser {
             decimal = Integer.parseInt(number);
           }
         } catch (final NumberFormatException nfe) {
-          logger.log(Level.WARNING, "entityDecode()", nfe);
+          logger.warn("entityDecode()", nfe);
           decimal = 0;
         }
         sb.append((char) decimal);

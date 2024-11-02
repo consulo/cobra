@@ -23,13 +23,12 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.Dimension;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.NodeImpl;
 import org.cobraparser.html.style.RenderState;
 import org.cobraparser.ua.UserAgentContext;
+
+import java.awt.*;
 
 class RAnonTableCell extends RAbstractCell {
   private final NodeImpl cellNode;
@@ -163,7 +162,7 @@ class RAnonTableCell extends RAbstractCell {
     return true;
   }
 
-  @NonNull RenderState getRenderState() {
+  RenderState getRenderState() {
     return cellNode.getRenderState();
   }
 

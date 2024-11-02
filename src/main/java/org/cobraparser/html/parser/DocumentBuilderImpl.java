@@ -23,25 +23,25 @@
  */
 package org.cobraparser.html.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.DocumentBuilder;
-
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.DOMImplementationImpl;
 import org.cobraparser.html.domimpl.HTMLDocumentImpl;
 import org.cobraparser.html.io.WritableLineReader;
 import org.cobraparser.ua.UserAgentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * The <code>DocumentBuilderImpl</code> class is an HTML DOM parser that
@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
  * @author J. H. S.
  */
 public class DocumentBuilderImpl extends DocumentBuilder {
-  private static final Logger logger = Logger.getLogger(DocumentBuilderImpl.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(DocumentBuilderImpl.class.getName());
   private EntityResolver resolver;
   private ErrorHandler errorHandler;
   private final UserAgentContext bcontext;
@@ -136,7 +136,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
     }
     final String uri = is.getSystemId();
     if (uri == null) {
-      logger.warning("parse(): InputSource has no SystemId (URI); document item URLs will not be resolvable.");
+      logger.warn("parse(): InputSource has no SystemId (URI); document item URLs will not be resolvable.");
     }
     WritableLineReader wis;
     final Reader reader = is.getCharacterStream();

@@ -23,13 +23,14 @@
  */
 package org.cobraparser.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author J. H. S.
@@ -42,7 +43,7 @@ public class ID {
   // Disabling. Don't like the feel of this:
   private static final long globalProcessID;
 
-  private static final Logger logger = Logger.getLogger(ID.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(ID.class.getName());
 
   static {
     final long time = System.currentTimeMillis();
@@ -55,7 +56,7 @@ public class ID {
       // inetAddress = InetAddress.getLocalHost();
       addressHashCode = inetAddress.getHostName().hashCode() ^ inetAddress.getHostAddress().hashCode();
     } catch (final Exception err) {
-      logger.log(Level.WARNING, "Unable to get local host information.", err);
+      logger.warn("Unable to get local host information.", err);
       addressHashCode = ID.class.hashCode();
     }
 

@@ -21,20 +21,17 @@
 
 package org.cobraparser.html.style;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
-import java.awt.Toolkit;
+import org.cobraparser.util.Urls;
+import org.cobraparser.util.gui.ColorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.css.CSS2Properties;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.cobraparser.util.Urls;
-import org.cobraparser.util.gui.ColorFactory;
-import org.w3c.dom.css.CSS2Properties;
 
 public class HtmlValues {
   static final String BORDER_THIN_SIZE = "1px";
@@ -42,7 +39,7 @@ public class HtmlValues {
   static final String BORDER_THICK_SIZE = "5px";
 
   public static final Map<String, FontInfo> SYSTEM_FONTS = new HashMap<>();
-  private static final Logger logger = Logger.getLogger(HtmlValues.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(HtmlValues.class.getName());
   public static final float DEFAULT_FONT_SIZE = 16.0f;
   public static final int DEFAULT_FONT_SIZE_INT = (int) DEFAULT_FONT_SIZE;
 
@@ -611,7 +608,7 @@ public class HtmlValues {
     try {
       return Urls.createURL(null, tentativeUri);
     } catch (final java.net.MalformedURLException mfu) {
-      logger.log(Level.WARNING, "Unable to create URL for URI=[" + tentativeUri + "].", mfu);
+      logger.warn("Unable to create URL for URI=[" + tentativeUri + "].", mfu);
       return null;
     }
   }

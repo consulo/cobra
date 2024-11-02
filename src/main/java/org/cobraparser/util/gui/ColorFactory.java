@@ -23,18 +23,19 @@
  */
 package org.cobraparser.util.gui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author J. H. S.
  */
 public class ColorFactory {
-  private static final Logger logger = Logger.getLogger(ColorFactory.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(ColorFactory.class.getName());
   public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
   private static ColorFactory instance;
   private final Map<String, Color> colorMap = new HashMap<>(256);
@@ -317,8 +318,8 @@ public class ColorFactory {
             // ignore
           }
         } else {
-          if (logger.isLoggable(Level.INFO)) {
-            logger.warning("getColor(): Color spec [" + normalSpec + "] unknown.");
+          if (logger.isWarnEnabled()) {
+            logger.warn("getColor(): Color spec [" + normalSpec + "] unknown.");
           }
           return Color.RED;
         }

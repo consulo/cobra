@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.cobraparser.html.domimpl.ModelNode;
 import org.cobraparser.html.style.RenderState;
 
@@ -43,7 +41,7 @@ import cz.vutbr.web.css.CSSProperty.VerticalAlign;
  * @author J. H. S.
  */
 class RLine extends BaseRCollection {
-  private final ArrayList<@NonNull Renderable> renderables = new ArrayList<>(8);
+  private final ArrayList<Renderable> renderables = new ArrayList<>(8);
   // private final RenderState startRenderState;
   private int baseLineOffset;
   private int desiredMaxWidth;
@@ -175,11 +173,11 @@ class RLine extends BaseRCollection {
     return result;
   }
 
-  public final void addStyleChanger(final @NonNull RStyleChanger sc) {
+  public final void addStyleChanger(final RStyleChanger sc) {
     this.renderables.add(sc);
   }
 
-  public final void simplyAdd(final @NonNull Renderable r) {
+  public final void simplyAdd(final Renderable r) {
     this.renderables.add(r);
   }
 
@@ -328,7 +326,7 @@ class RLine extends BaseRCollection {
    *          The required new line height.
    * @param valign
    */
-  private final void setElementY(final RElement relement, final int elementHeight, final @Nullable VerticalAlign valign) {
+  private final void setElementY(final RElement relement, final int elementHeight, final VerticalAlign valign) {
     // At this point height should be more than what's needed.
     int yoffset;
     if (valign != null) {
@@ -383,7 +381,7 @@ class RLine extends BaseRCollection {
     final int ph = relement.getHeight();
     int requiredHeight;
 
-    final @Nullable VerticalAlign valign = relement.getVAlign();
+    final VerticalAlign valign = relement.getVAlign();
     if (valign != null) {
       switch (valign) {
       case BASELINE:
@@ -451,7 +449,7 @@ class RLine extends BaseRCollection {
       if (r instanceof RElement) {
         final RElement relement = (RElement) r;
         // System.out.println("Placing: " + r + "\n  with: " + relement.getVAlign());
-        @Nullable VerticalAlign vAlign = relement.getVAlign();
+        VerticalAlign vAlign = relement.getVAlign();
         if (vAlign != null) {
           switch (vAlign) {
           case BOTTOM:
@@ -491,7 +489,7 @@ class RLine extends BaseRCollection {
    * @param newHeight
    * @param alignmentY
    */
-  private void adjustHeight(final int newHeight, final int elementHeight, final @Nullable VerticalAlign valign) {
+  private void adjustHeight(final int newHeight, final int elementHeight, final VerticalAlign valign) {
     // Set new line height
     // int oldHeight = this.height;
     this.height = newHeight;
@@ -693,7 +691,7 @@ class RLine extends BaseRCollection {
    *
    * @see org.xamjwg.html.renderer.RCollection#getRenderables()
    */
-  public Iterator<@NonNull Renderable> getRenderables(final boolean topFirst) {
+  public Iterator<Renderable> getRenderables(final boolean topFirst) {
     // TODO: Returning Renderables in order always, assuming that they don't overlap.
     //       Need to check the assumption
     return this.renderables.iterator();

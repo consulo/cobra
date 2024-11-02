@@ -23,22 +23,13 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.util.ArrayList;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.js.PropertyName;
-import org.cobraparser.html.style.HtmlLength;
-import org.cobraparser.html.style.HtmlValues;
-import org.cobraparser.html.style.JStyleProperties;
-import org.cobraparser.html.style.RenderState;
-import org.cobraparser.html.style.TableRenderState;
+import org.cobraparser.html.style.*;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
-import org.w3c.dom.html.HTMLCollection;
-import org.w3c.dom.html.HTMLElement;
-import org.w3c.dom.html.HTMLTableCaptionElement;
-import org.w3c.dom.html.HTMLTableElement;
-import org.w3c.dom.html.HTMLTableSectionElement;
+import org.w3c.dom.html.*;
+
+import java.util.ArrayList;
 
 public class HTMLTableElementImpl extends HTMLAbstractUIElement implements HTMLTableElement {
 
@@ -291,7 +282,7 @@ public class HTMLTableElementImpl extends HTMLAbstractUIElement implements HTMLT
   }
 
   @Override
-  protected @NonNull RenderState createRenderState(final RenderState prevRenderState) {
+  protected RenderState createRenderState(final RenderState prevRenderState) {
     return new TableRenderState(prevRenderState, this);
   }
 }

@@ -23,23 +23,7 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import org.eclipse.jdt.annotation.NonNull;
+import cz.vutbr.web.css.*;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.js.Event;
 import org.cobraparser.html.style.RenderState;
@@ -50,32 +34,23 @@ import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.util.Strings;
 import org.cobraparser.util.Urls;
 import org.mozilla.javascript.Function;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Comment;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.Text;
-import org.w3c.dom.UserDataHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.*;
 import org.w3c.dom.html.HTMLCollection;
 import org.w3c.dom.html.HTMLDocument;
 
-import cz.vutbr.web.css.CSSException;
-import cz.vutbr.web.css.CSSFactory;
-import cz.vutbr.web.css.CombinedSelector;
-import cz.vutbr.web.css.RuleSet;
-import cz.vutbr.web.css.Selector;
-import cz.vutbr.web.css.StyleSheet;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
 
 // TODO: Implement org.w3c.dom.events.EventTarget ?
 public abstract class NodeImpl extends AbstractScriptableDelegate implements Node, ModelNode {
   private static final NodeImpl[] EMPTY_ARRAY = new NodeImpl[0];
-  private static final @NonNull RenderState BLANK_RENDER_STATE = new StyleSheetRenderState(null);
-  protected static final Logger logger = Logger.getLogger(NodeImpl.class.getName());
+  private static final RenderState BLANK_RENDER_STATE = new StyleSheetRenderState(null);
+  protected static final Logger logger = LoggerFactory.getLogger(NodeImpl.class.getName());
   protected UINode uiNode;
   protected ArrayList<Node> nodeList;
   protected volatile Document document;
@@ -486,7 +461,7 @@ public abstract class NodeImpl extends AbstractScriptableDelegate implements Nod
   }
 
   // TODO: Use this wherever nodeList needs to be non empty
-  private @NonNull ArrayList<Node> getNonEmptyNodeList() {
+  private ArrayList<Node> getNonEmptyNodeList() {
     ArrayList<Node> nl = this.nodeList;
     if (nl == null) {
       nl = new ArrayList<>();
@@ -1047,7 +1022,7 @@ public abstract class NodeImpl extends AbstractScriptableDelegate implements Nod
    * @see
    * org.xamjwg.html.renderer.RenderableContext#getFullURL(java.lang.String)
    */
-  public @NonNull URL getFullURL(final String spec) throws MalformedURLException {
+  public URL getFullURL(final String spec) throws MalformedURLException {
     final Object doc = this.document;
     final String cleanSpec = Urls.encodeIllegalCharacters(spec);
     if (doc instanceof HTMLDocumentImpl) {
@@ -1117,11 +1092,11 @@ public abstract class NodeImpl extends AbstractScriptableDelegate implements Nod
   }
 
   public void warn(final String message, final Throwable err) {
-    logger.log(Level.WARNING, message, err);
+    logger.warn(message, err);
   }
 
   public void warn(final String message) {
-    logger.log(Level.WARNING, message);
+    logger.warn(message);
   }
 
   public void informSizeInvalid() {
@@ -1201,7 +1176,7 @@ public abstract class NodeImpl extends AbstractScriptableDelegate implements Nod
 
   private RenderState renderState = null;
 
-  public @NonNull RenderState getRenderState() {
+  public RenderState getRenderState() {
     // Generally called from the GUI thread, except for
     // offset properties.
     synchronized (this.treeLock) {
@@ -1232,7 +1207,7 @@ public abstract class NodeImpl extends AbstractScriptableDelegate implements Nod
   }
 
   // abstract protected RenderState createRenderState(final RenderState prevRenderState);
-  protected @NonNull RenderState createRenderState(final RenderState prevRenderState) {
+  protected RenderState createRenderState(final RenderState prevRenderState) {
     if (prevRenderState == null) {
       return BLANK_RENDER_STATE;
     } else {
@@ -1502,7 +1477,7 @@ public abstract class NodeImpl extends AbstractScriptableDelegate implements Nod
   }
 
   public boolean dispatchEvent(final Event evt) {
-    System.out.println("Dispatching event: " + evt);
+    if (logger.isDebugEnabled()) logger.debug("Dispatching event: " + evt);
     // dispatchEventToHandlers(evt, onEventHandlers.get(evt.getType()));
     ((HTMLDocumentImpl) getOwnerDocument()).getEventTargetManager().dispatchEvent(this, evt);
     return false;

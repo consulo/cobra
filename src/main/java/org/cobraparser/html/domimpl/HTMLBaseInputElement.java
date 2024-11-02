@@ -23,9 +23,6 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.util.ArrayList;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.FormInput;
 import org.cobraparser.html.js.Event;
 import org.cobraparser.html.js.NotGetterSetter;
@@ -34,6 +31,8 @@ import org.cobraparser.ua.ImageResponse.State;
 import org.mozilla.javascript.Function;
 import org.w3c.dom.Node;
 import org.w3c.dom.html.HTMLFormElement;
+
+import java.util.ArrayList;
 
 public abstract class HTMLBaseInputElement extends HTMLAbstractUIElement {
   public HTMLBaseInputElement(final String name) {
@@ -46,7 +45,7 @@ public abstract class HTMLBaseInputElement extends HTMLAbstractUIElement {
   protected Boolean deferredReadonly;
   protected Boolean deferredDisabled;
 
-  public void setInputContext(final @NonNull InputContext ic) {
+  public void setInputContext(final InputContext ic) {
     String dv = null;
     Boolean defDisabled = null;
     Boolean defReadonly = null;

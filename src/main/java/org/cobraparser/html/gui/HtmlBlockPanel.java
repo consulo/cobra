@@ -23,70 +23,27 @@
  */
 package org.cobraparser.html.gui;
 
-import java.awt.Adjustable;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-
-import org.eclipse.jdt.annotation.Nullable;
 import org.cobraparser.html.HtmlRendererContext;
-import org.cobraparser.html.domimpl.HTMLDocumentImpl;
-import org.cobraparser.html.domimpl.HTMLElementImpl;
-import org.cobraparser.html.domimpl.ModelNode;
-import org.cobraparser.html.domimpl.NodeImpl;
-import org.cobraparser.html.domimpl.UINode;
-import org.cobraparser.html.renderer.BoundableRenderable;
-import org.cobraparser.html.renderer.DelayedPair;
-import org.cobraparser.html.renderer.FrameContext;
-import org.cobraparser.html.renderer.NodeRenderer;
-import org.cobraparser.html.renderer.PositionedRenderable;
-import org.cobraparser.html.renderer.RBlock;
-import org.cobraparser.html.renderer.RCollection;
-import org.cobraparser.html.renderer.RElement;
-import org.cobraparser.html.renderer.Renderable;
-import org.cobraparser.html.renderer.RenderableContainer;
-import org.cobraparser.html.renderer.RenderableSpot;
-import org.cobraparser.html.renderer.TranslatedRenderable;
+import org.cobraparser.html.domimpl.*;
+import org.cobraparser.html.renderer.*;
 import org.cobraparser.html.style.RenderState;
 import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.util.Nodes;
 import org.cobraparser.util.gui.ColorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.*;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 /**
  * A Swing component that renders a HTML block, given by a DOM root or an
@@ -100,8 +57,7 @@ import org.w3c.dom.Node;
  */
 public class HtmlBlockPanel extends JComponent implements NodeRenderer, RenderableContainer, ClipboardOwner {
   private static final long serialVersionUID = 7851587340938903001L;
-  private static final Logger logger = Logger.getLogger(HtmlBlockPanel.class.getName());
-  private static final boolean loggableInfo = logger.isLoggable(Level.INFO);
+  private static final Logger logger = LoggerFactory.getLogger(HtmlBlockPanel.class.getName());
   protected final FrameContext frameContext;
   protected final UserAgentContext ucontext;
   protected final HtmlRendererContext rcontext;
@@ -206,7 +162,7 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
    *          requested bounds are not currently visible vertically.
    */
   public void scrollTo(final Rectangle bounds, final boolean xIfNeeded, final boolean yIfNeeded) {
-    final @Nullable HTMLDocumentImpl doc = (HTMLDocumentImpl) getRootNode();
+    final HTMLDocumentImpl doc = (HTMLDocumentImpl) getRootNode();
     if (doc != null) {
       RBlock bodyBlock = (RBlock)((HTMLElementImpl) doc.getBody()).getUINode();
       bodyBlock.scrollTo(bounds, xIfNeeded, yIfNeeded);
@@ -378,7 +334,7 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
               }
             });
           } catch (final Exception err) {
-            logger.log(Level.SEVERE, "Unable to do preferred size layout.", err);
+            logger.debug("Unable to do preferred size layout.", err);
           }
         }
         // Adjust for permanent vertical scrollbar.
@@ -475,7 +431,7 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
     this.repaint();
   }
 
-  private @Nullable NodeImpl getRootNode() {
+  private NodeImpl getRootNode() {
     final RBlock block = this.rblock;
     return block == null ? null : (NodeImpl) block.getModelNode();
   }
@@ -760,7 +716,7 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
         }
       }
     } catch (final Exception thrown) {
-      logger.log(Level.SEVERE, "Unexpected error in layout engine. Document is " + this.getRootNode(), thrown);
+      logger.debug("Unexpected error in layout engine. Document is " + this.getRootNode(), thrown);
     }
   }
 
@@ -870,7 +826,7 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
           final NodeImpl node = dn.node;
           if (node == null) {
             // This is all-invalidate (new style sheet)
-            if (loggableInfo) {
+            if (logger.isInfoEnabled()) {
               logger.info("processDocumentNotifications(): Calling invalidateLayoutDeep().");
             }
             this.rblock.invalidateLayoutDeep();
@@ -885,7 +841,7 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
               // relement.invalidateRenderStyle();
               // }
             } else {
-              if (loggableInfo) {
+              if (logger.isInfoEnabled()) {
                 logger.info("processDocumentNotifications(): Unable to find UINode for " + node);
               }
             }

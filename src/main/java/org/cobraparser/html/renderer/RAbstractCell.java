@@ -1,12 +1,11 @@
 package org.cobraparser.html.renderer;
 
-import java.awt.Dimension;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.NodeImpl;
 import org.cobraparser.html.style.RenderState;
 import org.cobraparser.ua.UserAgentContext;
+
+import java.awt.*;
 
 public abstract class RAbstractCell extends RBlock {
 
@@ -30,7 +29,7 @@ public abstract class RAbstractCell extends RBlock {
   protected abstract Dimension doCellLayout(final int width, final int height, final boolean expandWidth, final boolean expandHeight,
       final boolean sizeOnly);
 
-  abstract @NonNull RenderState getRenderState();
+  abstract RenderState getRenderState();
 
   private VirtualCell topLeftVirtualCell;
 

@@ -1,13 +1,10 @@
 package org.cobraparser.html.renderer;
 
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import org.cobraparser.html.domimpl.ModelNode;
+
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
-
-import org.eclipse.jdt.annotation.NonNull;
-import org.cobraparser.html.domimpl.ModelNode;
 
 abstract class BaseRCollection extends BaseBoundableRenderable implements RCollection {
   public BaseRCollection(final RenderableContainer container, final ModelNode modelNode) {
@@ -375,7 +372,7 @@ abstract class BaseRCollection extends BaseBoundableRenderable implements RColle
 
   @Override
   public boolean isReadyToPaint() {
-    final Iterator<@NonNull ? extends Renderable> renderables = getRenderables();
+    final Iterator<? extends Renderable> renderables = getRenderables();
     if (renderables == null) {
       return true;
     }

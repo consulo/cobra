@@ -25,7 +25,6 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.HTMLElementImpl;
 import org.cobraparser.html.domimpl.ModelNode;
@@ -34,7 +33,7 @@ import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.util.CollectionUtilities;
 
 public class RInlineBlock extends BaseElementRenderable {
-  private final @NonNull BaseBlockyRenderable child;
+  private final BaseBlockyRenderable child;
 
   public RInlineBlock(final RenderableContainer container, final HTMLElementImpl modelNode, final UserAgentContext uacontext,
       final HtmlRendererContext rendererContext, final FrameContext frameContext) {
@@ -53,8 +52,8 @@ public class RInlineBlock extends BaseElementRenderable {
     this.height = child.getHeight();
   }
 
-  public Iterator<@NonNull ? extends Renderable> getRenderables(final boolean topFirst) {
-    return CollectionUtilities.singletonIterator((@NonNull Renderable) this.child);
+  public Iterator<? extends Renderable> getRenderables(final boolean topFirst) {
+    return CollectionUtilities.singletonIterator((Renderable) this.child);
   }
 
   public RenderableSpot getLowestRenderableSpot(final int x, final int y) {

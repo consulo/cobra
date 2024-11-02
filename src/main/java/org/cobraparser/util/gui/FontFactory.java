@@ -23,32 +23,20 @@
  */
 package org.cobraparser.util.gui;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.font.TextAttribute;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.cobraparser.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.text.StyleContext;
-
-import org.cobraparser.util.Strings;
-
-/** Note: Undocumented class? */
-//import sun.font.FontManager;
+import java.awt.*;
+import java.awt.font.TextAttribute;
+import java.util.*;
 
 /**
  * @author J. H. S.
  */
 public class FontFactory {
-  private static final Logger logger = Logger.getLogger(FontFactory.class.getName());
-  private static final boolean loggableFine = logger.isLoggable(Level.FINE);
+  private static final Logger logger = LoggerFactory.getLogger(FontFactory.class.getName());
   private static final FontFactory instance = new FontFactory();
   private final Set<String> fontFamilies = new HashSet<>(40);
   private final Map<FontKey, Font> fontMap = new HashMap<>(50);
@@ -57,13 +45,12 @@ public class FontFactory {
    *
    */
   private FontFactory() {
-    final boolean liflag = loggableFine;
     final String[] ffns = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
     final Set<String> fontFamilies = this.fontFamilies;
     synchronized (this) {
       for (final String ffn : ffns) {
-        if (liflag) {
-          logger.fine("FontFactory(): family=" + ffn);
+        if (logger.isDebugEnabled()) {
+          logger.debug("FontFactory(): family=" + ffn);
         }
         fontFamilies.add(ffn.toLowerCase());
       }

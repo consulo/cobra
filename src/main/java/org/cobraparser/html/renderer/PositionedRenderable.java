@@ -20,27 +20,23 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.domimpl.ModelNode;
 import org.cobraparser.html.style.RenderState;
 import org.w3c.dom.html.HTMLDocument;
 import org.w3c.dom.html.HTMLHtmlElement;
 
+import java.awt.*;
+
 public class PositionedRenderable implements Renderable {
   public static final PositionedRenderable[] EMPTY_ARRAY = new PositionedRenderable[0];
-  public final @NonNull BoundableRenderable renderable;
+  public final BoundableRenderable renderable;
   public final boolean verticalAlignable;
   public final int ordinal;
   public final boolean isFloat;
   private final boolean isFixed;
   private final boolean isDelegated;
 
-  public PositionedRenderable(final @NonNull BoundableRenderable renderable, final boolean verticalAlignable, final int ordinal,
+  public PositionedRenderable(final BoundableRenderable renderable, final boolean verticalAlignable, final int ordinal,
       final boolean isFloat, final boolean isFixed, final boolean isDelegated) {
     super();
     this.renderable = renderable;

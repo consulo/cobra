@@ -31,8 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.AnonymousNodeImpl;
 import org.cobraparser.html.domimpl.HTMLElementImpl;
@@ -51,7 +49,7 @@ import org.cobraparser.ua.UserAgentContext;
 final class TableMatrix {
   private final ArrayList<Row> ROWS = new ArrayList<>();
   private final ArrayList<RowGroup> ROW_GROUPS = new ArrayList<>();
-  private final ArrayList<@NonNull RAbstractCell> ALL_CELLS = new ArrayList<>();
+  private final ArrayList<RAbstractCell> ALL_CELLS = new ArrayList<>();
   private final HTMLElementImpl tableElement;
   private final UserAgentContext uaContext;
   private final HtmlRendererContext rendererContext;
@@ -325,7 +323,7 @@ final class TableMatrix {
       }
     }
 
-    @Nullable HtmlInsets getGroupBorderInsets() {
+    HtmlInsets getGroupBorderInsets() {
       final BorderInfo borderInfo = rowGroupElem == null ? null : rowGroupElem.getRenderState().getBorderInfo();
       return borderInfo == null ? null : borderOverrider.get(borderInfo.insets);
     }
@@ -366,10 +364,10 @@ final class TableMatrix {
       return getCSSInsets(getLeftMostCell().getActualCell().getRenderState()).left;
     }
 
-    void add(final @Nullable VirtualCell cell) {
+    void add(final VirtualCell cell) {
       if (cell != null) {
         final RAbstractCell ac = cell.getActualCell();
-        final @NonNull RenderState rs = ac.getRenderState();
+        final RenderState rs = ac.getRenderState();
         BorderInfo binfo = rs.getBorderInfo();
         if (binfo != null) {
           final HtmlInsets bi = binfo.insets;
@@ -694,7 +692,7 @@ final class TableMatrix {
         }
         rowSizeInfo.htmlLength = bestHeightLength;
 
-        @Nullable HtmlInsets rowGroupInsets = row.rowGroup.getGroupBorderInsets();
+        HtmlInsets rowGroupInsets = row.rowGroup.getGroupBorderInsets();
         if (row.firstInGroup && rowGroupInsets != null) {
           rowSizeInfo.marginTop = Math.max(0, rowGroupInsets.top);
         }
@@ -1014,7 +1012,7 @@ final class TableMatrix {
               colSize.layoutSize = size.width;
             }
 
-            @NonNull Insets cbi = ac.getBorderInsets();
+            Insets cbi = ac.getBorderInsets();
             final int cellFullLayoutWidth = size.width + cbi.left + cbi.right;
             if (cellFullLayoutWidth > colSize.fullLayoutSize) {
               colSize.fullLayoutSize = cellFullLayoutWidth;
@@ -1204,7 +1202,7 @@ final class TableMatrix {
       colSizes[i].fullLayoutSize = 0;
     }
 
-    for (@NonNull RAbstractCell cell: this.ALL_CELLS) {
+    for (RAbstractCell cell: this.ALL_CELLS) {
       final int col = cell.getVirtualColumn();
       final int colSpan = cell.getColSpan();
       int cellsTotalWidth;
@@ -1244,7 +1242,7 @@ final class TableMatrix {
       }
       // Set render widths
       final int cellLayoutWidth = size.width;
-      @NonNull Insets cbi = cell.getBorderInsets();
+      Insets cbi = cell.getBorderInsets();
       final int cellFullLayoutWidth = size.width + cbi.left + cbi.right;
       if (colSpan > 1) {
         // TODO: set fullLayoutSize
@@ -1517,7 +1515,7 @@ final class TableMatrix {
     // given that things might change as we layout one last time.
     final ColSizeInfo[] colSizes = this.columnSizes;
     final RowSizeInfo[] rowSizes = this.rowSizes;
-    for (@NonNull RAbstractCell cell : this.ALL_CELLS) {
+    for (RAbstractCell cell : this.ALL_CELLS) {
       final int col = cell.getVirtualColumn();
       final int colSpan = cell.getColSpan();
       int totalCellWidth;
@@ -1659,7 +1657,7 @@ final class TableMatrix {
 
     // Set offsets of each cell
 
-    for (@NonNull RAbstractCell cell : this.ALL_CELLS) {
+    for (RAbstractCell cell : this.ALL_CELLS) {
       cell.setCellBounds(colSizes, rowSizes, hasBorder, cellSpacingX, cellSpacingY);
     }
     this.rowGroupSizes = prepareRowGroupSizes();
@@ -1673,7 +1671,7 @@ final class TableMatrix {
     }
 
     @Override
-    public Iterator<@NonNull ? extends Renderable> getRenderables(boolean topFirst) {
+    public Iterator<? extends Renderable> getRenderables(boolean topFirst) {
       return null;
     }
 
@@ -1724,7 +1722,7 @@ final class TableMatrix {
     }
 
     @Override
-    public @NonNull Insets getBorderInsets() {
+    public Insets getBorderInsets() {
       return borderOverrider.get(super.getBorderInsets());
     }
   }
@@ -1735,7 +1733,7 @@ final class TableMatrix {
       rgsi.prePaintBackground(g);
     }
 
-    for (final @NonNull RAbstractCell cell : this.ALL_CELLS) {
+    for (final RAbstractCell cell : this.ALL_CELLS) {
       // Should clip table cells, just in case.
       final Graphics newG = g.create(cell.x, cell.y, cell.width, cell.height);
       try {
@@ -1761,7 +1759,7 @@ final class TableMatrix {
       // Paint cell borders
 
       g.setColor(Color.GRAY);
-      for (@NonNull RAbstractCell cell : this.ALL_CELLS) {
+      for (RAbstractCell cell : this.ALL_CELLS) {
         final int cx = cell.getX() - 1;
         final int cy = cell.getY() - 1;
         final int cwidth = cell.getWidth() + 1;
@@ -1854,7 +1852,7 @@ final class TableMatrix {
    * int)
    */
   public RenderableSpot getLowestRenderableSpot(final int x, final int y) {
-    for (@NonNull RAbstractCell cell : this.ALL_CELLS) {
+    for (RAbstractCell cell : this.ALL_CELLS) {
       final Rectangle bounds = cell.getVisualBounds();
       if (bounds.contains(x, y)) {
         final RenderableSpot rp = cell.getLowestRenderableSpot(x - bounds.x, y - bounds.y);
@@ -1874,7 +1872,7 @@ final class TableMatrix {
    * .MouseEvent, int, int)
    */
   public boolean onMouseClick(final MouseEvent event, final int x, final int y) {
-    for (@NonNull RAbstractCell cell : this.ALL_CELLS) {
+    for (RAbstractCell cell : this.ALL_CELLS) {
       final Rectangle bounds = cell.getVisualBounds();
       if (bounds.contains(x, y)) {
         if (!cell.onMouseClick(event, x - bounds.x, y - bounds.y)) {
@@ -1887,7 +1885,7 @@ final class TableMatrix {
   }
 
   public boolean onDoubleClick(final MouseEvent event, final int x, final int y) {
-    for (@NonNull RAbstractCell cell : this.ALL_CELLS) {
+    for (RAbstractCell cell : this.ALL_CELLS) {
       final Rectangle bounds = cell.getVisualBounds();
       if (bounds.contains(x, y)) {
         if (!cell.onDoubleClick(event, x - bounds.x, y - bounds.y)) {
@@ -1981,7 +1979,7 @@ final class TableMatrix {
     return true;
   }
 
-  Iterator<@NonNull RAbstractCell> getCells() {
+  Iterator<RAbstractCell> getCells() {
     return this.ALL_CELLS.iterator();
   }
 
@@ -2015,9 +2013,9 @@ final class TableMatrix {
     private final int x;
     private final int y;
 
-    private final @NonNull RTableRowGroup r;
+    private final RTableRowGroup r;
 
-    RowGroupSizeInfo(final int width, final int height, final @NonNull RTableRowGroup r, final int x, final int y) {
+    RowGroupSizeInfo(final int width, final int height, final RTableRowGroup r, final int x, final int y) {
       this.height = height;
       this.width = width;
       this.r = r;
@@ -2038,7 +2036,7 @@ final class TableMatrix {
     }
   }
 
-  public Iterator<@NonNull RTableRowGroup> getRowGroups() {
+  public Iterator<RTableRowGroup> getRowGroups() {
     return this.rowGroupSizes.stream().map(rgs -> rgs.r).iterator();
   }
 }

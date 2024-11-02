@@ -20,23 +20,20 @@
 
 package org.cobraparser.ua;
 
-import java.awt.Image;
-
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
+import java.awt.*;
 
 public final class ImageResponse {
   public static enum State {loading, loaded, error}
 
   public final State state;
-  public final @Nullable Image img;
+  public final Image img;
 
   public ImageResponse() {
     this.state = State.loading;
     this.img = null;
   }
 
-  public ImageResponse(final State state, final @Nullable Image img) {
+  public ImageResponse(final State state, final Image img) {
     this.state = state;
     this.img = img;
   }
@@ -44,7 +41,7 @@ public final class ImageResponse {
   public boolean isDecoded() {
     if (state == State.loaded) {
       assert(img != null);
-      @NonNull Image imgLocal = img;
+      Image imgLocal = img;
       return imgLocal.getWidth(null) >= 0 && imgLocal.getHeight(null) >= 0;
     } else {
       return false;
@@ -54,7 +51,7 @@ public final class ImageResponse {
   public boolean isReadyToPaint() {
     if (state == State.loaded) {
       assert(img != null);
-      @NonNull Image imgLocal = img;
+      Image imgLocal = img;
       return imgLocal.getWidth(null) >= 0 && imgLocal.getHeight(null) >= 0;
     } else {
       return state != State.loading;

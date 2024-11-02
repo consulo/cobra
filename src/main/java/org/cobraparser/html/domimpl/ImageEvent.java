@@ -20,16 +20,15 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.util.EventObject;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.ua.ImageResponse;
+
+import java.util.EventObject;
 
 public class ImageEvent extends EventObject {
   private static final long serialVersionUID = 6412430882522254948L;
-  public @NonNull final ImageResponse imageResponse;
+  public final ImageResponse imageResponse;
 
-  public ImageEvent(final Object source, final @NonNull ImageResponse imageResponse) {
+  public ImageEvent(final Object source, final ImageResponse imageResponse) {
     super(source);
     this.imageResponse = imageResponse;
   }

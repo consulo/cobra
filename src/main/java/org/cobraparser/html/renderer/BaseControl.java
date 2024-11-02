@@ -23,20 +23,17 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.util.logging.Logger;
-
-import javax.swing.JComponent;
-
-import org.cobraparser.html.domimpl.HTMLElementImpl;
-
 import cz.vutbr.web.css.CSSProperty.VerticalAlign;
+import org.cobraparser.html.domimpl.HTMLElementImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
 
 abstract class BaseControl extends JComponent implements UIControl {
   private static final long serialVersionUID = 7061225345785659580L;
-  private static final Logger logger = Logger.getLogger(BaseControl.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(BaseControl.class.getName());
   protected static final Dimension ZERO_DIMENSION = new Dimension(0, 0);
   protected final HTMLElementImpl controlElement;
   protected RUIControl ruicontrol;
@@ -67,7 +64,7 @@ abstract class BaseControl extends JComponent implements UIControl {
   protected void invalidateAndRepaint() {
     final RUIControl rc = this.ruicontrol;
     if (rc == null) {
-      logger.severe("invalidateAndPaint(): RUIControl not set.");
+      logger.warn("invalidateAndPaint(): RUIControl not set.");
       return;
     }
     if (rc.isValid()) {

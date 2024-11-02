@@ -1,14 +1,13 @@
 package org.cobraparser.html.domimpl;
 
-import java.util.ArrayList;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.FormInput;
 import org.mozilla.javascript.Function;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.html.HTMLCollection;
 import org.w3c.dom.html.HTMLElement;
 import org.w3c.dom.html.HTMLSelectElement;
+
+import java.util.ArrayList;
 
 public class HTMLSelectElementImpl extends HTMLBaseInputElement implements HTMLSelectElement {
   public HTMLSelectElementImpl(final String name) {
@@ -156,7 +155,7 @@ public class HTMLSelectElementImpl extends HTMLBaseInputElement implements HTMLS
   }
 
   @Override
-  public void setInputContext(final @NonNull InputContext ic) {
+  public void setInputContext(final InputContext ic) {
     super.setInputContext(ic);
     ic.setSelectedIndex(this.deferredSelectedIndex);
   }

@@ -23,11 +23,6 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.logging.Level;
-
 import org.cobraparser.html.js.Executor;
 import org.cobraparser.html.js.Window;
 import org.cobraparser.html.js.Window.JSRunnableTask;
@@ -40,6 +35,10 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLScriptElement;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
 
 public class HTMLScriptElementImpl extends HTMLElementImpl implements HTMLScriptElement {
   public HTMLScriptElementImpl() {
@@ -173,7 +172,7 @@ public class HTMLScriptElementImpl extends HTMLElementImpl implements HTMLScript
               request.open("GET", scriptURI, false);
               request.send(null, new Request(scriptURL, RequestKind.JavaScript));
             } catch (final java.io.IOException thrown) {
-              logger.log(Level.WARNING, "processScript()", thrown);
+              logger.warn("processScript()", thrown);
             }
             return null;
           });

@@ -23,22 +23,17 @@
  */
 package org.cobraparser.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
-import java.util.TimeZone;
-import java.util.logging.Logger;
-
-import org.eclipse.jdt.annotation.NonNull;
+import java.util.*;
 
 public class Urls {
-  private static final Logger logger = Logger.getLogger(Urls.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(Urls.class.getName());
   public static final DateFormat PATTERN_RFC1123 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
 
   static {
@@ -85,7 +80,7 @@ public class Urls {
   /**
    * Creates an absolute URL in a manner equivalent to major browsers.
    */
-  public static @NonNull URL createURL(final URL baseUrl, final String relativeUrl) throws java.net.MalformedURLException {
+  public static URL createURL(final URL baseUrl, final String relativeUrl) throws java.net.MalformedURLException {
     return new URL(baseUrl, relativeUrl);
   }
 
@@ -111,7 +106,7 @@ public class Urls {
               final long seconds = Long.parseLong(value);
               return new Long(baseTime + (seconds * 1000L));
             } catch (final NumberFormatException nfe) {
-              logger.warning("getExpiration(): Bad Cache-Control max-age value: " + value);
+              logger.warn("getExpiration(): Bad Cache-Control max-age value: " + value);
               // ignore
             }
           }
@@ -131,7 +126,7 @@ public class Urls {
           seconds = Integer.parseInt(expires);
           return new Long(baseTime + (seconds * 1000));
         } catch (final NumberFormatException nfe) {
-          logger.warning("getExpiration(): Bad Expires header value: " + expires);
+          logger.warn("getExpiration(): Bad Expires header value: " + expires);
         }
       }
     }

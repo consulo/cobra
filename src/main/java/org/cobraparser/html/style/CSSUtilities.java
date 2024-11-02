@@ -33,7 +33,8 @@ import org.cobraparser.ua.UserAgentContext.RequestKind;
 import org.cobraparser.util.SecurityUtil;
 import org.cobraparser.util.Strings;
 import org.cobraparser.util.Urls;
-import org.eclipse.jdt.annotation.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.css.sac.InputSource;
 import org.w3c.dom.stylesheets.MediaList;
 
@@ -44,11 +45,9 @@ import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CSSUtilities {
-  private static final Logger logger = Logger.getLogger(CSSUtilities.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(CSSUtilities.class.getName());
   private static final RuleFactory rf = RuleFactoryImpl.getInstance();
 
   private CSSUtilities() {
@@ -108,13 +107,13 @@ public class CSSUtilities {
         request.open("GET", cssURI, false);
         request.send(null, new Request(cssURL, RequestKind.CSS));
       } catch (final IOException thrown) {
-        logger.log(Level.WARNING, "parse()", thrown);
+        logger.warn("parse()", thrown);
       }
       return getEmptyStyleSheet();
     });
     final int status = request.getStatus();
     if ((status != 200) && (status != 0)) {
-      logger.warning("Unable to parse CSS. URI=[" + cssURI + "]. Response status was " + status + ".");
+      logger.warn("Unable to parse CSS. URI=[" + cssURI + "]. Response status was " + status + ".");
       return getEmptyStyleSheet();
     }
 
@@ -141,7 +140,7 @@ public class CSSUtilities {
       CSSFactory.setAutoImportMedia(new MediaSpec("screen"));
       return CSSParserFactory.getInstance().parse(processedText, new SafeNetworkProcessor(bcontext), "utf-8", CSSParserFactory.SourceType.EMBEDDED, base);
     } catch (IOException | CSSException e) {
-      logger.log(Level.SEVERE, "Unable to parse CSS. URI=[" + cssURI + "].", e);
+      logger.debug( "Unable to parse CSS. URI=[" + cssURI + "].", e);
       return getEmptyStyleSheet();
     }
   }
@@ -154,7 +153,7 @@ public class CSSUtilities {
     }
 
     @Override
-    public InputStream fetch(final @NonNull URL url) throws IOException {
+    public InputStream fetch(final URL url) throws IOException {
       try {
         return AccessController.doPrivileged((PrivilegedExceptionAction<InputStream>) () -> {
           final NetworkRequest request = bcontext.createHttpRequest();
@@ -183,7 +182,7 @@ public class CSSUtilities {
     try {
       return CSSParserFactory.getInstance().parse(style, new SafeNetworkProcessor(null), null, CSSParserFactory.SourceType.INLINE, element, inlinePriority, element.getDocumentURL());
     } catch (IOException | CSSException e) {
-      logger.log(Level.SEVERE, "Unable to parse CSS. CSS=[" + style + "].", e);
+      logger.debug("Unable to parse CSS. CSS=[" + style + "].", e);
       return getEmptyStyleSheet();
     }
   }

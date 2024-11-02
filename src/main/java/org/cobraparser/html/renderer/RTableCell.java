@@ -23,13 +23,12 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.Dimension;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.HTMLElementImpl;
 import org.cobraparser.html.style.RenderState;
 import org.cobraparser.ua.UserAgentContext;
+
+import java.awt.*;
 
 class RTableCell extends RAbstractCell {
   private final HTMLElementImpl cellElement;
@@ -223,7 +222,7 @@ class RTableCell extends RAbstractCell {
     return true;
   }
 
-  @NonNull RenderState getRenderState() {
+  RenderState getRenderState() {
     return cellElement.getRenderState();
   }
 

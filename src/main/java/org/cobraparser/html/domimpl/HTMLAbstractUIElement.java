@@ -1,9 +1,5 @@
 package org.cobraparser.html.domimpl;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-
 import org.cobraparser.html.js.Executor;
 import org.cobraparser.html.js.Window;
 import org.cobraparser.js.JavaScript;
@@ -13,6 +9,9 @@ import org.mozilla.javascript.EcmaError;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
 import org.w3c.dom.Document;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implements common functionality of most elements.
@@ -182,11 +181,11 @@ public class HTMLAbstractUIElement extends HTMLElementImpl {
               // in case it's called multiple times? Is that done?
               f = ctx.compileFunction(thisScope, functionCode, this.getTagName() + "[" + this.getId() + "]." + attributeName, 1, null);
             } catch (final EcmaError ecmaError) {
-              logger.log(Level.WARNING, "Javascript error at " + ecmaError.sourceName() + ":" + ecmaError.lineNumber() + ": "
+              logger.warn("Javascript error at " + ecmaError.sourceName() + ":" + ecmaError.lineNumber() + ": "
                   + ecmaError.getMessage(), ecmaError);
               f = null;
             } catch (final Exception err) {
-              logger.log(Level.WARNING, "Unable to evaluate Javascript code", err);
+              logger.warn("Unable to evaluate Javascript code", err);
               f = null;
             }
           } finally {

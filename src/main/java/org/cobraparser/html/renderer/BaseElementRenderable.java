@@ -20,35 +20,10 @@
 
 package org.cobraparser.html.renderer;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.image.ImageObserver;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.function.Function;
-import java.util.logging.Level;
-
-import javax.swing.SwingUtilities;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.domimpl.HTMLDocumentImpl;
 import org.cobraparser.html.domimpl.HTMLElementImpl;
 import org.cobraparser.html.domimpl.ModelNode;
-import org.cobraparser.html.style.BackgroundInfo;
-import org.cobraparser.html.style.BorderInfo;
-import org.cobraparser.html.style.HtmlInsets;
-import org.cobraparser.html.style.HtmlValues;
-import org.cobraparser.html.style.JStyleProperties;
-import org.cobraparser.html.style.RenderState;
+import org.cobraparser.html.style.*;
 import org.cobraparser.ua.ImageResponse;
 import org.cobraparser.ua.ImageResponse.State;
 import org.cobraparser.ua.NetworkRequest;
@@ -60,6 +35,15 @@ import org.cobraparser.util.Strings;
 import org.cobraparser.util.gui.GUITasks;
 import org.w3c.dom.Node;
 import org.w3c.dom.css.CSS2Properties;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.function.Function;
 
 abstract class BaseElementRenderable extends BaseRCollection implements RElement, RenderableContainer, ImageObserver {
   protected static final Integer INVALID_SIZE = new Integer(Integer.MIN_VALUE);
@@ -509,7 +493,7 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
           try {
             this.zIndex = Integer.parseInt(zIndex);
           } catch (final NumberFormatException err) {
-            logger.log(Level.WARNING, "Unable to parse z-index [" + zIndex + "] in element " + this.modelNode + ".", err);
+            logger.warn("Unable to parse z-index [" + zIndex + "] in element " + this.modelNode + ".", err);
             this.zIndex = 0;
           }
         } else {
@@ -576,7 +560,7 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
     return changes;
   }
 
-  protected void loadBackgroundImage(final @NonNull URL imageURL) {
+  protected void loadBackgroundImage(final URL imageURL) {
     final UserAgentContext ctx = this.userAgentContext;
     if (ctx != null) {
       final NetworkRequest request = ctx.createHttpRequest();
@@ -588,7 +572,7 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
             final ImageResponse imgResp = request.getResponseImage();
             if (imgResp.state == State.loaded) {
               assert(imgResp.img != null);
-              final @NonNull Image img = imgResp.img;
+              final Image img = imgResp.img;
               BaseElementRenderable.this.backgroundImage = img;
               backgroundImageError = false;
               // Cause observer to be called
@@ -954,7 +938,7 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
 
   protected static final int SCROLL_BAR_THICKNESS = 16;
 
-  public @NonNull Insets getBorderInsets() {
+  public Insets getBorderInsets() {
     Insets bi = this.borderInsets;
     return bi == null ? RBlockViewport.ZERO_INSETS : borderOverrider.get(bi);
   }
@@ -963,7 +947,7 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
    * Gets insets of content area. It includes margin, borders, padding and
    * scrollbars.
    */
-  public @NonNull Insets getInsets(final boolean hscroll, final boolean vscroll) {
+  public Insets getInsets(final boolean hscroll, final boolean vscroll) {
     return getInsets(hscroll, vscroll, true, true, true);
   }
 
@@ -984,7 +968,7 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
   }
 
   // TODO: This method could be inlined manually for performance
-  private @NonNull Insets getInsets(final boolean hscroll, final boolean vscroll,
+  private Insets getInsets(final boolean hscroll, final boolean vscroll,
       final boolean includeMI, final boolean includeBI, final boolean includePI) {
     final Insets mi = this.marginInsets;
     final Insets bi = this.borderInsets;

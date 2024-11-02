@@ -1,18 +1,19 @@
 package org.cobraparser.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A thread pool that allows cancelling all running tasks without shutting down
  * the thread pool.
  */
 public class SimpleThreadPool {
-  private static final Logger logger = Logger.getLogger(SimpleThreadPool.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(SimpleThreadPool.class.getName());
   private final LinkedList<SimpleThreadPoolTask> taskList = new LinkedList<>();
   private final Set<SimpleThreadPoolTask> runningSet = new HashSet<>();
   private final int minThreads;
@@ -123,18 +124,18 @@ public class SimpleThreadPool {
             try {
               currentThread.setName(baseName + ":" + task.toString());
             } catch (final Exception thrown) {
-              logger.log(Level.WARNING, "run(): Unable to set task name.", thrown);
+              logger.warn( "run(): Unable to set task name.", thrown);
             }
             try {
               task.run();
             } catch (final Exception thrown) {
-              logger.log(Level.SEVERE, "run(): Error in task: " + task + ".", thrown);
+              logger.warn( "run(): Error in task: " + task + ".", thrown);
             }
           } finally {
             currentThread.setName(baseName);
           }
         } catch (final Exception thrown) {
-          logger.log(Level.SEVERE, "run(): Error in thread pool: " + SimpleThreadPool.this.name + ".", thrown);
+          logger.warn("run(): Error in thread pool: " + SimpleThreadPool.this.name + ".", thrown);
         }
       }
     }

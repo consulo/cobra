@@ -27,7 +27,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.Properties;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.clientlet.ComponentContent;
 import org.cobraparser.ua.UserAgentContext.Request;
 
@@ -51,7 +50,7 @@ public interface NavigatorFrame {
    * @param url
    *          The URL to open.
    */
-  public NavigatorFrame open(@NonNull URL url);
+  public NavigatorFrame open(URL url);
 
   /**
    * Opens a URL in a separate window using the properties provided.
@@ -62,7 +61,7 @@ public interface NavigatorFrame {
    *          Window properties, following Javascript Window.open() conventions.
    * @throws java.net.MalformedURLException
    */
-  public NavigatorFrame open(@NonNull URL url, Properties windowProperties);
+  public NavigatorFrame open(URL url, Properties windowProperties);
 
   /**
    * Opens a URL in a separate window.
@@ -76,7 +75,7 @@ public interface NavigatorFrame {
    * @param pinfo
    *          The URL parameter information.
    */
-  public NavigatorFrame open(@NonNull URL url, String method, ParameterInfo pinfo, String windowId, Properties windowProperties);
+  public NavigatorFrame open(URL url, String method, ParameterInfo pinfo, String windowId, Properties windowProperties);
 
   /**
    * Opens a URL in a separate window.
@@ -88,7 +87,7 @@ public interface NavigatorFrame {
    * @param pinfo
    *          The URL parameter information.
    */
-  public NavigatorFrame open(@NonNull URL url, String method, ParameterInfo pinfo);
+  public NavigatorFrame open(URL url, String method, ParameterInfo pinfo);
 
   /**
    * Navigates to a URL in the current frame.
@@ -114,7 +113,7 @@ public interface NavigatorFrame {
    * @param url
    *          An absolute URL.
    */
-  public void navigate(@NonNull URL url);
+  public void navigate(URL url);
 
   /**
    * Navigates to a URL in the current frame.
@@ -124,7 +123,7 @@ public interface NavigatorFrame {
    * @param requestType
    *          The request type.
    */
-  public void navigate(@NonNull URL url, RequestType requestType);
+  public void navigate(URL url, RequestType requestType);
 
   /**
    * Navigates to a URL in the current frame.
@@ -140,7 +139,7 @@ public interface NavigatorFrame {
    * @param requestType
    *          The request type.
    */
-  public void navigate(@NonNull URL url, String method, ParameterInfo paramInfo, TargetType targetType, RequestType requestType);
+  public void navigate(URL url, String method, ParameterInfo paramInfo, TargetType targetType, RequestType requestType);
 
   /**
    * Navigates to a URL in the current frame. This method should be used when
@@ -159,7 +158,7 @@ public interface NavigatorFrame {
    * @param originatingFrame
    *          The frame where the request originated.
    */
-  public void navigate(@NonNull URL url, String method, ParameterInfo paramInfo, TargetType targetType, RequestType requestType,
+  public void navigate(URL url, String method, ParameterInfo paramInfo, TargetType targetType, RequestType requestType,
                        NavigatorFrame originatingFrame);
 
   /**
@@ -177,7 +176,7 @@ public interface NavigatorFrame {
    *          For example, in HTML documents the <code>linkObject</code> might
    *          be of type <code>org.w3c.dom.html2.HTMLElement</code>.
    */
-  public void linkClicked(@NonNull URL url, TargetType targetType, Object linkObject);
+  public void linkClicked(URL url, TargetType targetType, Object linkObject);
 
   /**
    * Closes the current window, if allowed.

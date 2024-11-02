@@ -23,7 +23,6 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.cobraparser.clientlet;
 
 import org.cobraparser.ua.RequestType;
-import org.eclipse.jdt.annotation.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +38,7 @@ public interface ClientletResponse {
    * Gets the response URL. This may be different to the request URL in the case
    * of a redirect.
    */
-  public @NonNull URL getResponseURL();
+  public URL getResponseURL();
 
   /**
    * Gets the request method for the response URL. This may be different to the

@@ -23,7 +23,6 @@
  */
 package org.cobraparser.html.domimpl;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.style.RenderState;
 import org.cobraparser.html.style.TableCellRenderState;
 import org.w3c.dom.html.HTMLTableCellElement;
@@ -169,7 +168,7 @@ public class HTMLTableCellElementImpl extends HTMLAbstractUIElement implements H
   }
 
   @Override
-  protected @NonNull RenderState createRenderState(final RenderState prevRenderState) {
+  protected RenderState createRenderState(final RenderState prevRenderState) {
     return new TableCellRenderState(prevRenderState, this);
   }
 }

@@ -1,9 +1,8 @@
 package org.cobraparser.html.renderer;
 
-import java.awt.Insets;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.style.HtmlInsets;
+
+import java.awt.*;
 
 final class BorderOverrider {
   boolean leftOverridden = false;
@@ -11,7 +10,7 @@ final class BorderOverrider {
   boolean bottomOverridden = false;
   boolean topOverridden = false;
 
-  @NonNull Insets get(final @NonNull Insets borderInsets) {
+  Insets get(final Insets borderInsets) {
     if (leftOverridden || rightOverridden || topOverridden || bottomOverridden) {
       final int topDash = topOverridden ? 0 : borderInsets.top;
       final int leftDash = leftOverridden ? 0 : borderInsets.left;

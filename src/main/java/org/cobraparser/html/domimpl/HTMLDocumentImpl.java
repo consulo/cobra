@@ -57,7 +57,6 @@ import org.cobraparser.util.Urls;
 import org.cobraparser.util.WeakValueHashMap;
 import org.cobraparser.util.io.EmptyReader;
 import org.cobraparser.validation.DomainValidation;
-import org.eclipse.jdt.annotation.NonNull;
 import org.mozilla.javascript.Function;
 import org.w3c.dom.*;
 import org.w3c.dom.css.CSSStyleSheet;
@@ -83,7 +82,6 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 
 /**
  * Implementation of the W3C <code>HTMLDocument</code> interface.
@@ -119,21 +117,10 @@ public class HTMLDocumentImpl extends NodeImpl implements HTMLDocument, Document
     this.contentType = contentType;
     try {
       final URL docURL = new URL(documentURI);
-      final SecurityManager sm = System.getSecurityManager();
-      if (sm != null) {
-        // Do not allow creation of HTMLDocumentImpl if there's
-        // no permission to connect to the host of the URL.
-        // This is so that cookies cannot be written arbitrarily
-        // with setCookie() method.
-        final String protocol = docURL.getProtocol();
-        if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
-        sm.checkPermission(new java.net.SocketPermission(docURL.getHost(), "connect"));
-        }
-      }
       this.documentURL = docURL;
       this.domain = docURL.getHost();
     } catch (final MalformedURLException mfu) {
-      logger.warning("HTMLDocumentImpl(): Document URI [" + documentURI + "] is malformed.");
+      logger.warn("HTMLDocumentImpl(): Document URI [" + documentURI + "] is malformed.");
     }
 
     // TODO: This should be inside the try block above. That is, if there is a malformed URL, the below shouldn't be allowed.
@@ -292,9 +279,9 @@ public class HTMLDocumentImpl extends NodeImpl implements HTMLDocument, Document
     return this.domain;
   }
 
-  public void setDomain(final String domain) {
+  public void setDomain(final String domain, DomainValidation domainValidation) {
     final String oldDomain = this.domain;
-    if ((oldDomain != null) && DomainValidation.isValidCookieDomain(domain, oldDomain)) {
+    if ((oldDomain != null) && domainValidation.isValidCookieDomain(domain, oldDomain)) {
       this.domain = domain;
     } else {
       throw new SecurityException("Cannot set domain to '" + domain + "' when current domain is '" + oldDomain + "'");
@@ -450,7 +437,7 @@ public class HTMLDocumentImpl extends NodeImpl implements HTMLDocument, Document
           try {
             reader.close();
           } catch (final Exception err) {
-            logger.log(Level.WARNING, "load(): Unable to close stream", err);
+            logger.warn("load(): Unable to close stream", err);
           }
           synchronized (this.treeLock) {
             this.reader = null;
@@ -853,7 +840,7 @@ public class HTMLDocumentImpl extends NodeImpl implements HTMLDocument, Document
   }
 
   @Override
-  public final @NonNull URL getFullURL(final String uri) throws MalformedURLException {
+  public final URL getFullURL(final String uri) throws MalformedURLException {
     try {
       final String baseURI = this.getBaseURI();
       final URL documentURL = baseURI == null ? null : new URL(baseURI);
@@ -1120,7 +1107,7 @@ public class HTMLDocumentImpl extends NodeImpl implements HTMLDocument, Document
   }
 
   @Override
-  protected @NonNull RenderState createRenderState(final RenderState prevRenderState) {
+  protected RenderState createRenderState(final RenderState prevRenderState) {
     return new StyleSheetRenderState(this);
   }
 
@@ -1210,7 +1197,7 @@ public class HTMLDocumentImpl extends NodeImpl implements HTMLDocument, Document
               httpRequest.open("GET", url);
               httpRequest.send(null, new Request(url, RequestKind.Image));
             } catch (final IOException thrown) {
-              logger.log(Level.WARNING, "loadImage()", thrown);
+              logger.warn("loadImage()", thrown);
             }
             return null;
           });

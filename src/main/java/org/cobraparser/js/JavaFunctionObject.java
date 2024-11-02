@@ -20,28 +20,21 @@
  */
 package org.cobraparser.js;
 
+import org.cobraparser.util.Objects;
+import org.mozilla.javascript.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMException;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.cobraparser.util.Objects;
-import org.mozilla.javascript.Callable;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.EvaluatorException;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-import org.mozilla.javascript.WrappedException;
-import org.w3c.dom.DOMException;
 
 public class JavaFunctionObject extends ScriptableObject implements Function {
   private static final long serialVersionUID = 3716471130167741876L;
-  private static final Logger logger = Logger.getLogger(JavaFunctionObject.class.getName());
-  private static final boolean loggableInfo = logger.isLoggable(Level.INFO);
+  private static final Logger logger = LoggerFactory.getLogger(JavaFunctionObject.class.getName());
   private final String methodName;
   private final String className;
   private final ArrayList<Method> methods = new ArrayList<>();
@@ -246,8 +239,8 @@ public class JavaFunctionObject extends ScriptableObject implements Function {
 
   @Override
   public Object getDefaultValue(final Class<?> hint) {
-    if (loggableInfo) {
-      logger.info("getDefaultValue(): hint=" + hint + ",this=" + this);
+    if (logger.isDebugEnabled()) {
+      logger.debug("getDefaultValue(): hint=" + hint + ",this=" + this);
     }
     if ((hint == null) || String.class.equals(hint)) {
       return "function " + this.methodName;

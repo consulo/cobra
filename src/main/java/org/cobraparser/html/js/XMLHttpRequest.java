@@ -1,18 +1,5 @@
 package org.cobraparser.html.js;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.js.Window.JSRunnableTask;
 import org.cobraparser.js.AbstractScriptableDelegate;
 import org.cobraparser.js.JavaScript;
@@ -26,14 +13,26 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.ScriptRuntime;
 import org.mozilla.javascript.Scriptable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 public class XMLHttpRequest extends AbstractScriptableDelegate {
   // TODO: See reference:
   // http://www.xulplanet.com/references/objref/XMLHttpRequest.html
 
-  private static final Logger logger = Logger.getLogger(XMLHttpRequest.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(XMLHttpRequest.class.getName());
   private final NetworkRequest request;
   private final UserAgentContext pcontext;
   private final Scriptable scope;
@@ -99,7 +98,7 @@ public class XMLHttpRequest extends AbstractScriptableDelegate {
     return request.getStatusText();
   }
 
-  private @NonNull URL getFullURL(final String relativeUrl) throws MalformedURLException {
+  private URL getFullURL(final String relativeUrl) throws MalformedURLException {
     return Urls.createURL(this.codeSource, relativeUrl);
   }
 
@@ -246,7 +245,7 @@ public class XMLHttpRequest extends AbstractScriptableDelegate {
         }));
       }
     } catch (final Exception err) {
-      logger.log(Level.WARNING, "Error processing ready state change.", err);
+      logger.warn("Error processing ready state change.", err);
       Executor.logJSException(err);
     }
 
@@ -265,7 +264,7 @@ public class XMLHttpRequest extends AbstractScriptableDelegate {
           }));
         }
       } catch (final Exception err) {
-        logger.log(Level.WARNING, "Error processing ready state change.", err);
+        logger.warn("Error processing ready state change.", err);
       }
     }
   }

@@ -27,7 +27,6 @@ import org.cobraparser.ua.NavigatorFrame;
 import org.cobraparser.ua.NavigatorProgressEvent;
 import org.cobraparser.ua.ProgressType;
 import org.cobraparser.ua.UserAgent;
-import org.eclipse.jdt.annotation.NonNull;
 
 import java.awt.*;
 import java.io.IOException;
@@ -195,7 +194,7 @@ public interface ClientletContext {
    *          The URL to be shown in progress messages.
    * @see NavigatorFrame#setProgressEvent(NavigatorProgressEvent)
    */
-  public void setProgressEvent(org.cobraparser.ua.ProgressType progressType, int value, int max, @NonNull URL url);
+  public void setProgressEvent(org.cobraparser.ua.ProgressType progressType, int value, int max, URL url);
 
   /**
    * Sets the current progress state.

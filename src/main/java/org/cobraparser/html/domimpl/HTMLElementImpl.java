@@ -31,7 +31,6 @@ import org.cobraparser.html.parser.HtmlParser;
 import org.cobraparser.html.style.*;
 import org.cobraparser.js.HideFromJS;
 import org.cobraparser.util.Strings;
-import org.eclipse.jdt.annotation.NonNull;
 import org.w3c.css.sac.InputSource;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
@@ -44,7 +43,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.*;
-import java.util.logging.Level;
 
 public class HTMLElementImpl extends ElementImpl implements HTMLElement, CSS2PropertiesContext {
   private static final MatchConditionOnElements elementMatchCondition = new MatchConditionOnElements();
@@ -111,7 +109,7 @@ public class HTMLElementImpl extends ElementImpl implements HTMLElement, CSS2Pro
    * Hiding from JS because it is not a standard property. See GH #141
    */
   @HideFromJS
-  public @NonNull JStyleProperties getCurrentStyle() {
+  public JStyleProperties getCurrentStyle() {
     synchronized (this) {
       if (currentStyle != null) {
         return currentStyle;
@@ -298,12 +296,12 @@ public class HTMLElementImpl extends ElementImpl implements HTMLElement, CSS2Pro
 
   @Override
   public void warn(final String message, final Throwable err) {
-    logger.log(Level.WARNING, message, err);
+    logger.warn(message, err);
   }
 
   @Override
   public void warn(final String message) {
-    logger.log(Level.WARNING, message);
+    logger.warn(message);
   }
 
   protected int getAttributeAsInt(final String name, final int defaultValue) {
@@ -799,7 +797,7 @@ public class HTMLElementImpl extends ElementImpl implements HTMLElement, CSS2Pro
   }
 
   @Override
-  protected @NonNull RenderState createRenderState(final RenderState prevRenderState) {
+  protected RenderState createRenderState(final RenderState prevRenderState) {
     // Overrides NodeImpl method
     // Called in synchronized block already
     return new StyleSheetRenderState(prevRenderState, this);

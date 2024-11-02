@@ -23,19 +23,7 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-
-import javax.swing.SwingUtilities;
-
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
+import cz.vutbr.web.css.CSSProperty.VerticalAlign;
 import org.cobraparser.html.domimpl.HTMLElementImpl;
 import org.cobraparser.html.domimpl.HTMLImageElementImpl;
 import org.cobraparser.html.domimpl.ImageEvent;
@@ -43,7 +31,10 @@ import org.cobraparser.html.domimpl.ImageListener;
 import org.cobraparser.html.style.HtmlValues;
 import org.cobraparser.ua.ImageResponse;
 
-import cz.vutbr.web.css.CSSProperty.VerticalAlign;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 
 class ImgControl extends BaseControl implements ImageListener {
   private static final long serialVersionUID = -1510794248068777990L;
@@ -109,7 +100,7 @@ class ImgControl extends BaseControl implements ImageListener {
   @Override
   public VerticalAlign getVAlign() {
     final HTMLElementImpl element = this.controlElement;
-    final @Nullable VerticalAlign verticalAlign = element.getRenderState().getVerticalAlign();
+    final VerticalAlign verticalAlign = element.getRenderState().getVerticalAlign();
     return verticalAlign == null ? VerticalAlign.BASELINE : verticalAlign;
   }
 
@@ -126,7 +117,7 @@ class ImgControl extends BaseControl implements ImageListener {
     }
 
     assert(imageResponseLocal.img != null);
-    final @NonNull Image img = imageResponseLocal.img;
+    final Image img = imageResponseLocal.img;
 
     if (dw == -1) {
       if (dh != -1) {

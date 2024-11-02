@@ -430,10 +430,8 @@ public class HtmlPanel extends JComponent implements FrameContext, DefferedLayou
         final Document document = builder.parse(is);
         this.setDocument(document, rcontext);
       }
-    } catch (final java.io.IOException ioe) {
+    } catch (final java.io.IOException | org.xml.sax.SAXException ioe) {
       throw new IllegalStateException("Unexpected condition.", ioe);
-    } catch (final org.xml.sax.SAXException se) {
-      throw new IllegalStateException("Unexpected condition.", se);
     }
   }
 

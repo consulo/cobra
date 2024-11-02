@@ -22,39 +22,10 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.function.Function;
-import java.util.logging.Level;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.BrowserFrame;
 import org.cobraparser.html.HtmlObject;
 import org.cobraparser.html.HtmlRendererContext;
-import org.cobraparser.html.domimpl.DocumentFragmentImpl;
-import org.cobraparser.html.domimpl.HTMLBaseInputElement;
-import org.cobraparser.html.domimpl.HTMLCanvasElementImpl;
-import org.cobraparser.html.domimpl.HTMLElementImpl;
-import org.cobraparser.html.domimpl.HTMLIFrameElementImpl;
-import org.cobraparser.html.domimpl.HTMLImageElementImpl;
-import org.cobraparser.html.domimpl.HTMLTableElementImpl;
-import org.cobraparser.html.domimpl.ModelNode;
-import org.cobraparser.html.domimpl.NodeImpl;
-import org.cobraparser.html.domimpl.UINode;
+import org.cobraparser.html.domimpl.*;
 import org.cobraparser.html.style.HtmlInsets;
 import org.cobraparser.html.style.JStyleProperties;
 import org.cobraparser.html.style.RenderState;
@@ -64,6 +35,12 @@ import org.cobraparser.util.CollectionUtilities;
 import org.w3c.dom.Node;
 import org.w3c.dom.html.HTMLDocument;
 import org.w3c.dom.html.HTMLHtmlElement;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * A substantial portion of the HTML rendering logic of the package can be found
@@ -98,7 +75,7 @@ public class RBlockViewport extends BaseRCollection {
   // of the RBlockViewport, so ancestor blocks can obtain them to adjust
   // their own bounds.
 
-  public static final @NonNull Insets ZERO_INSETS = new Insets(0, 0, 0, 0);
+  public static final Insets ZERO_INSETS = new Insets(0, 0, 0, 0);
 
   // private final ArrayList awtComponents = new ArrayList();
   private final int listNesting;
@@ -107,7 +84,7 @@ public class RBlockViewport extends BaseRCollection {
   private final FrameContext frameContext;
 
   private SortedSet<PositionedRenderable> positionedRenderables;
-  private ArrayList<@NonNull BoundableRenderable> seqRenderables = null;
+  private ArrayList<BoundableRenderable> seqRenderables = null;
   private ArrayList<ExportableFloat> exportableFloats = null;
   // private Collection exportedRenderables;
   private RLine currentLine;
@@ -344,7 +321,7 @@ public class RBlockViewport extends BaseRCollection {
     final int prevMaxY = this.maxY;
     // Horizontal alignment
     if (alignXPercent > 0) {
-      final ArrayList<@NonNull BoundableRenderable> renderables = this.seqRenderables;
+      final ArrayList<BoundableRenderable> renderables = this.seqRenderables;
       if (renderables != null) {
         final Insets insets = this.paddingInsets;
         // final FloatingBounds floatBounds = this.floatBounds;
@@ -511,7 +488,7 @@ public class RBlockViewport extends BaseRCollection {
     }
     rline = new RLine(startNode, this.container, newX, newLineY, newMaxWidth, 0, initialAllowOverflow);
     rline.setParent(this);
-    ArrayList<@NonNull BoundableRenderable> sr = this.seqRenderables;
+    ArrayList<BoundableRenderable> sr = this.seqRenderables;
     if (sr == null) {
       sr = new ArrayList<>(1);
       this.seqRenderables = sr;
@@ -716,7 +693,7 @@ public class RBlockViewport extends BaseRCollection {
   }
 
   /* This is used to bubble up relative elements (on the z-axis) */
-  private boolean bubbleUpIfRelative(final HTMLElementImpl markupElement, final @NonNull RElement renderable) {
+  private boolean bubbleUpIfRelative(final HTMLElementImpl markupElement, final RElement renderable) {
     final int position = getPosition(markupElement);
     final boolean isRelative = position == RenderState.POSITION_RELATIVE;
     if (isRelative) {
@@ -732,7 +709,7 @@ public class RBlockViewport extends BaseRCollection {
     return false;
   }
 
-  private final void positionRElement(final HTMLElementImpl markupElement, final @NonNull RElement renderable, final boolean usesAlignAttribute,
+  private final void positionRElement(final HTMLElementImpl markupElement, final RElement renderable, final boolean usesAlignAttribute,
       final boolean obeysFloats,
       final boolean alignCenterAttribute) {
     if (!this.addElsewhereIfPositioned(renderable, markupElement, usesAlignAttribute, true, true)) {
@@ -932,7 +909,7 @@ public class RBlockViewport extends BaseRCollection {
    * @param usesAlignAttribute
    * @return True if it was added elsewhere.
    */
-  private boolean addElsewhereIfPositioned(final @NonNull RElement renderable, final HTMLElementImpl element, final boolean usesAlignAttribute,
+  private boolean addElsewhereIfPositioned(final RElement renderable, final HTMLElementImpl element, final boolean usesAlignAttribute,
       final boolean layoutIfPositioned, final boolean obeysFloats) {
     // At this point block already has bounds.
     final JStyleProperties style = element.getCurrentStyle();
@@ -973,7 +950,7 @@ public class RBlockViewport extends BaseRCollection {
   /**
    * Checks property 'float' and in some cases attribute 'align'.
    */
-  private void addRenderableToLineCheckStyle(final @NonNull RElement renderable, final HTMLElementImpl element, final boolean usesAlignAttribute) {
+  private void addRenderableToLineCheckStyle(final RElement renderable, final HTMLElementImpl element, final boolean usesAlignAttribute) {
     if (this.addElsewhereIfPositioned(renderable, element, usesAlignAttribute, true, true)) {
       return;
     }
@@ -1056,7 +1033,7 @@ public class RBlockViewport extends BaseRCollection {
   }
 
   /*
-  private void addAsSeqBlockCheckStyle(final @NonNull RElement block, final HTMLElementImpl element, final boolean usesAlignAttribute) {
+  private void addAsSeqBlockCheckStyle(final RElement block, final HTMLElementImpl element, final boolean usesAlignAttribute) {
     if (this.addElsewhereIfPositioned(block, element, usesAlignAttribute, false, true)) {
       return;
     }
@@ -1096,7 +1073,7 @@ public class RBlockViewport extends BaseRCollection {
       final boolean addLine, final boolean centerBlock, final boolean isRelative) {
     final Insets insets = this.paddingInsets;
     final int insetsl = insets.left;
-    ArrayList<@NonNull BoundableRenderable> sr = this.seqRenderables;
+    ArrayList<BoundableRenderable> sr = this.seqRenderables;
     if (sr == null) {
       sr = new ArrayList<>(1);
       this.seqRenderables = sr;
@@ -1220,12 +1197,12 @@ public class RBlockViewport extends BaseRCollection {
   }
 
   private boolean isFirstBlock() {
-    final ArrayList<@NonNull BoundableRenderable> sr = this.seqRenderables;
+    final ArrayList<BoundableRenderable> sr = this.seqRenderables;
     return (!firstElementProcessed) && (sr == null || ((sr.size() == 1) && (sr.get(0) instanceof RLine) && ((RLine)sr.get(0)).isEmpty()));
   }
 
   private void addLineAfterBlock(final RBlock block, final boolean informLineDone) {
-    ArrayList<@NonNull BoundableRenderable> sr = this.seqRenderables;
+    ArrayList<BoundableRenderable> sr = this.seqRenderables;
     if (sr == null) {
       sr = new ArrayList<>(1);
       this.seqRenderables = sr;
@@ -1444,13 +1421,13 @@ public class RBlockViewport extends BaseRCollection {
     }
   }
 
-  public Iterator<@NonNull ? extends Renderable> getRenderables(final boolean topFirst) {
+  public Iterator<? extends Renderable> getRenderables(final boolean topFirst) {
     final SortedSet<PositionedRenderable> others = this.positionedRenderables;
-    final ArrayList<@NonNull ? extends Renderable> sr = this.seqRenderables;
+    final ArrayList<? extends Renderable> sr = this.seqRenderables;
     if ((others == null) || (others.size() == 0)) {
       return sr == null ? null : sr.iterator();
     } else {
-      final ArrayList<@NonNull Renderable> allRenderables = new ArrayList<>();
+      final ArrayList<Renderable> allRenderables = new ArrayList<>();
       Iterator<? extends Renderable> srIterator = sr == null ? null : sr.iterator();
       if (topFirst) {
         populateZIndexGroupsTopFirst(new ArrayList<>(others), srIterator, allRenderables);
@@ -1705,7 +1682,7 @@ public class RBlockViewport extends BaseRCollection {
   /**
    * @param absolute    if true, then position is absolute, else fixed
    */
-  private void scheduleAbsDelayedPair(final @NonNull BoundableRenderable renderable,
+  private void scheduleAbsDelayedPair(final BoundableRenderable renderable,
       final String leftText, final String rightText, final String topText, final String bottomText,
       final String widthText, final String heightText,
       final RenderState rs, final int currX, final int currY, final boolean absolute) {
@@ -1770,11 +1747,11 @@ public class RBlockViewport extends BaseRCollection {
     // }
   }
 
-  private final void addPositionedRenderable(final @NonNull BoundableRenderable renderable, final boolean verticalAlignable, final boolean isFloat, final boolean isFixed) {
+  private final void addPositionedRenderable(final BoundableRenderable renderable, final boolean verticalAlignable, final boolean isFloat, final boolean isFixed) {
     addPositionedRenderable(renderable, verticalAlignable, isFloat, isFixed, false);
   }
 
-  private final void addPositionedRenderable(final @NonNull BoundableRenderable renderable, final boolean verticalAlignable, final boolean isFloat, final boolean isFixed, final boolean isDelegated) {
+  private final void addPositionedRenderable(final BoundableRenderable renderable, final boolean verticalAlignable, final boolean isFloat, final boolean isFixed, final boolean isDelegated) {
     // Expected to be called only in GUI thread.
     final PositionedRenderable pr = new PositionedRenderable(renderable, verticalAlignable, this.positionedOrdinal++, isFloat, isFixed, isDelegated);
     addPosRenderable(pr);
@@ -2283,8 +2260,8 @@ public class RBlockViewport extends BaseRCollection {
       if (node == null) {
         renderable = this.createRenderable(bodyLayout, markupElement);
         if (renderable == null) {
-          if (logger.isLoggable(Level.INFO)) {
-            logger.info("layoutMarkup(): Don't know how to render " + markupElement + ".");
+          if (logger.isDebugEnabled()) {
+            logger.debug("layoutMarkup(): Don't know how to render " + markupElement + ".");
           }
           return;
         }

@@ -25,7 +25,6 @@ package org.cobraparser.clientlet;
 import org.cobraparser.ua.ParameterInfo;
 import org.cobraparser.ua.RequestType;
 import org.cobraparser.ua.UserAgent;
-import org.eclipse.jdt.annotation.NonNull;
 
 import java.net.URL;
 
@@ -45,7 +44,7 @@ public interface ClientletRequest {
   /**
    * Gets the request URL.
    */
-  public @NonNull URL getRequestURL();
+  public URL getRequestURL();
 
   /**
    * Gets information about the user agent making the request.

@@ -20,7 +20,6 @@
  */
 package org.cobraparser.html.domimpl;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.style.BaseFontRenderState;
 import org.cobraparser.html.style.HtmlValues;
 import org.cobraparser.html.style.RenderState;
@@ -56,7 +55,7 @@ public class HTMLBaseFontElementImpl extends HTMLAbstractUIElement implements HT
   }
 
   @Override
-  protected @NonNull RenderState createRenderState(RenderState prevRenderState) {
+  protected RenderState createRenderState(RenderState prevRenderState) {
     final String size = this.getAttribute("size");
     if (size != null) {
       final int fontNumber = HtmlValues.getFontNumberOldStyle(size, prevRenderState);

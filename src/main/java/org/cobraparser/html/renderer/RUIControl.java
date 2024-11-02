@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.domimpl.ModelNode;
 import org.cobraparser.html.domimpl.NodeImpl;
 import org.cobraparser.html.domimpl.UINode;
@@ -368,7 +367,7 @@ class RUIControl extends BaseElementRenderable {
     }
   }
 
-  public Iterator<@NonNull Renderable> getRenderables(final boolean topFirst) {
+  public Iterator<Renderable> getRenderables(final boolean topFirst) {
     // No children for GUI controls
     return null;
   }

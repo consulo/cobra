@@ -20,19 +20,7 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.ImageObserver;
-
-import javax.swing.SwingUtilities;
-
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
+import cz.vutbr.web.css.CSSProperty.VerticalAlign;
 import org.cobraparser.html.domimpl.HTMLBaseInputElement;
 import org.cobraparser.html.domimpl.HTMLElementImpl;
 import org.cobraparser.html.domimpl.ImageEvent;
@@ -42,7 +30,11 @@ import org.cobraparser.ua.ImageResponse;
 import org.cobraparser.ua.ImageResponse.State;
 import org.cobraparser.util.gui.WrapperLayout;
 
-import cz.vutbr.web.css.CSSProperty.VerticalAlign;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.ImageObserver;
 
 class InputImageControl extends BaseInputControl implements ImageListener {
   private static final long serialVersionUID = -2242175570423778798L;
@@ -139,7 +131,7 @@ class InputImageControl extends BaseInputControl implements ImageListener {
     }
 
     assert (imgResponse.img != null);
-    final @NonNull Image img = imgResponse.img;
+    final Image img = imgResponse.img;
 
     if (dw == -1) {
       dw = HtmlValues.scaleToDevicePixels(img.getWidth(this));
@@ -213,7 +205,7 @@ class InputImageControl extends BaseInputControl implements ImageListener {
     this.imageResponse = imageResponseLocal;
     if (imageResponseLocal.isDecoded()) {
       assert (imageResponseLocal.img != null);
-      @Nullable Image image = imageResponseLocal.img;
+      Image image = imageResponseLocal.img;
       final int width = image.getWidth(this);
       final int height = image.getHeight(this);
       this.imageUpdate(image, width, height);

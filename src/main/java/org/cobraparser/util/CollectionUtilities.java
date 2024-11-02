@@ -23,16 +23,7 @@
  */
 package org.cobraparser.util;
 
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.NoSuchElementException;
-
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
+import java.util.*;
 
 /**
  * @author J. H. S.
@@ -195,7 +186,7 @@ public class CollectionUtilities {
   }
 
   // Filter iterator adapted from an implementation found in http://erikras.com/2008/01/18/the-filter-pattern-java-conditional-abstraction-with-iterables/
-  public static <@NonNull T> Iterator<T> filter(final Iterator<T> iterator, final FilterFunction<T> filterFunction) {
+  public static <T> Iterator<T> filter(final Iterator<T> iterator, final FilterFunction<T> filterFunction) {
     return new FilterIterator<>(iterator, filterFunction);
   }
 
@@ -203,9 +194,9 @@ public class CollectionUtilities {
     public boolean passes(T object);
   }
 
-  public static class FilterIterator<@NonNull T> implements Iterator<@NonNull T> {
-    private final Iterator<@NonNull T> iterator;
-    private @Nullable T next;
+  public static class FilterIterator<T> implements Iterator<T> {
+    private final Iterator<T> iterator;
+    private T next;
     private final FilterFunction<T> filterFunction;
 
     private FilterIterator(final Iterator<T> iterator, final FilterFunction<T> filterFunction) {
@@ -219,9 +210,9 @@ public class CollectionUtilities {
     }
 
     public T next() {
-      final @Nullable T lNext = this.next;
+      final T lNext = this.next;
       if (lNext != null) {
-        final @NonNull T returnValue = lNext;
+        final T returnValue = lNext;
         toNext();
         return returnValue;
       } else {

@@ -1,16 +1,16 @@
 package org.cobraparser.html.js;
 
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.HTMLDocumentImpl;
 import org.cobraparser.js.AbstractScriptableDelegate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+import java.net.URL;
+
 public class Location extends AbstractScriptableDelegate {
-  private static final Logger logger = Logger.getLogger(Location.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(Location.class.getName());
   private final Window window;
 
   Location(final Window window) {
@@ -107,7 +107,7 @@ public class Location extends AbstractScriptableDelegate {
         }
         rcontext.navigate(url, this.target);
       } catch (final java.net.MalformedURLException mfu) {
-        logger.log(Level.WARNING, "setHref(): Malformed location: [" + uri + "].", mfu);
+        logger.warn( "setHref(): Malformed location: [" + uri + "].", mfu);
       }
     }
   }

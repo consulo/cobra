@@ -23,24 +23,19 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.SwingUtilities;
-
 import org.cobraparser.html.domimpl.ModelNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * @author J. H. S.
  */
 abstract class BaseBoundableRenderable extends BaseRenderable implements BoundableRenderable {
-  protected static final Logger logger = Logger.getLogger(BaseBoundableRenderable.class.getName());
+  protected static final Logger logger = LoggerFactory.getLogger(BaseBoundableRenderable.class.getName());
   protected static final Color SELECTION_COLOR = Color.BLUE;
   protected static final Color SELECTION_XOR = Color.LIGHT_GRAY;
 
@@ -227,8 +222,8 @@ abstract class BaseBoundableRenderable extends BaseRenderable implements Boundab
       // Has to be top RBlock.
       this.container.relayout();
     } else {
-      if (logger.isLoggable(Level.INFO)) {
-        logger.warning("relayout(): Don't know how to relayout " + this + ", parent being " + parent);
+      if (logger.isWarnEnabled()) {
+        logger.warn("relayout(): Don't know how to relayout " + this + ", parent being " + parent);
       }
     }
   }
@@ -304,8 +299,8 @@ abstract class BaseBoundableRenderable extends BaseRenderable implements Boundab
       // Has to be top RBlock.
       this.container.repaint(x, y, width, height);
     } else {
-      if (logger.isLoggable(Level.INFO)) {
-        logger.warning("repaint(): Don't know how to repaint " + this + ", parent being " + parent);
+      if (logger.isWarnEnabled()) {
+        logger.warn("repaint(): Don't know how to repaint " + this + ", parent being " + parent);
       }
     }
   }

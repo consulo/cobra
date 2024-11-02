@@ -1,35 +1,26 @@
 package org.cobraparser.html.renderer;
 
-import java.awt.Cursor;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.cobraparser.html.FormInput;
 import org.cobraparser.html.HtmlRendererContext;
-import org.cobraparser.html.domimpl.ElementImpl;
-import org.cobraparser.html.domimpl.HTMLAbstractUIElement;
-import org.cobraparser.html.domimpl.HTMLButtonElementImpl;
-import org.cobraparser.html.domimpl.HTMLDocumentImpl;
-import org.cobraparser.html.domimpl.HTMLElementImpl;
-import org.cobraparser.html.domimpl.HTMLInputElementImpl;
-import org.cobraparser.html.domimpl.HTMLLinkElementImpl;
-import org.cobraparser.html.domimpl.HTMLSelectElementImpl;
-import org.cobraparser.html.domimpl.ModelNode;
-import org.cobraparser.html.domimpl.NodeImpl;
+import org.cobraparser.html.domimpl.*;
 import org.cobraparser.html.js.Event;
 import org.cobraparser.html.js.Executor;
 import org.cobraparser.html.style.RenderState;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.Optional;
+
 class HtmlController {
-  private static final Logger logger = Logger.getLogger(HtmlController.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(HtmlController.class.getName());
   private static final HtmlController instance = new HtmlController();
 
   static HtmlController getInstance() {
@@ -77,8 +68,8 @@ class HtmlController {
    * @return True to propagate further and false if the event was consumed.
    */
   public boolean onMouseClick(final ModelNode node, final MouseEvent event, final int x, final int y, boolean eventDispatched) {
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("onMouseClick(): node=" + node + ",class=" + node.getClass().getName());
+    if (logger.isDebugEnabled()) {
+      logger.debug("onMouseClick(): node=" + node + ",class=" + node.getClass().getName());
     }
     // System.out.println("HtmlController.onMouseClick(): " + node + " already dispatched: " + eventDispatched);
 
@@ -204,8 +195,8 @@ class HtmlController {
   }
 
   public boolean onContextMenu(final ModelNode node, final MouseEvent event, final int x, final int y) {
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("onContextMenu(): node=" + node + ",class=" + node.getClass().getName());
+    if (logger.isDebugEnabled()) {
+      logger.debug("onContextMenu(): node=" + node + ",class=" + node.getClass().getName());
     }
     if (node instanceof HTMLAbstractUIElement) {
       final HTMLAbstractUIElement uiElement = (HTMLAbstractUIElement) node;
@@ -348,8 +339,8 @@ class HtmlController {
    * @return True to propagate further, false if consumed.
    */
   public boolean onDoubleClick(final ModelNode node, final MouseEvent event, final int x, final int y) {
-    if (logger.isLoggable(Level.INFO)) {
-      logger.info("onDoubleClick(): node=" + node + ",class=" + node.getClass().getName());
+    if (logger.isDebugEnabled()) {
+      logger.debug("onDoubleClick(): node=" + node + ",class=" + node.getClass().getName());
     }
     if (node instanceof HTMLAbstractUIElement) {
       final HTMLAbstractUIElement uiElement = (HTMLAbstractUIElement) node;

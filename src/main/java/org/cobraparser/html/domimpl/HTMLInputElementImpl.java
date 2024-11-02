@@ -23,8 +23,6 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.util.logging.Level;
-
 import org.cobraparser.html.FormInput;
 import org.w3c.dom.html.HTMLInputElement;
 
@@ -197,8 +195,8 @@ public class HTMLInputElementImpl extends HTMLBaseInputElement implements HTMLIn
       } else if ("file".equals(type)) {
         final java.io.File file = this.getFileValue();
         if (file == null) {
-          if (logger.isLoggable(Level.INFO)) {
-            logger.info("getFormInputs(): File input named " + name + " has null file.");
+          if (logger.isDebugEnabled()) {
+            logger.debug("getFormInputs(): File input named " + name + " has null file.");
           }
           return null;
         } else {

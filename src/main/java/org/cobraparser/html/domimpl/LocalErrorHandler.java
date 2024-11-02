@@ -23,15 +23,15 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 class LocalErrorHandler implements ErrorHandler {
-  private static final Logger logger = Logger.getLogger(LocalErrorHandler.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(LocalErrorHandler.class.getName());
 
   /**
    * @param context
@@ -40,14 +40,14 @@ class LocalErrorHandler implements ErrorHandler {
   }
 
   public void warning(final SAXParseException exception) throws SAXException {
-    logger.log(Level.WARNING, exception.getMessage(), exception.getCause());
+    logger.warn(exception.getMessage(), exception.getCause());
   }
 
   public void error(final SAXParseException exception) throws SAXException {
-    logger.log(Level.SEVERE, exception.getMessage(), exception.getCause());
+    logger.error( exception.getMessage(), exception.getCause());
   }
 
   public void fatalError(final SAXParseException exception) throws SAXException {
-    logger.log(Level.SEVERE, exception.getMessage(), exception.getCause());
+    logger.error(exception.getMessage(), exception.getCause());
   }
 }

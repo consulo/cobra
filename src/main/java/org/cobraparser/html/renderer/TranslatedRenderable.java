@@ -1,16 +1,12 @@
 package org.cobraparser.html.renderer;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.util.Iterator;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.domimpl.ModelNode;
 import org.cobraparser.util.CollectionUtilities;
 import org.cobraparser.util.Threads;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.util.Iterator;
 
 public class TranslatedRenderable extends BaseBoundableRenderable implements RCollection {
 
@@ -220,9 +216,9 @@ public class TranslatedRenderable extends BaseBoundableRenderable implements RCo
     return translatedChild.getZIndex();
   }
 
-  private final @NonNull BoundableRenderable translatedChild;
+  private final BoundableRenderable translatedChild;
 
-  public TranslatedRenderable(final @NonNull BoundableRenderable translatedChild) {
+  public TranslatedRenderable(final BoundableRenderable translatedChild) {
     // TODO
     super(null, null);
     this.translatedChild = translatedChild;
@@ -243,7 +239,7 @@ public class TranslatedRenderable extends BaseBoundableRenderable implements RCo
   }
 
   @Override
-  public Iterator<@NonNull ? extends Renderable> getRenderables(boolean topFirst) {
+  public Iterator<? extends Renderable> getRenderables(boolean topFirst) {
     return CollectionUtilities.singletonIterator(translatedChild);
   }
 

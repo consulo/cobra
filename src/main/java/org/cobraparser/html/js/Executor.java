@@ -20,24 +20,19 @@
  */
 package org.cobraparser.html.js;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.cobraparser.html.domimpl.HTMLDocumentImpl;
 import org.cobraparser.html.domimpl.NodeImpl;
 import org.cobraparser.js.JavaScript;
 import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.ua.UserAgentContext.Request;
 import org.cobraparser.ua.UserAgentContext.RequestKind;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.ContextFactory;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.RhinoException;
-import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 public class Executor {
-  private static final Logger logger = Logger.getLogger(Executor.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(Executor.class.getName());
 
   /**
    * This method should be invoked instead of <code>Context.enter</code>.
@@ -118,10 +113,10 @@ public class Executor {
   }
 
   public static void logJSException(final Throwable err) {
-    logger.log(Level.WARNING, "Unable to evaluate Javascript code", err);
+    logger.warn("Unable to evaluate Javascript code", err);
     if (err instanceof RhinoException) {
       final RhinoException rhinoException = (RhinoException) err;
-      logger.log(Level.WARNING, "JS Error: " + rhinoException.details() + "\nJS Stack:\n" + rhinoException.getScriptStackTrace());
+      logger.warn("JS Error: " + rhinoException.details() + "\nJS Stack:\n" + rhinoException.getScriptStackTrace());
     }
   }
 

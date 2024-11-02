@@ -1,18 +1,16 @@
 package org.cobraparser.util;
 
-import javax.annotation.Nullable;
-
 public class HexDump
 {
     private final static char[] HEX_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
     private final static char[] HEX_LOWER_CASE_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
-    public static String dumpHexString(@Nullable byte[] array) {
+    public static String dumpHexString(byte[] array) {
         if (array == null) return "(null)";
         return dumpHexString(array, 0, array.length);
     }
 
-    public static String dumpHexString(@Nullable byte[] array, int offset, int length)
+    public static String dumpHexString(byte[] array, int offset, int length)
     {
         if (array == null) return "(null)";
         StringBuilder result = new StringBuilder();

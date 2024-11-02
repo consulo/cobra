@@ -1,8 +1,5 @@
 package org.cobraparser.html.domimpl;
 
-import java.net.URL;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.BrowserFrame;
 import org.cobraparser.html.js.Event;
 import org.cobraparser.html.js.Executor;
@@ -16,6 +13,8 @@ import org.cobraparser.ua.UserAgentContext.RequestKind;
 import org.mozilla.javascript.Function;
 import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLIFrameElement;
+
+import java.net.URL;
 
 public class HTMLIFrameElementImpl extends HTMLAbstractUIElement implements HTMLIFrameElement, FrameNode {
   private volatile BrowserFrame browserFrame;
@@ -267,7 +266,7 @@ public class HTMLIFrameElementImpl extends HTMLAbstractUIElement implements HTML
   }
 
   @Override
-  protected @NonNull RenderState createRenderState(final RenderState prevRenderState) {
+  protected RenderState createRenderState(final RenderState prevRenderState) {
     return new IFrameRenderState(prevRenderState, this);
   }
 }

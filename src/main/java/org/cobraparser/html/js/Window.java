@@ -23,6 +23,29 @@
  */
 package org.cobraparser.html.js;
 
+import org.cobraparser.html.HtmlRendererContext;
+import org.cobraparser.html.domimpl.*;
+import org.cobraparser.js.*;
+import org.cobraparser.ua.UserAgentContext;
+import org.cobraparser.ua.UserAgentContext.Request;
+import org.cobraparser.ua.UserAgentContext.RequestKind;
+import org.cobraparser.util.ID;
+import org.mozilla.javascript.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.css.CSS2Properties;
+import org.w3c.dom.events.EventException;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
+import org.w3c.dom.html.HTMLCollection;
+import org.w3c.dom.html.HTMLElement;
+import org.w3c.dom.views.AbstractView;
+import org.w3c.dom.views.DocumentView;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.ref.WeakReference;
@@ -40,58 +63,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.Timer;
-
-import org.cobraparser.html.HtmlRendererContext;
-import org.cobraparser.html.domimpl.CanvasPath2D;
-import org.cobraparser.html.domimpl.CommentImpl;
-import org.cobraparser.html.domimpl.HTMLDivElementImpl;
-import org.cobraparser.html.domimpl.HTMLDocumentImpl;
-import org.cobraparser.html.domimpl.HTMLElementImpl;
-import org.cobraparser.html.domimpl.HTMLIFrameElementImpl;
-import org.cobraparser.html.domimpl.HTMLImageElementImpl;
-import org.cobraparser.html.domimpl.HTMLOptionElementImpl;
-import org.cobraparser.html.domimpl.HTMLScriptElementImpl;
-import org.cobraparser.html.domimpl.HTMLSelectElementImpl;
-import org.cobraparser.html.domimpl.NodeImpl;
-import org.cobraparser.html.domimpl.TextImpl;
-import org.cobraparser.js.AbstractScriptableDelegate;
-import org.cobraparser.js.HideFromJS;
-import org.cobraparser.js.JavaClassWrapper;
-import org.cobraparser.js.JavaClassWrapperFactory;
-import org.cobraparser.js.JavaInstantiator;
-import org.cobraparser.js.JavaObjectWrapper;
-import org.cobraparser.js.JavaScript;
-import org.cobraparser.ua.UserAgentContext;
-import org.cobraparser.ua.UserAgentContext.Request;
-import org.cobraparser.ua.UserAgentContext.RequestKind;
-import org.cobraparser.util.ID;
-import org.mozilla.javascript.ClassShutter;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.ContextFactory;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.ScriptRuntime;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.css.CSS2Properties;
-import org.w3c.dom.events.EventException;
-import org.w3c.dom.events.EventListener;
-import org.w3c.dom.events.EventTarget;
-import org.w3c.dom.html.HTMLCollection;
-import org.w3c.dom.html.HTMLElement;
-import org.w3c.dom.views.AbstractView;
-import org.w3c.dom.views.DocumentView;
 
 public class Window extends AbstractScriptableDelegate implements AbstractView, EventTarget {
   private static final Storage STORAGE = new Storage();
 
-  private static final Logger logger = Logger.getLogger(Window.class.getName());
+  private static final Logger logger = LoggerFactory.getLogger(Window.class.getName());
   private static final Map<HtmlRendererContext, WeakReference<Window>> CONTEXT_WINDOWS = new WeakHashMap<>();
   // private static final JavaClassWrapper IMAGE_WRAPPER =
   // JavaClassWrapperFactory.getInstance().getClassWrapper(Image.class);
@@ -465,7 +441,8 @@ public class Window extends AbstractScriptableDelegate implements AbstractView, 
       }
     } else {
       // TODO: This happens when the URL is not accepted by okhttp
-      System.out.println("Not adding task because url context is null");
+      if (logger.isDebugEnabled()) 
+        logger.debug("Not adding task because url context is null");
     }
   }
 
@@ -1351,8 +1328,8 @@ public class Window extends AbstractScriptableDelegate implements AbstractView, 
       try {
         final Window window = this.getWindow();
         if (window == null) {
-          if (logger.isLoggable(Level.INFO)) {
-            logger.info("actionPerformed(): Window is no longer available.");
+          if (logger.isDebugEnabled()) {
+            logger.debug("actionPerformed(): Window is no longer available.");
           }
           return;
         }
@@ -1373,7 +1350,7 @@ public class Window extends AbstractScriptableDelegate implements AbstractView, 
         }));
         // Executor.executeFunction(window.getWindowScope(), function, doc.getDocumentURL(), window.getUserAgentContext(), window.windowFactory);
       } catch (final Exception err) {
-        logger.log(Level.WARNING, "actionPerformed()", err);
+        logger.warn("actionPerformed()", err);
       }
     }
   }
@@ -1398,8 +1375,8 @@ public class Window extends AbstractScriptableDelegate implements AbstractView, 
       try {
         final Window window = this.getWindow();
         if (window == null) {
-          if (logger.isLoggable(Level.INFO)) {
-            logger.info("actionPerformed(): Window is no longer available.");
+          if (logger.isDebugEnabled()) {
+            logger.debug("actionPerformed(): Window is no longer available.");
           }
           return;
         }
@@ -1415,7 +1392,7 @@ public class Window extends AbstractScriptableDelegate implements AbstractView, 
         }));
         // window.evalInScope(this.expression);
       } catch (final Exception err) {
-        logger.log(Level.WARNING, "actionPerformed()", err);
+        logger.warn("actionPerformed()", err);
       }
     }
   }

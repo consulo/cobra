@@ -1,30 +1,22 @@
 package org.cobraparser.html.domimpl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.jdt.annotation.NonNull;
+import cz.vutbr.web.css.*;
 import org.cobraparser.html.style.ComputedJStyleProperties;
 import org.cobraparser.html.style.JStyleProperties;
 import org.cobraparser.js.HideFromJS;
 import org.w3c.dom.Text;
 
-import cz.vutbr.web.css.NodeData;
-import cz.vutbr.web.css.Term;
-import cz.vutbr.web.css.TermFunction;
-import cz.vutbr.web.css.TermIdent;
-import cz.vutbr.web.css.TermList;
-import cz.vutbr.web.css.TermString;
-import cz.vutbr.web.css.TermURI;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO: Extend a common interface or a minimal class instead of HTMLElementImpl
 public class GeneratedElement extends HTMLElementImpl {
 
   private final NodeData nodeData;
   private JStyleProperties currentStyle;
-  private final @NonNull TermList content;
+  private final TermList content;
 
-  public GeneratedElement(final HTMLElementImpl parent, final NodeData nodeData, final @NonNull TermList content) {
+  public GeneratedElement(final HTMLElementImpl parent, final NodeData nodeData, final TermList content) {
     super("");
     setParentImpl(parent);
     setOwnerDocument(parent.getOwnerDocument());
@@ -33,7 +25,7 @@ public class GeneratedElement extends HTMLElementImpl {
   }
 
   @HideFromJS
-  public @NonNull JStyleProperties getCurrentStyle() {
+  public JStyleProperties getCurrentStyle() {
     synchronized (this) {
       if (currentStyle != null) {
         return currentStyle;

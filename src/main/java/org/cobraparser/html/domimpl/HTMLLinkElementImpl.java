@@ -20,11 +20,8 @@
  */
 package org.cobraparser.html.domimpl;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
-
-import org.eclipse.jdt.annotation.NonNull;
+import cz.vutbr.web.css.StyleSheet;
+import org.cobraparser.css.domimpl.JStyleSheetWrapper;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.js.Window;
 import org.cobraparser.html.style.CSSUtilities;
@@ -35,8 +32,9 @@ import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.html.HTMLLinkElement;
 import org.w3c.dom.stylesheets.LinkStyle;
 
-import org.cobraparser.css.domimpl.JStyleSheetWrapper;
-import cz.vutbr.web.css.StyleSheet;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
 
 public class HTMLLinkElementImpl extends HTMLAbstractUIElement implements HTMLLinkElement, LinkStyle {
   private JStyleSheetWrapper styleSheet;
@@ -141,7 +139,7 @@ public class HTMLLinkElementImpl extends HTMLAbstractUIElement implements HTMLLi
     }
   }
 
-  private Optional<@NonNull URL> getAbsoluteURL() {
+  private Optional<URL> getAbsoluteURL() {
     final String href = this.getHref();
     if (href.startsWith("javascript:")) {
       return Optional.empty();
@@ -182,7 +180,7 @@ public class HTMLLinkElementImpl extends HTMLAbstractUIElement implements HTMLLi
       // evalInScope adds the JS task
       ((Window) (((HTMLDocumentImpl) document).getDefaultView())).evalInScope(script);
     } else {
-      final Optional<@NonNull URL> urlOpt = getAbsoluteURL();
+      final Optional<URL> urlOpt = getAbsoluteURL();
       if (urlOpt.isPresent()) {
         final HtmlRendererContext rcontext = this.getHtmlRendererContext();
         final String target = this.getTarget();

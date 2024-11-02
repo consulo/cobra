@@ -32,9 +32,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.jdt.annotation.Nullable;
-
-public class WeakValueHashMap<K, @Nullable V> implements Map<K, V> {
+public class WeakValueHashMap<K, V> implements Map<K, V> {
   private final Map<K, LocalWeakReference> map = new HashMap<>();
   private final ReferenceQueue<V> queue = new ReferenceQueue<>();
 

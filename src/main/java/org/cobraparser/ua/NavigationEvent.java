@@ -22,8 +22,6 @@ package org.cobraparser.ua;
 
 import java.net.URL;
 
-import org.eclipse.jdt.annotation.NonNull;
-
 /**
  * A navigation event.
  *
@@ -32,7 +30,7 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public class NavigationEvent extends java.util.EventObject {
   private static final long serialVersionUID = -3655001617854084211L;
-  private final @NonNull URL uRL;
+  private final URL uRL;
   private final String method;
   private final ParameterInfo paramInfo;
   private final TargetType targetType;
@@ -41,7 +39,7 @@ public class NavigationEvent extends java.util.EventObject {
   private final Object linkObject;
   private final NavigatorFrame originatingFrame;
 
-  public NavigationEvent(final Object source, final @NonNull URL url, final String method, final ParameterInfo paramInfo,
+  public NavigationEvent(final Object source, final URL url, final String method, final ParameterInfo paramInfo,
       final TargetType targetType, final RequestType requestType,
       final boolean fromClick, final Object linkObject, final NavigatorFrame originatingFrame) {
     super(source);
@@ -55,24 +53,24 @@ public class NavigationEvent extends java.util.EventObject {
     this.originatingFrame = originatingFrame;
   }
 
-  public NavigationEvent(final Object source, final @NonNull URL url, final String method, final ParameterInfo paramInfo,
+  public NavigationEvent(final Object source, final URL url, final String method, final ParameterInfo paramInfo,
       final TargetType targetType, final RequestType requestType,
       final NavigatorFrame originatingFrame) {
     this(source, url, method, paramInfo, targetType, requestType, false, null, originatingFrame);
   }
 
-  public NavigationEvent(final Object source, final @NonNull URL url, final TargetType targetType, final RequestType requestType,
+  public NavigationEvent(final Object source, final URL url, final TargetType targetType, final RequestType requestType,
       final Object linkObject,
       final NavigatorFrame originatingFrame) {
     this(source, url, "GET", null, targetType, requestType, true, linkObject, originatingFrame);
   }
 
-  public NavigationEvent(final Object source, final @NonNull URL url, final String method, final RequestType requestType,
+  public NavigationEvent(final Object source, final URL url, final String method, final RequestType requestType,
       final NavigatorFrame originatingFrame) {
     this(source, url, method, null, TargetType.SELF, requestType, false, null, originatingFrame);
   }
 
-  public @NonNull URL getURL() {
+  public URL getURL() {
     return uRL;
   }
 

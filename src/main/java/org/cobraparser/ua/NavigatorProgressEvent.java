@@ -24,8 +24,6 @@ package org.cobraparser.ua;
 
 import java.net.URL;
 
-import org.eclipse.jdt.annotation.NonNull;
-
 /**
  * An event containing response progress information.
  *
@@ -34,13 +32,13 @@ import org.eclipse.jdt.annotation.NonNull;
 public class NavigatorProgressEvent extends NavigatorEvent {
   private static final long serialVersionUID = 1808435207463060420L;
   private final ProgressType progressType;
-  private final @NonNull URL url;
+  private final URL url;
   private final String method;
   private final int currentValue;
   private final int maxValue;
 
   public NavigatorProgressEvent(final Object source, final NavigatorFrame clientletFrame, final ProgressType progressType,
-      final @NonNull URL url, final String method,
+      final URL url, final String method,
       final int value, final int max) {
     super(source, NavigatorEventType.PROGRESS_UPDATED, clientletFrame);
     this.progressType = progressType;
@@ -58,7 +56,7 @@ public class NavigatorProgressEvent extends NavigatorEvent {
     return progressType;
   }
 
-  public @NonNull URL  getUrl() {
+  public URL  getUrl() {
     return url;
   }
 

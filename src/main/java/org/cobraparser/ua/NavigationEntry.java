@@ -22,10 +22,9 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.cobraparser.ua;
 
-import java.net.URL;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.clientlet.ClientletResponse;
+
+import java.net.URL;
 
 /**
  * Represents one item in the navigation history.
@@ -33,13 +32,13 @@ import org.cobraparser.clientlet.ClientletResponse;
 public class NavigationEntry {
   // Note: Do not retain request context here.
 
-  private final @NonNull URL url;
+  private final URL url;
   private final String method;
   private final String title;
   private final String description;
   private final NavigatorFrame frame;
 
-  public NavigationEntry(final NavigatorFrame frame, final @NonNull URL url, final String method, final String title, final String description) {
+  public NavigationEntry(final NavigatorFrame frame, final URL url, final String method, final String title, final String description) {
     super();
     this.frame = frame;
     this.url = url;
@@ -59,7 +58,7 @@ public class NavigationEntry {
     return title;
   }
 
-  public @NonNull URL getUrl() {
+  public URL getUrl() {
     return url;
   }
 

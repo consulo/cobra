@@ -23,7 +23,6 @@ package org.cobraparser.html.renderer;
 import java.awt.Dimension;
 import java.awt.Insets;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.cobraparser.html.domimpl.ModelNode;
 import org.cobraparser.ua.UserAgentContext;
 
@@ -38,7 +37,7 @@ public class RImgControl extends RUIControl {
   // A better way would be to create two methods: one for excluded space and one for included space and implement as per convenience.
   // Yet another idea: check if RImgControl really needs to sub-class RUIControl or it can directly sub-class BaseElementRenderable.
   @Override
-  public @NonNull Insets getBorderInsets() {
+  public Insets getBorderInsets() {
     return getInsets(false, false);
   }
 
