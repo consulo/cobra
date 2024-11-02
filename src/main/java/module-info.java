@@ -17,4 +17,6 @@ module consulo.internal.cobra {
     exports org.cobraparser.html.parser;
     exports org.cobraparser.html.domimpl;
     exports org.cobraparser.html.gui;
+    exports org.cobraparser.html.renderer;
+    exports org.cobraparser.ua;
 }
