@@ -6,8 +6,8 @@
 
     <groupId>consulo.internal.org.cobraparser</groupId>
     <artifactId>cobra-test</artifactId>
-    <version>2.6-SNAPSHOT</version>
-    
+    <version>2.7-SNAPSHOT</version>
+
     <build>
         <plugins>
             <plugin>
