@@ -21,6 +21,7 @@ module cobra.core {
     exports org.cobraparser.util;
     exports org.cobraparser.js;
     exports org.cobraparser.html.js;
+    exports org.cobraparser.css;
 
     uses org.cobraparser.js.JavaScriptEngine;
 
