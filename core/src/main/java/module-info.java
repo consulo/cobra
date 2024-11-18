@@ -23,4 +23,7 @@ module cobra.core {
     exports org.cobraparser.html.js;
 
     uses org.cobraparser.js.JavaScriptEngine;
+
+    uses org.cobraparser.css.DefaultCssFactory;
+    uses org.cobraparser.css.StandardColorProvider;
 }

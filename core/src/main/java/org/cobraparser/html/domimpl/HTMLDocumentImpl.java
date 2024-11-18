@@ -31,6 +31,7 @@ import cz.vutbr.web.csskit.ElementMatcherSafeStd;
 import cz.vutbr.web.csskit.antlr4.CSSParserFactory;
 import cz.vutbr.web.domassign.Analyzer.Holder;
 import cz.vutbr.web.domassign.AnalyzerUtil;
+import org.cobraparser.css.DefaultCssFactory;
 import org.cobraparser.css.domimpl.JStyleSheetWrapper;
 import org.cobraparser.css.domimpl.StyleSheetBridge;
 import org.cobraparser.html.HtmlRendererContext;
@@ -38,7 +39,6 @@ import org.cobraparser.html.domimpl.NodeFilter.*;
 import org.cobraparser.html.io.WritableLineReader;
 import org.cobraparser.html.js.*;
 import org.cobraparser.html.parser.HtmlParser;
-import org.cobraparser.html.style.CSSNorm;
 import org.cobraparser.html.style.RenderState;
 import org.cobraparser.html.style.StyleElements;
 import org.cobraparser.html.style.StyleSheetRenderState;
@@ -1479,17 +1479,16 @@ public class HTMLDocumentImpl extends NodeImpl implements HTMLDocument, Document
     }
 
     private Holder classifiedRules = null;
-    private static final StyleSheet recommendedStyle = parseStyle(CSSNorm.stdStyleSheet(), StyleSheet.Origin.AGENT, false);
-    private static final StyleSheet userAgentStyle = parseStyle(CSSNorm.userStyleSheet(), StyleSheet.Origin.AGENT, false);
-    private static final StyleSheet recommendedStyleXML = parseStyle(CSSNorm.stdStyleSheet(), StyleSheet.Origin.AGENT, true);
-    private static final StyleSheet userAgentStyleXML = parseStyle(CSSNorm.userStyleSheet(), StyleSheet.Origin.AGENT, true);
 
     private void updateStyleRules() {
         synchronized (treeLock) {
             if (classifiedRules == null) {
+                DefaultCssFactory cssFactory = DefaultCssFactory.INSTANCE;
+
                 final List<StyleSheet> jSheets = new ArrayList<>();
-                jSheets.add(isXML() ? recommendedStyleXML : recommendedStyle);
-                jSheets.add(isXML() ? userAgentStyleXML : userAgentStyle);
+                boolean xml = isXML();
+                jSheets.add(cssFactory.getStandardCSS(xml));
+                jSheets.add(cssFactory.getUserCSS(xml));
                 jSheets.addAll(styleSheetManager.getEnabledJStyleSheets());
                 classifiedRules = AnalyzerUtil.getClassifiedRules(jSheets, new MediaSpec("screen"));
             }

@@ -1,5 +1,6 @@
 package cobra;
 
+import cz.vutbr.web.domassign.SupportedCSS3;
 import org.cobraparser.html.AbstractHtmlRendererContext;
 import org.cobraparser.html.FormInput;
 import org.cobraparser.html.domimpl.HTMLDocumentImpl;

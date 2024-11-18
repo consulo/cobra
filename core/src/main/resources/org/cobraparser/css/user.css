@@ -1,0 +1,12 @@
+html   { overflow: auto; }
+a[href]{ cursor: pointer; color: blue; text-decoration: underline; }
+label{cursor:default}
+script { display: none; }
+style  { display: none; }
+option { display: none; }
+br     { display: block; }
+hr     { display: block; margin-top: 1px solid; }
+ul     { margin-left: 0; padding-left: 40px; }
+abbr, acronym   { font-variant: small-caps; letter-spacing: 0.1em }
+table {text-align: left}
+article, aside, footer, header, hgroup, main, nav, section {display:block}
