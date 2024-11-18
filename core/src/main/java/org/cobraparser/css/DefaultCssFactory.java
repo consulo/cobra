@@ -13,7 +13,7 @@ import java.util.ServiceLoader;
  * @since 2024-11-18
  */
 public abstract class DefaultCssFactory {
-    public static DefaultCssFactory INSTANCE = init();
+    public static final DefaultCssFactory INSTANCE = init();
 
     private static DefaultCssFactory init() {
         ServiceLoader<DefaultCssFactory> loader = ServiceLoader.load(DefaultCssFactory.class, DefaultCssFactory.class.getClassLoader());
@@ -22,7 +22,7 @@ public abstract class DefaultCssFactory {
             return first.get();
         }
 
-        return DefaultCssFactoryImpl.INSTANCE;
+        return new DefaultCssFactoryImpl();
     }
 
     public abstract StyleSheet getStandardCSS(boolean xhtml);

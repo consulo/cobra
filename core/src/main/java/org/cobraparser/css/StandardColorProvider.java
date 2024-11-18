@@ -23,7 +23,7 @@ public abstract class StandardColorProvider {
             return first.get();
         }
 
-        return DefaultStandardColorProvider.INSTANCE;
+        return new DefaultStandardColorProvider();
     }
 
     private final Map<String, Color> colorMap = new HashMap<>();

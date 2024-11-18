@@ -14,8 +14,6 @@ import java.util.Objects;
  * @since 2024-11-18
  */
 public class DefaultCssFactoryImpl extends DefaultCssFactory {
-    public static final DefaultCssFactoryImpl INSTANCE = new DefaultCssFactoryImpl();
-
     private StyleSheet standardCSS;
     private StyleSheet userCSS;
 
