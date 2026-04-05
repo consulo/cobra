@@ -936,7 +936,10 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
     return true;
   }
 
-  protected static final int SCROLL_BAR_THICKNESS = 16;
+  protected static int getScrollBarThickness() {
+    final int w = UIManager.getInt("ScrollBar.width");
+    return w > 0 ? w : 16;
+  }
 
   public Insets getBorderInsets() {
     Insets bi = this.borderInsets;
@@ -996,10 +999,10 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
       right += pi.right;
     }
     if (hscroll) {
-      bottom += SCROLL_BAR_THICKNESS;
+      bottom += getScrollBarThickness();
     }
     if (vscroll) {
-      right += SCROLL_BAR_THICKNESS;
+      right += getScrollBarThickness();
     }
     return new Insets(top, left, bottom, right);
   }

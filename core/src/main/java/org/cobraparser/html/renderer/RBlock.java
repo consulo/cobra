@@ -99,7 +99,7 @@ public class RBlock extends BaseBlockyRenderable {
    * Gets the width the vertical scrollbar has when shown.
    */
   public int getVScrollBarWidth() {
-    return SCROLL_BAR_THICKNESS;
+    return getScrollBarThickness();
   }
 
   @Override
@@ -219,8 +219,8 @@ public class RBlock extends BaseBlockyRenderable {
 
   @Override
   public Rectangle getClipBoundsWithoutInsets() {
-    final int hInset = this.hasVScrollBar ? SCROLL_BAR_THICKNESS : 0;
-    final int vInset = this.hasHScrollBar ? SCROLL_BAR_THICKNESS : 0;
+    final int hInset = this.hasVScrollBar ? getScrollBarThickness() : 0;
+    final int vInset = this.hasHScrollBar ? getScrollBarThickness() : 0;
     if (!(this.hasHScrollBar || this.hasVScrollBar)) {
       return null;
     } else {
@@ -277,7 +277,7 @@ public class RBlock extends BaseBlockyRenderable {
     final JScrollBar hsb = this.hScrollBar;
     if (hsb != null) {
       final Graphics sbg = g.create(insets.left, this.height - insets.bottom, this.width - insets.left - insets.right,
-          SCROLL_BAR_THICKNESS);
+          getScrollBarThickness());
       try {
         hsb.paint(sbg);
       } finally {
@@ -287,7 +287,7 @@ public class RBlock extends BaseBlockyRenderable {
     final JScrollBar vsb = this.vScrollBar;
     if (vsb != null) {
       final Graphics sbg = g
-          .create(this.width - insets.right, insets.top, SCROLL_BAR_THICKNESS, this.height - insets.top - insets.bottom);
+          .create(this.width - insets.right, insets.top, getScrollBarThickness(), this.height - insets.top - insets.bottom);
       try {
         vsb.paint(sbg);
       } finally {
@@ -673,7 +673,7 @@ public class RBlock extends BaseBlockyRenderable {
     if (adjDeclaredWidth == -1) {
       resultingWidth = expandWidth ? Math.max(prelimBlockWidth, tentativeWidth) : prelimBlockWidth;
       if ((tentativeWidth > 0) && hscroll && (resultingWidth > tentativeWidth)) {
-        resultingWidth = Math.max(tentativeWidth, SCROLL_BAR_THICKNESS);
+        resultingWidth = Math.max(tentativeWidth, getScrollBarThickness());
       }
     } else {
       // resultingWidth = visibleX ? Math.max(prelimBlockWidth, adjDeclaredWidth) : adjDeclaredWidth;
@@ -695,7 +695,7 @@ public class RBlock extends BaseBlockyRenderable {
     if (adjDeclaredHeight == -1) {
       resultingHeight = expandHeight ? Math.max(prelimBlockHeight, tentativeHeight) : prelimBlockHeight;
       if (vscroll && (resultingHeight > tentativeHeight)) {
-        resultingHeight = Math.max(tentativeHeight, SCROLL_BAR_THICKNESS);
+        resultingHeight = Math.max(tentativeHeight, getScrollBarThickness());
       }
     } else {
       // resultingHeight = visibleY ? Math.max(prelimBlockHeight, adjDeclaredHeight) : adjDeclaredHeight;
@@ -714,7 +714,7 @@ public class RBlock extends BaseBlockyRenderable {
       }
     }
 
-    final int scrollWidth = vscroll ? SCROLL_BAR_THICKNESS : 0;
+    final int scrollWidth = vscroll ? getScrollBarThickness() : 0;
     if (declaredWidth >= 0) {
       resultingWidth = Math.min(resultingWidth, declaredWidth + paddingTotalWidth + insetsTotalWidth - scrollWidth);
     }
@@ -723,7 +723,7 @@ public class RBlock extends BaseBlockyRenderable {
       resultingWidth = Math.min(resultingWidth, declaredMaxWidth + paddingTotalWidth + insetsTotalWidth - scrollWidth);
     }
 
-    final int scrollHeight = hscroll ? SCROLL_BAR_THICKNESS : 0;
+    final int scrollHeight = hscroll ? getScrollBarThickness() : 0;
     if (declaredHeight >= 0) {
       resultingHeight = Math.min(resultingHeight, declaredHeight + paddingTotalHeight + insetsTotalHeight - scrollHeight);
     }
@@ -1059,7 +1059,7 @@ public class RBlock extends BaseBlockyRenderable {
   // if (adjDeclaredWidth == -1) {
   // resultingWidth = rblockWidth;
   // if (hscroll && resultingWidth > tentativeWidth) {
-  // resultingWidth = Math.max(tentativeWidth, SCROLL_BAR_THICKNESS);
+  // resultingWidth = Math.max(tentativeWidth, getScrollBarThickness());
   // } else if (expandWidth && resultingWidth < tentativeWidth) {
   // resultingWidth = tentativeWidth;
   // }
@@ -1093,7 +1093,7 @@ public class RBlock extends BaseBlockyRenderable {
   // resultingHeight = rblockHeight;
   // if (vscroll && resultingHeight > tentativeHeight) {
   // resultingHeight = Math.max(tentativeHeight,
-  // SCROLL_BAR_THICKNESS);
+  // getScrollBarThickness());
   // } else if (expandHeight && resultingHeight < tentativeHeight) {
   // resultingHeight = tentativeHeight;
   // }
@@ -1469,13 +1469,13 @@ public class RBlock extends BaseBlockyRenderable {
         final JScrollBar hsb = this.hScrollBar;
         if (hsb != null) {
           hsb.setBounds(guiX + insets.left, (guiY + this.height) - insets.bottom, this.width - insets.left - insets.right,
-              SCROLL_BAR_THICKNESS);
+              getScrollBarThickness());
         }
       }
       if (vscroll) {
         final JScrollBar vsb = this.vScrollBar;
         if (vsb != null) {
-          vsb.setBounds((guiX + this.width) - insets.right, guiY + insets.top, SCROLL_BAR_THICKNESS, this.height - insets.top
+          vsb.setBounds((guiX + this.width) - insets.right, guiY + insets.top, getScrollBarThickness(), this.height - insets.top
               - insets.bottom);
         }
       }
@@ -1930,10 +1930,10 @@ public class RBlock extends BaseBlockyRenderable {
   }
 
   public int getHorizontalScrollBarHeight() {
-    return hasHScrollBar ? SCROLL_BAR_THICKNESS : 0;
+    return hasHScrollBar ? getScrollBarThickness() : 0;
   }
 
   public int getVerticalScrollBarHeight() {
-    return hasVScrollBar ? SCROLL_BAR_THICKNESS : 0;
+    return hasVScrollBar ? getScrollBarThickness() : 0;
   }
 }
