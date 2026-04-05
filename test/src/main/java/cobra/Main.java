@@ -77,7 +77,7 @@ public class Main {
                         UIManager.setLookAndFeel(new FlatLightLaf());
                     }
 
-                    FlatLaf.updateUI();
+                    FlatLaf.updateUILater();
                 }
                 catch (UnsupportedLookAndFeelException e1) {
                 }

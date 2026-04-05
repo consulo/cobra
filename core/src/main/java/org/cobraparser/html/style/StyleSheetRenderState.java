@@ -637,12 +637,16 @@ public class StyleSheetRenderState implements RenderState {
     final String whiteSpaceText = props == null ? null : props.getWhiteSpace();
     int wsValue;
     if (whiteSpaceText == null) {
-      wsValue = WS_NORMAL;
+      // white-space is inherited — fall back to parent render state
+      final RenderState prs = this.prevRenderState;
+      wsValue = prs != null ? prs.getWhiteSpace() : WS_NORMAL;
     } else {
       final String whiteSpaceTextTL = whiteSpaceText.toLowerCase();
       if ("nowrap".equals(whiteSpaceTextTL)) {
         wsValue = WS_NOWRAP;
-      } else if ("pre".equals(whiteSpaceTextTL)) {
+      } else if ("pre".equals(whiteSpaceTextTL) || "pre-wrap".equals(whiteSpaceTextTL) || "break-spaces".equals(whiteSpaceTextTL)) {
+        wsValue = WS_PRE;
+      } else if ("pre-line".equals(whiteSpaceTextTL)) {
         wsValue = WS_PRE;
       } else {
         wsValue = WS_NORMAL;

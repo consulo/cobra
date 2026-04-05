@@ -369,7 +369,15 @@ public class HtmlValues {
 
   private static final float getFontSizeImpl(final String spec, final RenderState parentRenderState) {
     final String specTL = spec.toLowerCase();
-    if (specTL.endsWith("em")) {
+    if (specTL.endsWith("rem")) {
+      final String pxText = specTL.substring(0, specTL.length() - 3);
+      try {
+        final double value = Double.parseDouble(pxText);
+        return (float) (DEFAULT_FONT_SIZE * value);
+      } catch (final NumberFormatException nfe) {
+        return DEFAULT_FONT_SIZE;
+      }
+    } else if (specTL.endsWith("em")) {
       if (parentRenderState == null) {
         return DEFAULT_FONT_SIZE;
       }
@@ -450,6 +458,14 @@ public class HtmlValues {
         final int dpi = getDpi();
         final double inches = val / 96;
         return (int) Math.round(dpi * inches);
+      } catch (final NumberFormatException nfe) {
+        return errorValue;
+      }
+    } else if (lcSpec.endsWith("rem")) {
+      final String valText = lcSpec.substring(0, lcSpec.length() - 3);
+      try {
+        final double val = Double.parseDouble(valText);
+        return (int) Math.round(DEFAULT_FONT_SIZE * val);
       } catch (final NumberFormatException nfe) {
         return errorValue;
       }

@@ -24,6 +24,7 @@
 package org.cobraparser.html.renderer;
 
 import org.cobraparser.html.domimpl.HTMLElementImpl;
+import org.cobraparser.html.style.RenderState;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,7 +52,8 @@ class HrControl extends BaseControl {
       c = Color.GRAY;
     }
     g.setColor(c);
-    g.drawLine(0, 0, getWidth() - 1, 0);
+    final int y = getHeight() / 2;
+    g.drawLine(0, y, getWidth() - 1, y);
   }
 
   public boolean paintSelection(final Graphics g, final boolean inSelection, final RenderableSpot startPoint, final RenderableSpot endPoint) {
@@ -67,6 +69,14 @@ class HrControl extends BaseControl {
 
   @Override
   public Dimension getPreferredSize() {
-    return new Dimension(this.availWidth, 1);
+    final RenderState rs = controlElement.getRenderState();
+    final int vspace;
+    if (rs != null) {
+      final Font font = rs.getFont();
+      vspace = font != null ? Math.round(font.getSize() * 0.8f) : 10;
+    } else {
+      vspace = 10;
+    }
+    return new Dimension(this.availWidth, 1 + 2 * vspace);
   }
 }
