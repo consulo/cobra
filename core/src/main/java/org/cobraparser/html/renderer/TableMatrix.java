@@ -138,6 +138,21 @@ final class TableMatrix {
 
     this.populateRows();
     this.adjustForCellSpans();
+
+    // When border-collapse: collapse, suppress duplicate borders between adjacent cells.
+    // Each cell draws only its right and bottom borders; top/left are drawn by the
+    // neighbour above/to-the-left respectively, so we skip them to avoid double-width lines.
+    if (isBorderCollapse()) {
+      for (final RAbstractCell cell : this.ALL_CELLS) {
+        if (cell.getVirtualRow() > 0) {
+          cell.borderOverrider.topOverridden = true;
+        }
+        if (cell.getVirtualColumn() > 0) {
+          cell.borderOverrider.leftOverridden = true;
+        }
+      }
+    }
+
     this.createSizeArrays();
 
     // Calculate widths of extras
@@ -160,15 +175,20 @@ final class TableMatrix {
     this.hasOldStyleBorder = border > 0 ? 1 : 0;
   }
 
+  private boolean isBorderCollapse() {
+    final JStyleProperties tableStyle = this.tableElement.getCurrentStyle();
+    if (tableStyle == null) {
+      return false;
+    }
+    return "collapse".equalsIgnoreCase(tableStyle.getBorderCollapse());
+  }
+
   private int getCellSpacingAttribute() {
     // border-collapse: collapse overrides border-spacing and forces 0 spacing
-    final JStyleProperties tableStyle = this.tableElement.getCurrentStyle();
-    if (tableStyle != null) {
-      final String borderCollapse = tableStyle.getBorderCollapse();
-      if ("collapse".equalsIgnoreCase(borderCollapse)) {
-        return 0;
-      }
+    if (isBorderCollapse()) {
+      return 0;
     }
+    final JStyleProperties tableStyle = this.tableElement.getCurrentStyle();
 
     // Try CSS border-spacing first
     if (tableStyle != null) {
