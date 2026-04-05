@@ -139,12 +139,6 @@ public interface UserAgentContext {
   public void setCookie(URL url, String cookieSpec);
 
   /**
-   * Gets the security policy for scripting. Return <code>null</code> if
-   * JavaScript code is trusted.
-   */
-  public java.security.Policy getSecurityPolicy();
-
-  /**
    * Gets the scripting optimization level, which is a value equivalent to
    * Rhino's optimization level.
    */

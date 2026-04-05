@@ -158,11 +158,6 @@ public class Main {
                         }
 
                         @Override
-                        public Policy getSecurityPolicy() {
-                            return null;
-                        }
-
-                        @Override
                         public int getScriptingOptimizationLevel() {
                             return 0;
                         }
