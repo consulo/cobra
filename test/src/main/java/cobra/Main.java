@@ -94,12 +94,12 @@ public class Main {
                     return new UserAgentContext() {
                         @Override
                         public boolean isRequestPermitted(Request request) {
-                            return false;
+                            return true;
                         }
 
                         @Override
                         public NetworkRequest createHttpRequest() {
-                            return null;
+                            return new SimpleNetworkRequest();
                         }
 
                         @Override
