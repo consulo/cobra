@@ -77,8 +77,12 @@ public class CSSVariableResolver {
 
     /**
      * Returns true if the current Swing L&F has a dark background.
+     * Uses FlatLaf's "laf.dark" UIManager property when available.
      */
     public static boolean isLafDark() {
+        Object dark = UIManager.get("laf.dark");
+        if (dark instanceof Boolean) return (Boolean) dark;
+        // Fallback: luminance check on panel background
         Color bg = UIManager.getColor("Panel.background");
         if (bg == null) return false;
         double lum = (0.299 * bg.getRed() + 0.587 * bg.getGreen() + 0.114 * bg.getBlue()) / 255.0;
