@@ -100,6 +100,15 @@ public class HtmlPanel extends JComponent implements FrameContext, DefferedLayou
     };
   }
 
+  @Override
+  public void updateUI() {
+    super.updateUI();
+    final NodeImpl root = this.rootNode;
+    if (root instanceof HTMLDocumentImpl) {
+      ((HTMLDocumentImpl) root).invalidateStyleSheets();
+    }
+  }
+
   /**
    * Sets a preferred width that serves as a hint in calculating the preferred
    * size of the <code>HtmlPanel</code>. Note that the preferred size can only

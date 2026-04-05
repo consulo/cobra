@@ -23,16 +23,35 @@
  */
 package org.cobraparser.html.renderer;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-
 import org.cobraparser.html.domimpl.HTMLElementImpl;
+
+import javax.swing.*;
+import java.awt.*;
 
 class HrControl extends BaseControl {
   private static final long serialVersionUID = 2138367420714598428L;
 
   public HrControl(final HTMLElementImpl modelNode) {
     super(modelNode);
+    setOpaque(false);
+  }
+
+  @Override
+  public void updateUI() {
+    // Prevent L&F from installing any component UI — we paint ourselves
+  }
+
+  @Override
+  protected void paintComponent(final Graphics g) {
+    Color c = UIManager.getColor("Separator.foreground");
+    if (c == null) {
+      c = UIManager.getColor("Label.foreground");
+    }
+    if (c == null) {
+      c = Color.GRAY;
+    }
+    g.setColor(c);
+    g.drawLine(0, 0, getWidth() - 1, 0);
   }
 
   public boolean paintSelection(final Graphics g, final boolean inSelection, final RenderableSpot startPoint, final RenderableSpot endPoint) {
@@ -48,6 +67,6 @@ class HrControl extends BaseControl {
 
   @Override
   public Dimension getPreferredSize() {
-    return new Dimension(this.availWidth, 0);
+    return new Dimension(this.availWidth, 1);
   }
 }

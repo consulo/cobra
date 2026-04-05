@@ -1,3 +1,4 @@
+html            { color: var(--cobra-fg); background-color: var(--cobra-bg); color-scheme: light dark; }
 html, address,
 blockquote,
 body, dd, div,
@@ -51,7 +52,7 @@ thead, tbody,
 tfoot           { vertical-align: middle }
 td, th, tr      { vertical-align: inherit }
 s, strike, del  { text-decoration: line-through }
-hr              { border: 1px inset }
+hr              { margin: 4px 0 }
 ol, ul, dir,
 menu, dd        { margin-left: 40px }
 ol              { list-style-type: decimal }

@@ -1,5 +1,7 @@
 package cobra;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import org.cobraparser.html.AbstractHtmlRendererContext;
 import org.cobraparser.html.FormInput;
@@ -30,6 +32,8 @@ import java.util.concurrent.ForkJoinPool;
  * @since 2024-11-02
  */
 public class Main {
+    private static boolean isDark;
+
     public static void main(String[] args) throws Exception {
         SwingUtilities.invokeLater(() -> {
             try {
@@ -42,7 +46,10 @@ public class Main {
     }
 
     private static void show() throws Exception {
-        FlatLightLaf.setup();
+        FlatLightLaf.installLafInfo();
+        FlatDarkLaf.installLafInfo();
+
+        UIManager.setLookAndFeel(new FlatLightLaf());
 
         URL resource = Main.class.getResource("/cobra/SomeHtml.html");
 
@@ -56,6 +63,26 @@ public class Main {
 
         JPanel panel = new JPanel(new BorderLayout());
         frame.add(panel);
+
+        JButton changeTheme = new JButton("Change Theme");
+        changeTheme.addActionListener(e -> {
+            isDark = !isDark;
+
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    if (isDark) {
+                        UIManager.setLookAndFeel(new FlatDarkLaf());
+                    }
+                    else {
+                        UIManager.setLookAndFeel(new FlatLightLaf());
+                    }
+
+                    FlatLaf.updateUI();
+                }
+                catch (UnsupportedLookAndFeelException e1) {
+                }
+            });
+        });
 
         JButton r = new JButton("Render");
         r.addActionListener(e -> {
@@ -233,7 +260,11 @@ public class Main {
             panel.add(htmlPanel);
         });
 
-        panel.add(r, BorderLayout.NORTH);
+        JPanel top = new JPanel();
+        top.add(changeTheme);
+        top.add(r);
+
+        panel.add(top, BorderLayout.NORTH);
 
         frame.setVisible(true);
     }

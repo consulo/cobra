@@ -1,0 +1,44 @@
+/*
+ * Cobra default theme variables.
+ *
+ * Defines --cobra-* custom properties using --swing-* built-in variables
+ * that map to Swing UIManager colors.  Override these in a custom
+ * DefaultCssFactory implementation to change how the engine looks.
+ *
+ * Built-in read-only variables provided by CSSVariableResolver:
+ *   --laf-dark                    "true" when the current L&F has a dark background
+ *   --swing-panel-background      UIManager: Panel.background
+ *   --swing-label-foreground      UIManager: Label.foreground
+ *   --swing-text-background       UIManager: TextField.background
+ *   --swing-text-foreground       UIManager: TextField.foreground
+ *   --swing-button-background     UIManager: Button.background
+ *   --swing-button-foreground     UIManager: Button.foreground
+ *   --swing-selection-background  UIManager: TextArea.selectionBackground
+ *   --swing-selection-foreground  UIManager: TextArea.selectionForeground
+ *   --swing-separator-foreground  UIManager: Separator.foreground
+ *   --swing-disabled-foreground   UIManager: Label.disabledForeground
+ */
+:root {
+  /* Base document colors */
+  --cobra-fg:                var(--swing-label-foreground);
+  --cobra-bg:                var(--swing-panel-background);
+
+  /* Form control colors */
+  --cobra-input-bg:          var(--swing-text-background);
+  --cobra-input-fg:          var(--swing-text-foreground);
+  --cobra-button-bg:         var(--swing-button-background);
+  --cobra-button-fg:         var(--swing-button-foreground);
+
+  /* Selection */
+  --cobra-selection-bg:      var(--swing-selection-background);
+  --cobra-selection-fg:      var(--swing-selection-foreground);
+
+  /* Misc */
+  --cobra-disabled-fg:       var(--swing-disabled-foreground);
+  --cobra-separator-fg:      var(--swing-separator-foreground);
+
+  /* Links (browser defaults) */
+  --cobra-link:              #0000EE;
+  --cobra-visited:           #551A8B;
+  --cobra-active-link:       #FF0000;
+}

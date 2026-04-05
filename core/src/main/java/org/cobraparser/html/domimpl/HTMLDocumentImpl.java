@@ -935,6 +935,14 @@ public class HTMLDocumentImpl extends NodeImpl implements HTMLDocument, Document
         }
     }
 
+    /**
+     * Clears all cached CSS stylesheets and triggers a full re-layout.
+     * Call this when the agent/user stylesheets have changed (e.g. L&F switch).
+     */
+    public void invalidateStyleSheets() {
+        this.styleSheetManager.invalidateStyles();
+    }
+
     public void allInvalidated(final boolean forgetRenderStates) {
         if (forgetRenderStates) {
             synchronized (this.treeLock) {

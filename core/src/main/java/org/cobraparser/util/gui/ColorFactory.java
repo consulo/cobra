@@ -77,7 +77,12 @@ public class ColorFactory {
     }
 
     public Color getColor(final String colorSpec) {
-        final String normalSpec = colorSpec.toLowerCase();
+        final String normalSpec = colorSpec.toLowerCase().trim();
+
+        Color systemColor = resolveSystemColor(normalSpec);
+        if (systemColor != null) {
+            return systemColor;
+        }
 
         Color standardColor = getStandardColorProvider().getColor(normalSpec);
         if (standardColor != null) {
@@ -85,6 +90,51 @@ public class ColorFactory {
         }
 
         return cachedColors.computeIfAbsent(normalSpec, ColorFactory::parseColor);
+    }
+
+    private static Color resolveSystemColor(final String name) {
+        return switch (name) {
+            case "canvas" -> {
+                Color c = javax.swing.UIManager.getColor("Panel.background");
+                yield c != null ? c : Color.WHITE;
+            }
+            case "canvastext" -> {
+                Color c = javax.swing.UIManager.getColor("Label.foreground");
+                yield c != null ? c : Color.BLACK;
+            }
+            case "buttonface" -> {
+                Color c = javax.swing.UIManager.getColor("Button.background");
+                yield c != null ? c : null;
+            }
+            case "buttontext" -> {
+                Color c = javax.swing.UIManager.getColor("Button.foreground");
+                yield c != null ? c : null;
+            }
+            case "graytext" -> {
+                Color c = javax.swing.UIManager.getColor("Label.disabledForeground");
+                yield c != null ? c : Color.GRAY;
+            }
+            case "highlight" -> {
+                Color c = javax.swing.UIManager.getColor("TextArea.selectionBackground");
+                yield c != null ? c : null;
+            }
+            case "highlighttext" -> {
+                Color c = javax.swing.UIManager.getColor("TextArea.selectionForeground");
+                yield c != null ? c : null;
+            }
+            case "field" -> {
+                Color c = javax.swing.UIManager.getColor("TextField.background");
+                yield c != null ? c : Color.WHITE;
+            }
+            case "fieldtext" -> {
+                Color c = javax.swing.UIManager.getColor("TextField.foreground");
+                yield c != null ? c : Color.BLACK;
+            }
+            case "linktext" -> new Color(0x0000EE);
+            case "visitedtext" -> new Color(0x551A8B);
+            case "activetext" -> Color.RED;
+            default -> null;
+        };
     }
 
     private static Color parseColor(String normalSpec) {

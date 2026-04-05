@@ -29,6 +29,19 @@ public abstract class DefaultCssFactory {
 
     public abstract StyleSheet getUserCSS(boolean xhtml);
 
+    /**
+     * Adds a listener notified when the CSS stylesheets need to be re-applied
+     * (e.g., after a Swing L&F change).  The default implementation delegates
+     * to {@link CSSVariableResolver#addChangeListener(Runnable)}.
+     */
+    public void addChangeListener(Runnable listener) {
+        CSSVariableResolver.INSTANCE.addChangeListener(listener);
+    }
+
+    public void removeChangeListener(Runnable listener) {
+        CSSVariableResolver.INSTANCE.removeChangeListener(listener);
+    }
+
     protected static StyleSheet parseStyle(final String cssdata) {
         return parseStyle(cssdata, StyleSheet.Origin.AGENT);
     }

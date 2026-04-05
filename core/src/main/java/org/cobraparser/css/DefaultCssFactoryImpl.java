@@ -14,20 +14,45 @@ import java.util.Objects;
  * @since 2024-11-18
  */
 public class DefaultCssFactoryImpl extends DefaultCssFactory {
-    private StyleSheet standardCSS;
-    private StyleSheet userCSS;
+    private volatile StyleSheet standardCSS;
+    private volatile StyleSheet userCSS;
 
     public DefaultCssFactoryImpl() {
-        standardCSS = readFromResource("/org/cobraparser/css/standard.css");
-        userCSS = readFromResource("/org/cobraparser/css/user.css");
+        // Load theme variables first so they are available when processing other CSS
+        loadThemeVariables();
+        buildStyleSheets();
+
+        // Rebuild when L&F changes so --swing-* variables resolve to new UIManager colors
+        CSSVariableResolver.INSTANCE.addChangeListener(this::onLafChange);
     }
 
-    private StyleSheet readFromResource(String path) {
+    private void loadThemeVariables() {
+        String themeText = readResource("/org/cobraparser/css/theme.css");
+        CSSVariableResolver.INSTANCE.loadFromCssText(themeText);
+    }
+
+    private void buildStyleSheets() {
+        standardCSS = readAndParseResource("/org/cobraparser/css/standard.css");
+        userCSS = readAndParseResource("/org/cobraparser/css/user.css");
+    }
+
+    private void onLafChange() {
+        // Re-resolve variables (--swing-* hex values may have changed for unmapped keys)
+        loadThemeVariables();
+        buildStyleSheets();
+    }
+
+    private StyleSheet readAndParseResource(String path) {
+        String raw = readResource(path);
+        String processed = CSSVariableResolver.INSTANCE.resolve(raw);
+        return parseStyle(processed);
+    }
+
+    private String readResource(String path) {
         try {
             URL resource = getClass().getResource(path);
             Objects.requireNonNull(resource, path);
-            String body = Files.readString(Path.of(resource.toURI()));
-            return parseStyle(body);
+            return Files.readString(Path.of(resource.toURI()));
         }
         catch (IOException | URISyntaxException e) {
             throw new RuntimeException(path, e);
