@@ -24,6 +24,7 @@ package org.cobraparser.html.style;
 import cz.vutbr.web.css.*;
 import cz.vutbr.web.csskit.RuleFactoryImpl;
 import cz.vutbr.web.csskit.antlr4.CSSParserFactory;
+import org.cobraparser.css.CSSVariableResolver;
 import org.cobraparser.html.domimpl.HTMLDocumentImpl;
 import org.cobraparser.html.domimpl.HTMLElementImpl;
 import org.cobraparser.ua.NetworkRequest;
@@ -119,7 +120,8 @@ public class CSSUtilities {
 
     final String text = request.getResponseText();
     if ((text != null) && !"".equals(text)) {
-      final String processedText = considerDoubleSlashComments ? preProcessCss(text) : text;
+      String processedText = considerDoubleSlashComments ? preProcessCss(text) : text;
+      processedText = CSSVariableResolver.INSTANCE.resolve(processedText);
       return jParseCSS2(ownerNode, cssURI, processedText, bcontext);
     } else {
       return getEmptyStyleSheet();

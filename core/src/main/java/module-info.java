@@ -9,7 +9,7 @@ module cobra.core {
 
     requires org.slf4j;
 
-    requires static net.sf.cssbox.jstyleparser;
+    requires net.sf.cssbox.jstyleparser;
     requires static xml.apis.ext;
 
     exports org.cobraparser.html;

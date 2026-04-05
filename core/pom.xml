@@ -67,15 +67,9 @@
         </dependency>
 
         <dependency>
-            <groupId>net.sf.cssbox</groupId>
-            <artifactId>jstyleparser</artifactId>
-            <version>4.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cobra-jstyleparser</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
