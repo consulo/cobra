@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLStreamHandler;
+import java.util.Base64;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,7 @@ public class DataURLHandler extends URLStreamHandler
                 bytes = URLDecoder.decode(data, charset).getBytes(charset);
             else
                 try {
-                    bytes = Base64Coder.decode(data);
+                    bytes = Base64.getDecoder().decode(data);
                 } catch (Exception e) {
                     throw new IOException("Couldn't decode base64 data", e);
                 }
