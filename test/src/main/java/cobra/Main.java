@@ -1,6 +1,6 @@
 package cobra;
 
-import cz.vutbr.web.domassign.SupportedCSS3;
+import com.formdev.flatlaf.FlatLightLaf;
 import org.cobraparser.html.AbstractHtmlRendererContext;
 import org.cobraparser.html.FormInput;
 import org.cobraparser.html.domimpl.HTMLDocumentImpl;
@@ -31,7 +31,18 @@ import java.util.concurrent.ForkJoinPool;
  */
 public class Main {
     public static void main(String[] args) throws Exception {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        SwingUtilities.invokeLater(() -> {
+            try {
+                show();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private static void show() throws Exception {
+        FlatLightLaf.setup();
 
         URL resource = Main.class.getResource("/cobra/SomeHtml.html");
 
@@ -224,8 +235,6 @@ public class Main {
 
         panel.add(r, BorderLayout.NORTH);
 
-        SwingUtilities.invokeLater(() -> {
-            frame.setVisible(true);
-        });
+        frame.setVisible(true);
     }
 }
