@@ -6,8 +6,15 @@ import org.cobraparser.ua.NetworkRequestListener;
 import org.cobraparser.ua.UserAgentContext.Request;
 import org.w3c.dom.Document;
 
+import com.github.weisj.jsvg.SVGDocument;
+import com.github.weisj.jsvg.attributes.ViewBox;
+import com.github.weisj.jsvg.geometry.size.FloatSize;
+import com.github.weisj.jsvg.parser.SVGLoader;
+
 import javax.imageio.ImageIO;
 import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +36,7 @@ public class SimpleNetworkRequest implements NetworkRequest {
     private volatile int status = 0;
     private volatile byte[] responseBytes;
     private volatile URL requestUrl;
+    private volatile String classpathResource;
     private volatile boolean async;
 
     @Override
@@ -51,11 +59,39 @@ public class SimpleNetworkRequest implements NetworkRequest {
     public ImageResponse getResponseImage() {
         byte[] b = responseBytes;
         if (b == null) return new ImageResponse(ImageResponse.State.error, null);
+        if (isSvgContent(b)) {
+            return renderSvg(b);
+        }
         try {
             Image img = ImageIO.read(new ByteArrayInputStream(b));
             if (img == null) return new ImageResponse(ImageResponse.State.error, null);
             return new ImageResponse(ImageResponse.State.loaded, img);
         } catch (IOException e) {
+            return new ImageResponse(ImageResponse.State.error, null);
+        }
+    }
+
+    private static boolean isSvgContent(byte[] bytes) {
+        int checkLen = Math.min(bytes.length, 512);
+        String head = new String(bytes, 0, checkLen, java.nio.charset.StandardCharsets.UTF_8);
+        return head.contains("<svg");
+    }
+
+    private static ImageResponse renderSvg(byte[] bytes) {
+        try {
+            SVGDocument doc = new SVGLoader().load(new ByteArrayInputStream(bytes));
+            if (doc == null) return new ImageResponse(ImageResponse.State.error, null);
+            FloatSize size = doc.size();
+            int w = Math.max(1, (int) Math.ceil(size.width));
+            int h = Math.max(1, (int) Math.ceil(size.height));
+            BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+            var g = img.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            doc.render(null, g, new ViewBox(0, 0, w, h));
+            g.dispose();
+            return new ImageResponse(ImageResponse.State.loaded, img);
+        } catch (Exception e) {
             return new ImageResponse(ImageResponse.State.error, null);
         }
     }
@@ -92,6 +128,11 @@ public class SimpleNetworkRequest implements NetworkRequest {
 
     @Override
     public void open(String method, String url) throws IOException {
+        if (url.startsWith("classpath:")) {
+            this.classpathResource = url.substring("classpath:".length());
+            setReadyState(STATE_LOADING);
+            return;
+        }
         open(method, new URL(url), true);
     }
 
@@ -124,14 +165,30 @@ public class SimpleNetworkRequest implements NetworkRequest {
 
     @Override
     public void send(String content, Request requestType) throws IOException {
-        if (async) {
-            ForkJoinPool.commonPool().execute(this::execute);
-        } else {
+        if (classpathResource != null || !async) {
             execute();
+        } else {
+            ForkJoinPool.commonPool().execute(this::execute);
         }
     }
 
     private void execute() {
+        String cp = classpathResource;
+        if (cp != null) {
+            try (InputStream in = getClass().getResourceAsStream(cp)) {
+                if (in != null) {
+                    responseBytes = in.readAllBytes();
+                    status = 200;
+                } else {
+                    status = 404;
+                }
+            } catch (Exception e) {
+                status = 0;
+                responseBytes = null;
+            }
+            setReadyState(STATE_COMPLETE);
+            return;
+        }
         try {
             URL url = requestUrl;
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -157,6 +214,10 @@ public class SimpleNetworkRequest implements NetworkRequest {
 
     @Override
     public Optional<URL> getURL() {
+        if (classpathResource != null) {
+            URL u = getClass().getResource(classpathResource);
+            return Optional.ofNullable(u);
+        }
         return Optional.ofNullable(requestUrl);
     }
 

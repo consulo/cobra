@@ -180,7 +180,7 @@ public class FontFactory {
     if ("italic".equalsIgnoreCase(key.fontStyle)) {
       fontStyle |= Font.ITALIC;
     }
-    if ("bold".equalsIgnoreCase(key.fontWeight) || "bolder".equalsIgnoreCase(key.fontWeight)) {
+    if (isBoldWeight(key.fontWeight)) {
       fontStyle |= Font.BOLD;
     }
     if (baseFont != null) {
@@ -211,6 +211,16 @@ public class FontFactory {
     }
     // Last resort:
     return createFont(this.defaultFontName, fontStyle, Math.round(key.fontSize));
+  }
+
+  private static boolean isBoldWeight(final String weight) {
+    if (weight == null) return false;
+    if ("bold".equalsIgnoreCase(weight) || "bolder".equalsIgnoreCase(weight)) return true;
+    try {
+      return Integer.parseInt(weight.trim()) >= 600;
+    } catch (NumberFormatException e) {
+      return false;
+    }
   }
 
   private static Font createFont(final String name, final int style, final int size) {

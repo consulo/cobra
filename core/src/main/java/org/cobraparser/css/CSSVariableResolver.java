@@ -40,7 +40,7 @@ public class CSSVariableResolver {
         swingKeys.put("--swing-selection-foreground", "TextArea.selectionForeground");
         swingKeys.put("--swing-separator-foreground", "Separator.foreground");
         swingKeys.put("--swing-disabled-foreground", "Label.disabledForeground");
-        swingKeys.put("--swing-link-foreground", "Label.foreground");
+        swingKeys.put("--swing-link-color", "Component.linkColor");
         SWING_UI_KEYS = Collections.unmodifiableMap(swingKeys);
     }
 

@@ -2,26 +2,109 @@
 <html>
 <head>
     <title>Title</title>
-
-    <style>
-        td {
-            border: 1px solid red
-        }
-    </style>
+    <link rel="stylesheet" href="classpath:/cobra/markdown.css"/>
 </head>
-<body>
-    <a href="https://google.com">Link test</a>
+<body class="markdown-body">
+<h2 id="about">About</h2>
 
-    <p>Test</p>
-    <span>Test</span>
-    <img src="https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68" width="30px">
-    <hr>
-    <table>
-        <tr>
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
-        </tr>
-    </table>
+<p>Consulo - multi-language ide. Project was started in year 2013 by forking <a href="https://github.com/JetBrains/intellij-community">IDEA
+    Community Edition</a>.</p>
+
+<p>Main goal - to create an <strong>open</strong> IDE, where you don&#39;t need to select an IDE for different languages. Instead, provide a
+    standard for language implementation inside the IDE.</p>
+
+<h2 id="contributing">Contributing</h2>
+
+<p>If you can&#39;t describe the issue, you can use our <a href="https://github.com/orgs/consulo/discussions/">forum</a>, or you can read
+    the <a href="https://github.com/consulo/consulo/blob/master/CONTRIBUTING.md">contributing guide</a> and report the issue at GitHub</p>
+
+<h2 id="building-running">Building &amp; Running</h2>
+
+<h3 id="build-status">Build Status</h3>
+<table>
+    <thead>
+    <tr>
+        <th>JVM</th>
+        <th style="text-align:right">Github Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Java 21</td>
+        <td style="text-align:right"><img src="https://github.com/consulo/consulo/workflows/jdk21/badge.svg" alt="jdk21"></td>
+    </tr>
+    <tr>
+        <td>Java 22</td>
+        <td style="text-align:right"><img src="https://github.com/consulo/consulo/workflows/jdk22/badge.svg" alt="jdk22"></td>
+    </tr>
+    <tr>
+        <td>Java 23</td>
+        <td style="text-align:right"><img src="https://github.com/consulo/consulo/workflows/jdk23/badge.svg" alt="jdk23"></td>
+    </tr>
+    <tr>
+        <td>Java 24</td>
+        <td style="text-align:right"><img src="https://github.com/consulo/consulo/workflows/jdk24/badge.svg" alt="jdk23"></td>
+    </tr>
+    </tbody>
+</table>
+<p>First of all, you need these tools:</p>
+<ul>
+    <li>Maven 3.9+</li>
+    <li>JDK 21+</li>
+</ul>
+<p>Then execute from command line:</p>
+<pre><code class="lang-sh">mvn <span class="hljs-class"><span class="hljs-keyword">package</span></span>
+</code></pre>
+<p>If you want run Consulo from repository</p>
+<ul>
+    <li><p>as a desktop application</p>
+<pre><code class="lang-sh"> <span class="hljs-keyword">mvn </span>install
+
+    <span class="hljs-keyword">mvn </span>consulo:run-desktop-awt-fork -pl consulo:consulo-sandbox-desktop-awt
+</code></pre>
+    </li>
+    <li><p>as a web application</p>
+
+        <p>first need build web sandbox</p>
+<pre><code>mvn <span class="hljs-keyword">package</span> <span class="hljs-title">-am -pl consulo:consulo-sandbox-web</span>
+</code></pre>
+        <p>then need start code server (since we used gwt as frontend)</p>
+<pre><code class="lang-sh">cd modules/web/web-ui-impl-client
+
+    mvn -am vaadin:<span class="hljs-keyword">run</span><span class="bash">-codeserver</span>
+</code></pre>
+        <p>and start web server</p>
+<pre><code class="lang-sh"><span class="hljs-keyword">cd</span> modules/web/web-<span class="hljs-keyword">bootstrap</span>
+
+    mvn -am jetty:<span class="hljs-keyword">run</span>
+</code></pre>
+    </li>
+</ul>
+<h2 id="sandbox-projects">Sandbox Projects</h2>
+<ul>
+    <li>Profiler API <a href="https://github.com/consulo/profiler-sandbox">link</a></li>
+    <li>Diagram support <a href="https://github.com/consulo/consulo/tree/master/modules/base/graph-api">link</a></li>
+    <li>Web IDE <a href="https://github.com/consulo/consulo/tree/master/modules/web">link</a></li>
+    <li>SWT UI <a href="https://github.com/consulo/consulo/tree/master/modules/desktop-swt">link</a></li>
+</ul>
+<h2 id="links">Links</h2>
+<ul>
+    <li><a href="https://github.com/consulo/consulo/blob/master/CONTRIBUTING.md">Contributing Guide</a></li>
+    <li><a href="https://consulo.app">Download</a></li>
+    <li><a href="https://github.com/consulo/consulo/issues">Issues</a></li>
+    <li><a href="https://https://github.com/consulo/consulo/discussions/">Forum</a></li>
+    <li><a href="https://discord.gg/Ab3Ka5gTFv">Discord Channel</a></li>
+</ul>
+<h2 id="we-are-using-yourkit-java-profiler-">We are using YourKit Java Profiler!</h2>
+
+<p><img src="https://www.yourkit.com/images/yklogo.png" alt=""></p>
+
+<p>YourKit supports open source projects with innovative and intelligent tools
+    for monitoring and profiling Java and .NET applications.</p>
+
+<p>YourKit is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a>,
+    <a href="https://www.yourkit.com/dotnet-profiler/">YourKit .NET Profiler</a>,
+    and <a href="https://www.yourkit.com/youmonitor/">YourKit YouMonitor</a>.</p>
+
 </body>
 </html>

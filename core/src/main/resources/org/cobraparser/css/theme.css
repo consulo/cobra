@@ -17,6 +17,7 @@
  *   --swing-selection-foreground  UIManager: TextArea.selectionForeground
  *   --swing-separator-foreground  UIManager: Separator.foreground
  *   --swing-disabled-foreground   UIManager: Label.disabledForeground
+ *   --swing-link-color            UIManager: Component.linkColor (FlatLaf; null on other LAFs)
  */
 :root {
   /* Base document colors */
@@ -36,12 +37,22 @@
   /* Typography */
   --cobra-font-size:         var(--swing-label-font-size);
 
+  /* Base sizing tokens (used by markdown.css and other content stylesheets) */
+  --base-size-4: 0.25rem;
+  --base-size-8: 0.5rem;
+  --base-size-16: 1rem;
+  --base-size-24: 1.5rem;
+  --base-size-40: 2.5rem;
+  --base-text-weight-normal: 400;
+  --base-text-weight-medium: 500;
+  --base-text-weight-semibold: 600;
+
   /* Misc */
   --cobra-disabled-fg:       var(--swing-disabled-foreground);
   --cobra-separator-fg:      var(--swing-separator-foreground);
 
-  /* Links (browser defaults) */
-  --cobra-link:              #0000EE;
+  /* Links — use LAF-provided link color when available (e.g. FlatLaf Component.linkColor) */
+  --cobra-link:              var(--swing-link-color, #0000EE);
   --cobra-visited:           #551A8B;
   --cobra-active-link:       #FF0000;
 }
