@@ -33,6 +33,9 @@
   --cobra-selection-bg:      var(--swing-selection-background);
   --cobra-selection-fg:      var(--swing-selection-foreground);
 
+  /* Typography */
+  --cobra-font-size:         var(--swing-label-font-size);
+
   /* Misc */
   --cobra-disabled-fg:       var(--swing-disabled-foreground);
   --cobra-separator-fg:      var(--swing-separator-foreground);

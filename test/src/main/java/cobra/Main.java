@@ -138,16 +138,6 @@ public class Main {
                         }
 
                         @Override
-                        public boolean isExternalCSSEnabled() {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean isInternalCSSEnabled() {
-                            return false;
-                        }
-
-                        @Override
                         public String getPlatform() {
                             return null;
                         }

@@ -1,4 +1,4 @@
-html            { color: var(--cobra-fg); background-color: var(--cobra-bg); color-scheme: light dark; }
+html            { color: var(--cobra-fg); background-color: var(--cobra-bg); font-size: var(--cobra-font-size); color-scheme: light dark; }
 html, address,
 blockquote,
 body, dd, div,

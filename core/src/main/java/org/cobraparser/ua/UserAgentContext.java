@@ -101,13 +101,18 @@ public interface UserAgentContext {
    * Returns a boolean value indicating whether remote (non-inline) CSS
    * documents should be loaded. TODO: Remove
    */
-  public boolean isExternalCSSEnabled();
+  default boolean isExternalCSSEnabled() {
+    return true;
+  }
 
   /**
    * Returns a boolean value indicating whether STYLE tags should be processed.
    * TODO: Remove
    */
-  public boolean isInternalCSSEnabled();
+  @Deprecated
+  default boolean isInternalCSSEnabled() {
+      return true;
+  }
 
   /**
    * Gets the name of the user's operating system.

@@ -126,14 +126,11 @@ public class HTMLStyleElementImpl extends HTMLElementImpl implements HTMLStyleEl
        we need not check for the media type here, jStyle parser should take care of this.
        */
       if (isAllowedType()) {
-        final UserAgentContext uacontext = this.getUserAgentContext();
-        if (uacontext.isInternalCSSEnabled()) {
-          final HTMLDocumentImpl doc = (HTMLDocumentImpl) this.getOwnerDocument();
-          final JStyleSheetWrapper newStyleSheet = processStyleHelper();
-          newStyleSheet.setDisabled(this.disabled);
-          this.styleSheet = newStyleSheet;
-          doc.styleSheetManager.invalidateStyles();
-        }
+        final HTMLDocumentImpl doc = (HTMLDocumentImpl) this.getOwnerDocument();
+        final JStyleSheetWrapper newStyleSheet = processStyleHelper();
+        newStyleSheet.setDisabled(this.disabled);
+        this.styleSheet = newStyleSheet;
+        doc.styleSheetManager.invalidateStyles();
       } else {
         this.detachStyleSheet();
       }

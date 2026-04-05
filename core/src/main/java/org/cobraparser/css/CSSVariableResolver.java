@@ -126,6 +126,12 @@ public class CSSVariableResolver {
             return isLafDark() ? "true" : "false";
         }
 
+        // Built-in: --swing-label-font-size — returns the Label.font size in px
+        if ("--swing-label-font-size".equals(name)) {
+            java.awt.Font f = UIManager.getFont("Label.font");
+            return (f != null ? f.getSize() : 13) + "px";
+        }
+
         // Built-in: --swing-* UIManager color variables — always resolves to hex
         // so jStyleParser can parse the resulting value without issue.
         // StyleSheets are rebuilt on L&F change (see DefaultCssFactoryImpl).
