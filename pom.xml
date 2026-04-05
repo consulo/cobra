@@ -6,7 +6,7 @@
 
     <groupId>consulo.internal.org.cobraparser</groupId>
     <artifactId>cobra-parent</artifactId>
-    <version>3.1</version>
+    <version>3.2</version>
     <packaging>pom</packaging>
 
     <modules>

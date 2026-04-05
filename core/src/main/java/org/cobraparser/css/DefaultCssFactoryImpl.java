@@ -3,8 +3,10 @@ package org.cobraparser.css;
 import cz.vutbr.web.css.StyleSheet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -38,12 +40,10 @@ public class DefaultCssFactoryImpl extends DefaultCssFactory {
     }
 
     private String readResource(String path) {
-        try {
-            URL resource = getClass().getResource(path);
-            Objects.requireNonNull(resource, path);
-            return Files.readString(Path.of(resource.toURI()));
+        try (InputStream stream = getClass().getResourceAsStream(path)) {
+            return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
         }
-        catch (IOException | URISyntaxException e) {
+        catch (IOException e) {
             throw new RuntimeException(path, e);
         }
     }
