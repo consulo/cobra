@@ -11,9 +11,14 @@ import java.util.Map.Entry;
 import cz.vutbr.web.css.CSSProperty;
 import cz.vutbr.web.css.Declaration;
 import cz.vutbr.web.css.NodeData;
+import cz.vutbr.web.css.RuleBlock;
+import cz.vutbr.web.css.RuleSet;
+import cz.vutbr.web.css.StyleSheet;
 import cz.vutbr.web.css.Term;
 import cz.vutbr.web.css.TermFunction;
+import cz.vutbr.web.css.VarResolver;
 import cz.vutbr.web.csskit.OutputUtil;
+import cz.vutbr.web.csskit.antlr4.CSSParserFactory;
 
 /**
  * Implementation of NodeData by single HashMap. Is more space efficient at the cost of 
@@ -25,6 +30,13 @@ import cz.vutbr.web.csskit.OutputUtil;
 public class SingleMapNodeData extends BaseNodeDataImpl {
 
 	private static final int COMMON_DECLARATION_SIZE = 7;
+
+	/** Resolves CSS custom properties at element-style-computation time (set by the core module). */
+	private static volatile VarResolver varResolver;
+
+	public static void setVarResolver(VarResolver resolver) {
+		varResolver = resolver;
+	}
 
 	private Map<String, Quadruple> map;
 	/** CSS declarations whose value contains var() — stored raw for runtime resolution. */
@@ -127,24 +139,30 @@ public class SingleMapNodeData extends BaseNodeDataImpl {
 	}
 
 	public NodeData push(Declaration d) {
-		
-		Map<String,CSSProperty> properties = 
+
+		Map<String,CSSProperty> properties =
 			new HashMap<String,CSSProperty>(COMMON_DECLARATION_SIZE);
-		Map<String,Term<?>> terms = 
+		Map<String,Term<?>> terms =
 			new HashMap<String, Term<?>>(COMMON_DECLARATION_SIZE);
-		
+
 		boolean result = transformer.parseDeclaration(d, properties, terms);
 
 		// in case of false do not insert anything
 		if(!result) {
-			// If the declaration uses var(), store the raw value for runtime resolution
 			if (hasVarTerm(d)) {
-				if (rawVarDeclarations == null) rawVarDeclarations = new HashMap<>();
-				rawVarDeclarations.put(d.getProperty(), buildTermsString(d));
+				// Try to resolve var() using the AST and re-run parseDeclaration
+				if (varResolver != null) {
+					result = tryResolveVarDeclaration(d, properties, terms);
+				}
+				if (!result) {
+					// Fallback: store raw var() string for per-property runtime resolution
+					if (rawVarDeclarations == null) rawVarDeclarations = new HashMap<>();
+					rawVarDeclarations.put(d.getProperty(), buildTermsString(d));
+				}
 			}
-			return this;
+			if (!result) return this;
 		}
-		
+
 		for(Entry<String, CSSProperty> entry : properties.entrySet()) {
 		    final String key = entry.getKey();
 			Quadruple q = map.get(key);
@@ -161,7 +179,58 @@ public class SingleMapNodeData extends BaseNodeDataImpl {
 		return this;
 
 	}
-	
+
+	/**
+	 * Resolves all var() references in the declaration terms, re-parses the resulting
+	 * declaration text as a mini-stylesheet so shorthand expansion works correctly, then
+	 * runs parseDeclaration on the result.
+	 *
+	 * @return true if resolution and parsing succeeded
+	 */
+	private boolean tryResolveVarDeclaration(Declaration d,
+	        Map<String,CSSProperty> outProperties, Map<String,Term<?>> outTerms) {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (Term<?> t : d) {
+			if (!first) {
+				Term.Operator op = t.getOperator();
+				sb.append(op == Term.Operator.COMMA ? ", " : " ");
+			}
+			if (t instanceof TermFunction.VarFunction) {
+				TermFunction.VarFunction vf = (TermFunction.VarFunction) t;
+				String varName = vf.getVarName();
+				if (varName == null) return false;
+				String resolved = varResolver.resolve(varName, null);
+				if (resolved == null) return false;
+				sb.append(resolved);
+			} else {
+				sb.append(t.toString());
+			}
+			first = false;
+		}
+		String resolvedValue = sb.toString().trim();
+		if (resolvedValue.isEmpty()) return false;
+
+		// Parse as a mini-stylesheet so jStyleParser can create properly-typed Terms
+		// (e.g. TermColor for hex colors) and expand shorthands correctly.
+		String miniCss = "* { " + d.getProperty() + ": " + resolvedValue + " }";
+		try {
+			StyleSheet ss = CSSParserFactory.getInstance().parse(
+				miniCss, null, null, CSSParserFactory.SourceType.EMBEDDED, null);
+			for (RuleBlock<?> block : ss) {
+				if (block instanceof RuleSet) {
+					RuleSet rs = (RuleSet) block;
+					for (Declaration decl : rs) {
+						if (transformer.parseDeclaration(decl, outProperties, outTerms)) {
+							return true;
+						}
+					}
+				}
+			}
+		} catch (Exception ignored) {}
+		return false;
+	}
+
 	private static boolean hasVarTerm(Declaration d) {
 		for (Term<?> t : d) {
 			if (t instanceof TermFunction.VarFunction) return true;
@@ -171,8 +240,11 @@ public class SingleMapNodeData extends BaseNodeDataImpl {
 
 	private static String buildTermsString(Declaration d) {
 		StringBuilder sb = new StringBuilder();
+		boolean first = true;
 		for (Term<?> t : d) {
+			if (!first) sb.append(' ');
 			sb.append(t.toString());
+			first = false;
 		}
 		return sb.toString().trim();
 	}

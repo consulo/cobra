@@ -116,7 +116,7 @@ public class CSSUtilities {
       }
       final String classpathText = request.getResponseText();
       if ((classpathText != null) && !"".equals(classpathText)) {
-        String processedText = considerDoubleSlashComments ? preProcessCss(classpathText) : classpathText;
+        final String processedText = considerDoubleSlashComments ? preProcessCss(classpathText) : classpathText;
         return jParseCSS2(ownerNode, baseUri, processedText, bcontext);
       } else {
         return getEmptyStyleSheet();
@@ -144,7 +144,7 @@ public class CSSUtilities {
 
     final String text = request.getResponseText();
     if ((text != null) && !"".equals(text)) {
-      String processedText = considerDoubleSlashComments ? preProcessCss(text) : text;
+      final String processedText = considerDoubleSlashComments ? preProcessCss(text) : text;
       return jParseCSS2(ownerNode, cssURI, processedText, bcontext);
     } else {
       return getEmptyStyleSheet();

@@ -1,5 +1,7 @@
 package org.cobraparser.css;
 
+import cz.vutbr.web.domassign.SingleMapNodeData;
+
 import javax.swing.UIManager;
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
@@ -64,6 +66,15 @@ public class CSSVariableResolver {
                 }
             }
         });
+        // Register this as the AST-level var() resolver for jStyleParser's SingleMapNodeData
+        SingleMapNodeData.setVarResolver(this::resolveVar);
+    }
+
+    /**
+     * Public entry point for AST-based var() resolution called from jStyleParser.
+     */
+    public String resolveVar(String varName, String fallback) {
+        return resolveVarName(varName, fallback, 0);
     }
 
     private void loadBuiltinTheme() {
