@@ -58,9 +58,9 @@
 <p>If you want run Consulo from repository</p>
 <ul>
     <li><p>as a desktop application</p>
-<pre><code class="lang-sh"> <span class="hljs-keyword">mvn </span>install
+<pre><code class="lang-sh"><span class="hljs-keyword">mvn </span>install
 
-    <span class="hljs-keyword">mvn </span>consulo:run-desktop-awt-fork -pl consulo:consulo-sandbox-desktop-awt
+<span class="hljs-keyword">mvn </span>consulo:run-desktop-awt-fork -pl consulo:consulo-sandbox-desktop-awt
 </code></pre>
     </li>
     <li><p>as a web application</p>
@@ -71,12 +71,12 @@
         <p>then need start code server (since we used gwt as frontend)</p>
 <pre><code class="lang-sh">cd modules/web/web-ui-impl-client
 
-    mvn -am vaadin:<span class="hljs-keyword">run</span><span class="bash">-codeserver</span>
+mvn -am vaadin:<span class="hljs-keyword">run</span><span class="bash">-codeserver</span>
 </code></pre>
         <p>and start web server</p>
 <pre><code class="lang-sh"><span class="hljs-keyword">cd</span> modules/web/web-<span class="hljs-keyword">bootstrap</span>
 
-    mvn -am jetty:<span class="hljs-keyword">run</span>
+mvn -am jetty:<span class="hljs-keyword">run</span>
 </code></pre>
     </li>
 </ul>
