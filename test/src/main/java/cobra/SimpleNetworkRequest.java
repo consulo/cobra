@@ -150,6 +150,12 @@ public class SimpleNetworkRequest implements NetworkRequest {
 
     @Override
     public void open(String method, String url, boolean asyncFlag) throws IOException {
+        if (url.startsWith("classpath:")) {
+            this.classpathResource = url.substring("classpath:".length());
+            this.async = asyncFlag;
+            setReadyState(STATE_LOADING);
+            return;
+        }
         open(method, new URL(url), asyncFlag);
     }
 

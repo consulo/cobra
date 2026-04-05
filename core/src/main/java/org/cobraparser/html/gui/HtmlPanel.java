@@ -102,13 +102,13 @@ public class HtmlPanel extends JComponent implements FrameContext, DefferedLayou
 
   @Override
   public void updateUI() {
-    super.updateUI();
+    // Invalidate before super so classifiedRules is null before any repaint is queued.
+    // No need to defer — CSS vars are resolved at call time in DefaultCssFactoryImpl.
     final NodeImpl root = this.rootNode;
     if (root instanceof HTMLDocumentImpl) {
-      // Defer until after the full Swing L&F update finishes so DefaultCssFactoryImpl
-      // has already rebuilt its StyleSheets with the new UIManager colors.
-      SwingUtilities.invokeLater(() -> ((HTMLDocumentImpl) root).invalidateStyleSheets());
+      ((HTMLDocumentImpl) root).invalidateStyleSheets();
     }
+    super.updateUI();
   }
 
   /**

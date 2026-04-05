@@ -24,7 +24,6 @@ package org.cobraparser.html.style;
 import cz.vutbr.web.css.*;
 import cz.vutbr.web.csskit.RuleFactoryImpl;
 import cz.vutbr.web.csskit.antlr4.CSSParserFactory;
-import org.cobraparser.css.CSSVariableResolver;
 import org.cobraparser.html.domimpl.HTMLDocumentImpl;
 import org.cobraparser.html.domimpl.HTMLElementImpl;
 import org.cobraparser.ua.NetworkRequest;
@@ -99,6 +98,31 @@ public class CSSUtilities {
       final boolean considerDoubleSlashComments) throws MalformedURLException {
     final UserAgentContext bcontext = doc.getUserAgentContext();
     final NetworkRequest request = bcontext.createHttpRequest();
+
+    if (href.startsWith("classpath:")) {
+      SecurityUtil.doPrivileged(() -> {
+        try {
+          request.open("GET", href);
+          request.send(null, new Request(new URL(baseUri), RequestKind.CSS));
+        } catch (final IOException thrown) {
+          logger.warn("parse()", thrown);
+        }
+        return getEmptyStyleSheet();
+      });
+      final int classpathStatus = request.getStatus();
+      if ((classpathStatus != 200) && (classpathStatus != 0)) {
+        logger.warn("Unable to parse CSS. URI=[" + href + "]. Response status was " + classpathStatus + ".");
+        return getEmptyStyleSheet();
+      }
+      final String classpathText = request.getResponseText();
+      if ((classpathText != null) && !"".equals(classpathText)) {
+        String processedText = considerDoubleSlashComments ? preProcessCss(classpathText) : classpathText;
+        return jParseCSS2(ownerNode, baseUri, processedText, bcontext);
+      } else {
+        return getEmptyStyleSheet();
+      }
+    }
+
     final URL baseURL = new URL(baseUri);
     final URL cssURL = Urls.createURL(baseURL, href);
     final String cssURI = cssURL.toExternalForm();
@@ -121,7 +145,6 @@ public class CSSUtilities {
     final String text = request.getResponseText();
     if ((text != null) && !"".equals(text)) {
       String processedText = considerDoubleSlashComments ? preProcessCss(text) : text;
-      processedText = CSSVariableResolver.INSTANCE.resolve(processedText);
       return jParseCSS2(ownerNode, cssURI, processedText, bcontext);
     } else {
       return getEmptyStyleSheet();

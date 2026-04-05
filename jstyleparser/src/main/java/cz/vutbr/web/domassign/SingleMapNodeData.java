@@ -12,6 +12,7 @@ import cz.vutbr.web.css.CSSProperty;
 import cz.vutbr.web.css.Declaration;
 import cz.vutbr.web.css.NodeData;
 import cz.vutbr.web.css.Term;
+import cz.vutbr.web.css.TermFunction;
 import cz.vutbr.web.csskit.OutputUtil;
 
 /**
@@ -24,8 +25,12 @@ import cz.vutbr.web.csskit.OutputUtil;
 public class SingleMapNodeData extends BaseNodeDataImpl {
 
 	private static final int COMMON_DECLARATION_SIZE = 7;
-	
+
 	private Map<String, Quadruple> map;
+	/** CSS declarations whose value contains var() — stored raw for runtime resolution. */
+	private Map<String, String> rawVarDeclarations;
+	/** Inherited raw var declarations from parent elements. */
+	private Map<String, String> inhRawVarDeclarations;
 	
 	public SingleMapNodeData() {
 		this.map = new HashMap<String, Quadruple>(css.getTotalProperties(), 1.0f);
@@ -84,8 +89,18 @@ public class SingleMapNodeData extends BaseNodeDataImpl {
     
     public String getAsString(String name, boolean includeInherited) {
         Quadruple q = map.get(name);
-        if(q==null) return null;
-        
+        if(q==null) {
+            // Fall back to raw var() declarations stored at push() time
+            if (rawVarDeclarations != null) {
+                String raw = rawVarDeclarations.get(name);
+                if (raw != null) return raw;
+            }
+            if (includeInherited && inhRawVarDeclarations != null) {
+                return inhRawVarDeclarations.get(name);
+            }
+            return null;
+        }
+
         CSSProperty prop = q.curProp;
         Term<?> value = q.curValue;
         if (prop == null && includeInherited) {
@@ -119,9 +134,16 @@ public class SingleMapNodeData extends BaseNodeDataImpl {
 			new HashMap<String, Term<?>>(COMMON_DECLARATION_SIZE);
 		
 		boolean result = transformer.parseDeclaration(d, properties, terms);
-		
+
 		// in case of false do not insert anything
-		if(!result) return this;
+		if(!result) {
+			// If the declaration uses var(), store the raw value for runtime resolution
+			if (hasVarTerm(d)) {
+				if (rawVarDeclarations == null) rawVarDeclarations = new HashMap<>();
+				rawVarDeclarations.put(d.getProperty(), buildTermsString(d));
+			}
+			return this;
+		}
 		
 		for(Entry<String, CSSProperty> entry : properties.entrySet()) {
 		    final String key = entry.getKey();
@@ -140,6 +162,21 @@ public class SingleMapNodeData extends BaseNodeDataImpl {
 
 	}
 	
+	private static boolean hasVarTerm(Declaration d) {
+		for (Term<?> t : d) {
+			if (t instanceof TermFunction.VarFunction) return true;
+		}
+		return false;
+	}
+
+	private static String buildTermsString(Declaration d) {
+		StringBuilder sb = new StringBuilder();
+		for (Term<?> t : d) {
+			sb.append(t.toString());
+		}
+		return sb.toString().trim();
+	}
+
 	public NodeData concretize() {
 
 		for(Map.Entry<String, Quadruple> entry : map.entrySet()) {
@@ -221,12 +258,29 @@ public class SingleMapNodeData extends BaseNodeDataImpl {
                 q.inhSource = qp.curSource;
                 changed = true;
 			}
-			// insert/replace only if contains inherited/original 
-			// value			
+			// insert/replace only if contains inherited/original
+			// value
 			if(changed && !q.isEmpty())
 			    map.put(key, q);
 		}
+
+		// Inherit raw var() declarations for inherited properties
+		propagateRawVarDeclarations(nd.rawVarDeclarations);
+		propagateRawVarDeclarations(nd.inhRawVarDeclarations);
+
 		return this;
+	}
+
+	private void propagateRawVarDeclarations(Map<String, String> source) {
+		if (source == null) return;
+		for (Map.Entry<String, String> entry : source.entrySet()) {
+			String key = entry.getKey();
+			CSSProperty def = css.getDefaultProperty(key);
+			if (def != null && def.inherited()) {
+				if (inhRawVarDeclarations == null) inhRawVarDeclarations = new HashMap<>();
+				inhRawVarDeclarations.putIfAbsent(key, entry.getValue());
+			}
+		}
 	}
 
 	

@@ -21,6 +21,7 @@
 package org.cobraparser.html.style;
 
 import cz.vutbr.web.css.*;
+import org.cobraparser.css.CSSVariableResolver;
 import org.cobraparser.js.AbstractScriptableDelegate;
 import org.cobraparser.js.HideFromJS;
 import org.cobraparser.util.Urls;
@@ -832,6 +833,10 @@ abstract public class JStyleProperties extends AbstractScriptableDelegate implem
         if (nodeData == null) {
             return null;
         }
-        return nodeData.getAsString(propertyName, true);
+        String value = nodeData.getAsString(propertyName, true);
+        if (value != null && value.contains("var(")) {
+            value = CSSVariableResolver.INSTANCE.resolve(value);
+        }
+        return value;
     }
 }

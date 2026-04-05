@@ -14,15 +14,17 @@ import java.util.Objects;
  * @since 2024-11-18
  */
 public class DefaultCssFactoryImpl extends DefaultCssFactory {
-    private volatile StyleSheet standardCSS;
-    private volatile StyleSheet userCSS;
+    // Raw CSS text — var() references are kept as-is and resolved at style-access time
+    private final String rawStandardCSS;
+    private final String rawUserCSS;
 
     public DefaultCssFactoryImpl() {
-        // Load theme variables first so they are available when processing other CSS
+        // Load theme variables so --cobra-* aliases are available for resolution
         loadThemeVariables();
-        buildStyleSheets();
+        rawStandardCSS = readResource("/org/cobraparser/css/standard.css");
+        rawUserCSS = readResource("/org/cobraparser/css/user.css");
 
-        // Rebuild when L&F changes so --swing-* variables resolve to new UIManager colors
+        // Reload theme variables on L&F change (theme.css may use --laf-dark etc.)
         CSSVariableResolver.INSTANCE.addChangeListener(this::onLafChange);
     }
 
@@ -31,21 +33,8 @@ public class DefaultCssFactoryImpl extends DefaultCssFactory {
         CSSVariableResolver.INSTANCE.loadFromCssText(themeText);
     }
 
-    private void buildStyleSheets() {
-        standardCSS = readAndParseResource("/org/cobraparser/css/standard.css");
-        userCSS = readAndParseResource("/org/cobraparser/css/user.css");
-    }
-
     private void onLafChange() {
-        // Re-resolve variables (--swing-* hex values may have changed for unmapped keys)
         loadThemeVariables();
-        buildStyleSheets();
-    }
-
-    private StyleSheet readAndParseResource(String path) {
-        String raw = readResource(path);
-        String processed = CSSVariableResolver.INSTANCE.resolve(raw);
-        return parseStyle(processed);
     }
 
     private String readResource(String path) {
@@ -61,11 +50,12 @@ public class DefaultCssFactoryImpl extends DefaultCssFactory {
 
     @Override
     public StyleSheet getStandardCSS(boolean xhtml) {
-        return standardCSS;
+        // Parse raw CSS — var() references are resolved at style-access time in JStyleProperties
+        return parseStyle(rawStandardCSS);
     }
 
     @Override
     public StyleSheet getUserCSS(boolean xhtml) {
-        return userCSS;
+        return parseStyle(rawUserCSS);
     }
 }

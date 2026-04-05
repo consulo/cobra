@@ -161,18 +161,40 @@ final class TableMatrix {
   }
 
   private int getCellSpacingAttribute() {
+    // border-collapse: collapse overrides border-spacing and forces 0 spacing
+    final JStyleProperties tableStyle = this.tableElement.getCurrentStyle();
+    if (tableStyle != null) {
+      final String borderCollapse = tableStyle.getBorderCollapse();
+      if ("collapse".equalsIgnoreCase(borderCollapse)) {
+        return 0;
+      }
+    }
+
+    // Try CSS border-spacing first
+    if (tableStyle != null) {
+      final String borderSpacing = tableStyle.getBorderSpacing();
+      if (borderSpacing != null && !borderSpacing.isEmpty()) {
+        // border-spacing can be "Npx" or "Npx Mpx" (horizontal vertical)
+        // Use the first (horizontal) value as uniform spacing
+        final String first = borderSpacing.trim().split("\\s+")[0];
+        final int px = HtmlValues.getPixelSize(first, this.tableElement.getRenderState(), 0, 0);
+        if (px >= 0) {
+          return px;
+        }
+      }
+    }
+
+    // Fall back to HTML cellspacing attribute
     int cellSpacing = 0;
     final String cellSpacingText = this.tableElement.getAttribute("cellspacing");
     if (cellSpacingText != null) {
       try {
-        // TODO: cellSpacing can be a percentage as well
         cellSpacing = Integer.parseInt(cellSpacingText);
         if (cellSpacing < 0) {
           cellSpacing = 0;
         }
       } catch (final NumberFormatException nfe) {
         System.out.println("Exception while parsing cellSpacing: " + nfe);
-        // ignore
       }
     }
     return cellSpacing;

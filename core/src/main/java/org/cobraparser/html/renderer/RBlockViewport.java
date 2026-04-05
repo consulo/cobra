@@ -127,7 +127,7 @@ public class RBlockViewport extends BaseRCollection {
     el.put("INPUT", new InputLayout2());
     el.put("TEXTAREA", new TextAreaLayout2());
     el.put("SELECT", new SelectLayout());
-    el.put("HR", new HrLayout());
+    // HR uses CSS-based block rendering (border-bottom, height, margin from UA/author stylesheet)
     final ObjectLayout ol = new ObjectLayout(false, true);
     el.put("OBJECT", new ObjectLayout(true, true));
     el.put("APPLET", ol);
@@ -1584,14 +1584,6 @@ public class RBlockViewport extends BaseRCollection {
     }
   }
 
-  private final void layoutHr(final HTMLElementImpl markupElement) {
-    RElement renderable = (RElement) markupElement.getUINode();
-    if (renderable == null) {
-      renderable = this.setupNewUIControl(container, markupElement, new HrControl(markupElement));
-    }
-    renderable.layout(this.availContentWidth, this.availContentHeight, this.sizeOnly);
-    this.addAlignableAsBlock(markupElement, renderable);
-  }
 
   private final static BaseInputControl createInputControl(final HTMLBaseInputElement markupElement) {
     String type = markupElement.getAttribute("type");
@@ -2057,18 +2049,6 @@ public class RBlockViewport extends BaseRCollection {
     }
   }
 
-  private static class HrLayout implements MarkupLayout {
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.xamjwg.html.renderer.MarkupLayout#layoutMarkup(java.awt.Container,
-     * java.awt.Insets, org.xamjwg.html.domimpl.HTMLElementImpl)
-     */
-    public void layoutMarkup(final RBlockViewport bodyLayout, final HTMLElementImpl markupElement) {
-      bodyLayout.layoutHr(markupElement);
-    }
-  }
 
   private static class ObjectLayout extends CommonWidgetLayout {
     private final boolean tryToRenderContent;
@@ -2321,6 +2301,10 @@ public class RBlockViewport extends BaseRCollection {
         final String tagName = markupElement.getTagName();
         if ("UL".equalsIgnoreCase(tagName) || "OL".equalsIgnoreCase(tagName)) {
           bodyLayout.layoutList(markupElement);
+        } else if ("TABLE".equalsIgnoreCase(tagName)) {
+          // CSS display:block on <table> still renders table content as a table
+          // (same as Chrome anonymous table box generation behavior)
+          bodyLayout.layoutRTable(markupElement);
         } else {
           bodyLayout.layoutRBlock(markupElement);
         }

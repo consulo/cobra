@@ -23,8 +23,6 @@ import java.util.regex.Pattern;
  * @author VISTALL
  */
 public class CSSVariableResolver {
-    public static final CSSVariableResolver INSTANCE = new CSSVariableResolver();
-
     // --swing-<name> → UIManager key
     private static final Map<String, String> SWING_UI_KEYS;
 
@@ -49,11 +47,15 @@ public class CSSVariableResolver {
     private static final Pattern VAR_PATTERN =
             Pattern.compile("var\\(\\s*(--[\\w-]+)(?:\\s*,\\s*([^)]+))?\\s*\\)");
 
+    // INSTANCE must be declared after all static patterns/maps so they are initialized first
+    public static final CSSVariableResolver INSTANCE = new CSSVariableResolver();
+
     // User-defined variables loaded from theme CSS
     private final Map<String, String> variables = new LinkedHashMap<>();
     private final java.util.List<Runnable> changeListeners = new CopyOnWriteArrayList<>();
 
     private CSSVariableResolver() {
+        loadBuiltinTheme();
         UIManager.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -62,6 +64,15 @@ public class CSSVariableResolver {
                 }
             }
         });
+    }
+
+    private void loadBuiltinTheme() {
+        try (java.io.InputStream in = CSSVariableResolver.class.getResourceAsStream("/org/cobraparser/css/theme.css")) {
+            if (in != null) {
+                loadFromCssText(new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8));
+            }
+        } catch (java.io.IOException ignored) {
+        }
     }
 
     /**

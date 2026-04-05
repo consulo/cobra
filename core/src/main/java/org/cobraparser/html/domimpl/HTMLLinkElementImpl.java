@@ -126,12 +126,16 @@ public class HTMLLinkElementImpl extends HTMLAbstractUIElement implements HTMLLi
 
   // TODO can go in Urls util class.
   private boolean isWellFormedURL() {
+    final String href = this.getHref();
+    if (href.startsWith("classpath:")) {
+      return true;
+    }
     final HTMLDocumentImpl doc = (HTMLDocumentImpl) this.getOwnerDocument();
     try {
       final URL baseURL = new URL(doc.getBaseURI());
       // we call createURL just to check whether it throws an exception
       // if the URL is not well formed.
-      Urls.createURL(baseURL, this.getHref());
+      Urls.createURL(baseURL, href);
       return true;
     } catch (final MalformedURLException mfe) {
       // this.warn("Will not parse CSS. URI=[" + this.getHref() + "] with BaseURI=[" + doc.getBaseURI() + "] does not appear to be a valid URI.");
