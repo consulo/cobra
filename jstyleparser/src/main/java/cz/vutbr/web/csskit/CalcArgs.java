@@ -248,7 +248,7 @@ public class CalcArgs extends ArrayList<Term<?>> {
                 case '*': return val1 * val2;
                 case '/': return val1 / val2;
                 default:
-                    log.error("Unknown operator {} in expression", op);
+                    log.debug("Unknown operator {} in expression", op);
                     return 0.0;
             }
         }
@@ -259,7 +259,7 @@ public class CalcArgs extends ArrayList<Term<?>> {
             if (op.getValue() == '~') {
                 return -val;
             } else {
-                log.error("Unknown unary operator {} in expression", op);
+                log.debug("Unknown unary operator {} in expression", op);
                 return val;
             }
         }
@@ -297,7 +297,7 @@ public class CalcArgs extends ArrayList<Term<?>> {
                 case '*': return val1 * val2;
                 case '/': return val1 / val2;
                 default:
-                    log.error("Unknown operator {} in expression", op);
+                    log.debug("Unknown operator {} in expression", op);
                     return 0.0f;
             }
         }
@@ -308,7 +308,7 @@ public class CalcArgs extends ArrayList<Term<?>> {
             if (op.getValue() == '~') {
                 return -val;
             } else {
-                log.error("Unknown unary operator {} in expression", op);
+                log.debug("Unknown unary operator {} in expression", op);
                 return val;
             }
         }

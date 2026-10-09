@@ -42,7 +42,7 @@ public final class ImageResponse {
     if (state == State.loaded) {
       assert(img != null);
       Image imgLocal = img;
-      return imgLocal.getWidth(null) >= 0 && imgLocal.getHeight(null) >= 0;
+      return ImageService.INSTANCE.getWidth(imgLocal, null) >= 0 && ImageService.INSTANCE.getHeight(imgLocal, null) >= 0;
     } else {
       return false;
     }
@@ -52,7 +52,7 @@ public final class ImageResponse {
     if (state == State.loaded) {
       assert(img != null);
       Image imgLocal = img;
-      return imgLocal.getWidth(null) >= 0 && imgLocal.getHeight(null) >= 0;
+      return ImageService.INSTANCE.getWidth(imgLocal, null) >= 0 && ImageService.INSTANCE.getHeight(imgLocal, null) >= 0;
     } else {
       return state != State.loading;
     }

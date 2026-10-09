@@ -27,4 +27,5 @@ module cobra.core {
 
     uses org.cobraparser.css.DefaultCssFactory;
     uses org.cobraparser.css.StandardColorProvider;
+    uses org.cobraparser.ua.ImageService;
 }

@@ -1076,7 +1076,7 @@ public class CSSParserVisitorImpl implements CSSParserVisitor<Object>, CSSParser
     public Object visitValuepart(CSSParser.ValuepartContext ctx) {
         logEnter("valuepart: ", ctx);
         if (ctxHasErrorNode(ctx)) {
-            log.error("value part with error");
+            log.debug("value part with error");
             terms_stack.peek().term = null;
             declaration_stack.peek().invalid = true;
             return null;
@@ -1173,7 +1173,7 @@ public class CSSParserVisitorImpl implements CSSParserVisitor<Object>, CSSParser
             if (terms_stack.peek().term == null)
                 declaration_stack.peek().invalid = true; //invalid bracketed ident - invalidate the whole declaration
         } else {
-            log.error("unhandled valueparts");
+            log.debug("unhandled valueparts");
             terms_stack.peek().term = null;
             declaration_stack.peek().invalid = true;
         }
@@ -1227,7 +1227,7 @@ public class CSSParserVisitorImpl implements CSSParserVisitor<Object>, CSSParser
     {
         logEnter("funct_argument: ", ctx);
         if (ctxHasErrorNode(ctx)) {
-            log.error("argument with error");
+            log.debug("argument with error");
             funct_args_stack.peek().term = null;
             declaration_stack.peek().invalid = true;
             return null;
@@ -1323,7 +1323,7 @@ public class CSSParserVisitorImpl implements CSSParserVisitor<Object>, CSSParser
                 declaration_stack.peek().invalid = true;
             }
         } else {
-            log.error("unhandled funct_args");
+            log.debug("unhandled funct_args");
             funct_args_stack.peek().term = null;
             declaration_stack.peek().invalid = true;
         }
@@ -1664,7 +1664,7 @@ public class CSSParserVisitorImpl implements CSSParserVisitor<Object>, CSSParser
                 (pseudo instanceof Selector.PseudoPage && ((Selector.PseudoPage) pseudo).getType() == null) ||
                 (pseudo instanceof Selector.PseudoClass && ((Selector.PseudoClass) pseudo).getType() == null) ||
                 (pseudo instanceof Selector.PseudoElement && ((Selector.PseudoElement) pseudo).getType() == null)) {
-            log.error("invalid pseudo declaration: " + name);
+            log.debug("invalid pseudo declaration: " + name);
             pseudo = null; // invalid
         }
         logLeave("pseudo");
@@ -1732,7 +1732,7 @@ public class CSSParserVisitorImpl implements CSSParserVisitor<Object>, CSSParser
 
     @Override
     public Object visitErrorNode(ErrorNode errorNode) {
-        log.error("visitErrorNode");
+        log.debug("visitErrorNode");
         return null;
     }
 

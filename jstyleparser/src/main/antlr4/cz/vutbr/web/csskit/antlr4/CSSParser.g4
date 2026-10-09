@@ -68,7 +68,7 @@ inlinestyle
 	: S*  ( declarations | inlineset+ )
 	;
     catch [RecognitionException re] {
-        log.error("Recognition exception | inlinestyle | should be EMPTY");
+        log.debug("Recognition exception | inlinestyle | should be EMPTY");
     }
 
 //http://www.w3.org/TR/css-syntax-3/
@@ -76,14 +76,14 @@ stylesheet
 	: ( CDO | CDC  | S | nostatement | statement )*
     ;
     catch [RecognitionException re] {
-        log.error("Recognition exception | stylesheet | should be EMPTY");
+        log.debug("Recognition exception | stylesheet | should be EMPTY");
     }
 
 statement
     : ruleset | atstatement
     ;
     catch [RecognitionException re] {
-        log.error("Recognition exception | statement | should be EMPTY");
+        log.debug("Recognition exception | statement | should be EMPTY");
     }
 
 atstatement
@@ -97,7 +97,7 @@ atstatement
 	| unknown_atrule
 	;
     catch [RecognitionException re] {
-        log.error("Recognition exception | atstatement consume until RCURLY | SEMICOLON");
+        log.debug("Recognition exception | atstatement consume until RCURLY | SEMICOLON");
         IntervalSet intervalSet = new IntervalSet(RCURLY, SEMICOLON);
         getCSSErrorHandler().consumeUntilGreedy(this, intervalSet);
         _localctx.addErrorNode(this.getTokenFactory().create(INVALID_ATSTATEMENT, "INVALID_ATSTATEMENT"));
@@ -107,7 +107,7 @@ import_uri
     : (STRING | URI | UNCLOSED_STRING | UNCLOSED_URI)
     ;
     catch [RecognitionException re] {
-        log.error("Recognition exception | import_uri | should be empty");
+        log.debug("Recognition exception | import_uri | should be empty");
     }
 
 page
@@ -117,7 +117,7 @@ page
 		RCURLY
 	;
     catch [RecognitionException re] {
-        log.error("Recognition exception | page | should be empty");
+        log.debug("Recognition exception | page | should be empty");
     }
 
 /** CSS3 margin-at-rule - see https://drafts.csswg.org/css-page-3/#margin-at-rules */
@@ -125,7 +125,7 @@ margin_rule
 	: MARGIN_AREA S* LCURLY S* declarations RCURLY S*
 	;
     catch [RecognitionException re] {
-        log.error("Recognition exception | margin_rule | should be empty");
+        log.debug("Recognition exception | margin_rule | should be empty");
     }
 
 /** A ruleset in the inline style according to
@@ -137,7 +137,7 @@ inlineset
 	  RCURLY
 	;
     catch [RecognitionException re] {
-        log.error("Recognition exception | inlineset | should be empty");
+        log.debug("Recognition exception | inlineset | should be empty");
     }
 
 
@@ -145,7 +145,7 @@ media
     : media_query (COMMA S* media_query)*
     ;
     catch [RecognitionException re] {
-        log.error("PARSING MEDIA ERROR | consume until COMMA, LCURLY, SEMICOLON");
+        log.debug("PARSING MEDIA ERROR | consume until COMMA, LCURLY, SEMICOLON");
         IntervalSet intervalSet = new IntervalSet(COMMA, LCURLY, SEMICOLON);
         getCSSErrorHandler().consumeUntil(this, intervalSet, CSSLexerState.RecoveryMode.BALANCED, null);
         _localctx.addErrorNode(this.getTokenFactory().create(INVALID_STATEMENT, "INVALID_STATEMENT"));
@@ -155,7 +155,7 @@ media_query
     : (media_term S*)+
     ;
     catch [RecognitionException re] {
-        log.error("Recognition exception | media_query | should be empty");
+        log.debug("Recognition exception | media_query | should be empty");
     }
 
 media_term
@@ -163,7 +163,7 @@ media_term
     | nomediaquery
     ;
     catch [RecognitionException re] {
-        log.error("PARSING MEDIATERM ERROR | consume until COMMA, LCURLY, SEMICOLON");
+        log.debug("PARSING MEDIATERM ERROR | consume until COMMA, LCURLY, SEMICOLON");
         IntervalSet intervalSet = new IntervalSet(COMMA, LCURLY, SEMICOLON);
         getCSSErrorHandler().consumeUntil(this, intervalSet, CSSLexerState.RecoveryMode.RULE, null);
         _localctx.addErrorNode(this.getTokenFactory().create(INVALID_STATEMENT, "INVALID_STATEMENT"));
@@ -173,7 +173,7 @@ media_expression
     : LPAREN S* IDENT S* (COLON S* terms)? RPAREN
     ;
     catch [RecognitionException re] {
-        log.error("PARSING media_expression ERROR | consume until RPAREN, SEMICOLON");
+        log.debug("PARSING media_expression ERROR | consume until RPAREN, SEMICOLON");
         IntervalSet intervalSet = new IntervalSet(RPAREN, SEMICOLON);
         getCSSErrorHandler().consumeUntilGreedy(this, intervalSet);
         _localctx.addErrorNode(this.getTokenFactory().create(INVALID_STATEMENT, "INVALID_STATEMENT"));
@@ -184,7 +184,7 @@ media_rule
     | atstatement //invalid statement
     ;
     catch [RecognitionException re] {
-        log.error("Recognition exception | media_rule | should be empty");
+        log.debug("Recognition exception | media_rule | should be empty");
     }
 
 keyframes_name
@@ -211,7 +211,7 @@ keyframe_selector
 	| PERCENTAGE S*
 	;
     catch [RecognitionException re] {
-        log.error("Recognition exception | keyframes_selector | should be empty");
+        log.debug("Recognition exception | keyframes_selector | should be empty");
     }
 
 unknown_atrule
@@ -219,7 +219,7 @@ unknown_atrule
     | ATKEYWORD S* any* SEMICOLON
     ;
     catch [RecognitionException re] {
-        log.error("PARSING unknown_atrule ERROR - consume until RCURLY");
+        log.debug("PARSING unknown_atrule ERROR - consume until RCURLY");
         IntervalSet intervalSet = new IntervalSet(RCURLY, SEMICOLON);
         getCSSErrorHandler().consumeUntilGreedy(this, intervalSet, CSSLexerState.RecoveryMode.BALANCED);
         _localctx.addErrorNode(this.getTokenFactory().create(INVALID_ATSTATEMENT, "INVALID_ATSTATEMENT"));
@@ -234,7 +234,7 @@ unknown_atrule_body
 	: LCURLY S* RCURLY
 	;
     catch [RecognitionException re] {
-        log.error("PARSING unknown_atrule_body has some content | consume until RCURLY");
+        log.debug("PARSING unknown_atrule_body has some content | consume until RCURLY");
         IntervalSet follow = new IntervalSet(RCURLY); //recover on the rule end
         this.getCSSErrorHandler().consumeUntilGreedy(this, follow, CSSLexerState.RecoveryMode.DECL, begin);
         _localctx.addErrorNode(this.getTokenFactory().create(RPAREN, "}")); //formally close the body
@@ -265,7 +265,7 @@ declarations
 	: declaration? (SEMICOLON S* declaration? )*
 	;
     catch [RecognitionException re] {
-        log.error("Recognition exception | declarations | should be empty");
+        log.debug("Recognition exception | declarations | should be empty");
     }
 
 
@@ -278,7 +278,7 @@ declaration
 	| noprop any* // invalid declaration /* if first character in the declaration is invalid (various dirty hacks) */
 	;
 	catch [RecognitionException re] {
-        log.error("PARSING declaration ERROR | consume until SEMICOLON, RCURLY");
+        log.debug("PARSING declaration ERROR | consume until SEMICOLON, RCURLY");
         IntervalSet follow = new IntervalSet(SEMICOLON, RCURLY); //recover on the declaration end or rule end
         //not greedy - the final ; or } must remain for properly finishing the declaration/rule
         this.getCSSErrorHandler().consumeUntil(this, follow, CSSLexerState.RecoveryMode.DECL, begin);
@@ -289,7 +289,7 @@ important
     : EXCLAMATION S* IMPORTANT S*
     ;
     catch [RecognitionException re] {
-        log.error("PARSING IMPORTANT error");
+        log.debug("PARSING IMPORTANT error");
         IntervalSet intervalSet = new IntervalSet(RCURLY,SEMICOLON);
         this.getCSSErrorHandler().consumeUntil(this, intervalSet, CSSLexerState.RecoveryMode.RULE, null);
         _localctx.addErrorNode(this.getTokenFactory().create(INVALID_DIRECTIVE, "INVALID_DIRECTIVE"));
@@ -299,14 +299,14 @@ property
 	: MINUS? IDENT S*
 	;
     catch [RecognitionException re]{
-        log.error("PARSING property ERROR | should be empty");
+        log.debug("PARSING property ERROR | should be empty");
     }
 
 terms
 	: term+
 	;
     catch [RecognitionException re] {
-        log.error("PARSING terms ERROR functLevel = {}", functLevel);
+        log.debug("PARSING terms ERROR functLevel = {}", functLevel);
         if (functLevel == 0){
             IntervalSet intervalSet = new IntervalSet(RCURLY, SEMICOLON);
             this.getCSSErrorHandler().consumeUntilGreedy(this, intervalSet);
@@ -325,7 +325,7 @@ term
     | ATKEYWORD S* #termInvalid // invalid term
     ;
     catch [RecognitionException re] {
-      log.error("PARSING term ERROR | should be empty");
+      log.debug("PARSING term ERROR | should be empty");
     }
 
 /** other functions than expression */
@@ -340,7 +340,7 @@ funct
 	| FUNCTION S* funct_args? RPAREN
 	;
     catch [RecognitionException re] {
-        log.error("Recognition exception | funct | should be empty");
+        log.debug("Recognition exception | funct | should be empty");
     }
 
 /** a part of a property value */
@@ -372,7 +372,7 @@ valuepart
     ) S*
     ;
 	catch [RecognitionException re] {
-		log.error("Recognition exception | valuepart");
+		log.debug("Recognition exception | valuepart");
 		IntervalSet intervalSet = new IntervalSet(RCURLY, SEMICOLON);
 		getCSSErrorHandler().consumeUntil(this, intervalSet, CSSLexerState.RecoveryMode.NOBALANCE, null);
 		_localctx.addErrorNode(this.getTokenFactory().create(INVALID_STATEMENT,""));
@@ -382,7 +382,7 @@ funct_args
 	: funct_argument+
 	;
     catch [RecognitionException re] {
-        log.error("PARSING funct_args ERROR functLevel = {}", functLevel);
+        log.debug("PARSING funct_args ERROR functLevel = {}", functLevel);
         IntervalSet intervalSet = new IntervalSet(RPAREN, RCURLY, SEMICOLON);
         this.getCSSErrorHandler().consumeUntilGreedy(this, intervalSet, CSSLexerState.RecoveryMode.FUNCTION);
         _localctx.addErrorNode(this.getTokenFactory().create(INVALID_STATEMENT, "INVALID_STATEMENT"));
@@ -417,7 +417,7 @@ funct_argument
     ) S*
     ;
 	catch [RecognitionException re] {
-		log.error("Recognition exception | funct_argument");
+		log.debug("Recognition exception | funct_argument");
 		IntervalSet intervalSet = new IntervalSet(RCURLY, SEMICOLON);
 		getCSSErrorHandler().consumeUntil(this, intervalSet, CSSLexerState.RecoveryMode.BALANCED, null);
 		_localctx.addErrorNode(this.getTokenFactory().create(INVALID_STATEMENT,""));
@@ -427,7 +427,7 @@ combined_selector
 	: selector ((combinator) selector)*
 	;
 	catch [RecognitionException re] {
-	  log.error("Recognition exception | combined_selector | should be empty");
+	  log.debug("Recognition exception | combined_selector | should be empty");
 	}
 
 //combinator of selectors
@@ -438,7 +438,7 @@ combinator
 	| S //descendant combinator
     ;
     catch [RecognitionException re] {
-        log.error("Recognition exception | combinator| should be empty");
+        log.debug("Recognition exception | combinator| should be empty");
     }
 
 
@@ -447,7 +447,7 @@ selector
     | selpart+ S*
     ;
     catch [RecognitionException re] {
-        log.error("PARSING selector ERROR | inserting INVALID_SELECTOR");
+        log.debug("PARSING selector ERROR | inserting INVALID_SELECTOR");
         _localctx.addErrorNode(this.getTokenFactory().create(INVALID_SELECTOR, "INVALID_SELECTOR"));
     }
 
@@ -459,7 +459,7 @@ selpart
     | INVALID_SELPART // invalid selpart
     ;
     catch [RecognitionException re] {
-        log.error("PARSING SELPART ERROR");
+        log.debug("PARSING SELPART ERROR");
         _localctx.addErrorNode(this.getTokenFactory().create(INVALID_SELPART, "INVALID_SELPART"));
 	  }
 
@@ -468,14 +468,14 @@ attribute
 	  ((EQUALS | INCLUDES | DASHMATCH | STARTSWITH | ENDSWITH | CONTAINS) S* (IDENT | string) S*)?
 	;
     catch [RecognitionException re] {
-        log.error("Recognition exception | attribute | should be empty");
+        log.debug("Recognition exception | attribute | should be empty");
      }
 
 pseudo
     : COLON COLON? (MINUS? IDENT | FUNCTION S* (MINUS? IDENT | MINUS? NUMBER | MINUS? INDEX | (selector (COMMA S* selector)*)) S* RPAREN)
     ;
     catch [RecognitionException re] {
-      log.error("PARSING pseudo ERROR | inserting INVALID_SELPART");
+      log.debug("PARSING pseudo ERROR | inserting INVALID_SELPART");
        _localctx.addErrorNode(this.getTokenFactory().create(INVALID_SELPART, "INVALID_SELPART"));
     }
 
@@ -486,7 +486,7 @@ string
 	| INVALID_STRING
 	;
     catch [RecognitionException re] {
-        log.error("PARSING string ERROR | should be empty");
+        log.debug("PARSING string ERROR | should be empty");
     }
 
 bracketed_idents
@@ -494,7 +494,7 @@ bracketed_idents
 	| INVALID_STATEMENT
 	;
 	catch [RecognitionException re] {
-		log.error("Recognition exception | bracketed_idents | empty");
+		log.debug("Recognition exception | bracketed_idents | empty");
 		_localctx.addErrorNode(this.getTokenFactory().create(INVALID_STATEMENT,""));
 	}
 
@@ -503,7 +503,7 @@ ident_list_item
 	| INVALID_STATEMENT
 	;
 	catch [RecognitionException re] {
-		log.error("Recognition exception | ident_list_item | empty");
+		log.debug("Recognition exception | ident_list_item | empty");
 		_localctx.addErrorNode(this.getTokenFactory().create(INVALID_STATEMENT,""));
 	}
 
@@ -538,7 +538,7 @@ any
     ) S*
     ;
     catch [RecognitionException re] {
-        log.error("PARSING any ERROR | should be empty");
+        log.debug("PARSING any ERROR | should be empty");
     }
 
 /** What cannot be contained directly in the stylesheet (ignored) */
@@ -549,7 +549,7 @@ nostatement
     | APOS
   );
   catch [RecognitionException re] {
-    log.error("PARSING nostatement ERROR | should be empty");
+    log.debug("PARSING nostatement ERROR | should be empty");
   }
 
 /** invalid start of a property */
@@ -581,7 +581,7 @@ noprop
     ) S*
     ;
     catch [RecognitionException re] {
-        log.error("PARSING noprop ERROR | should be empty");
+        log.debug("PARSING noprop ERROR | should be empty");
     }
 
 /** invalid start of a rule */
@@ -613,7 +613,7 @@ norule
     | INVALID_TOKEN
     );
     catch [RecognitionException re] {
-        log.error("PARSING norule ERROR | should be empty");
+        log.debug("PARSING norule ERROR | should be empty");
     }
 
 /** invalid start of a media query */
@@ -646,7 +646,7 @@ nomediaquery
     | AMPERSAND
     );
     catch [RecognitionException re] {
-        log.error("PARSING nomediaquery ERROR | should be empty");
+        log.debug("PARSING nomediaquery ERROR | should be empty");
     }
 
 

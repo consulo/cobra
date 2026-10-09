@@ -52,7 +52,7 @@ thead, tbody,
 tfoot           { vertical-align: middle }
 td, th, tr      { vertical-align: inherit }
 s, strike, del  { text-decoration: line-through }
-hr              { border: 0; }
+hr              { margin: 0.5em 0; border: 0; border-top: 1px solid var(--cobra-separator-fg); height: 0; }
 ol, ul          { padding-left: 40px }
 dir, menu, dd   { margin-left: 40px }
 ol              { list-style-type: decimal }

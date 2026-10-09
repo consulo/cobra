@@ -27,6 +27,7 @@ import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.*;
 import org.cobraparser.html.renderer.*;
 import org.cobraparser.html.style.RenderState;
+import org.cobraparser.html.style.RenderThreadState;
 import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.util.Nodes;
 import org.cobraparser.util.gui.ColorFactory;
@@ -310,8 +311,10 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
    * {@link #setPreferredSize(Dimension)}, then that size is returned. Otherwise
    * a preferred size is calculated by rendering the HTML DOM, provided one is
    * available and a preferred width other than <code>-1</code> has been set
-   * with {@link #setPreferredWidth(int)}. An arbitrary preferred size is
-   * returned in other scenarios.
+   * with {@link #setPreferredWidth(int)}: the size of the content laid out
+   * within that width, so the width shrinks to the content and the height
+   * covers all of it. An arbitrary preferred size is returned in other
+   * scenarios.
    */
   @Override
   public Dimension getPreferredSize() {
@@ -320,29 +323,46 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
       return super.getPreferredSize();
     }
     final int pw = this.preferredWidth;
-    if (pw != -1) {
-      final RBlock block = this.rblock;
-      if (block != null) {
-        // Layout should always be done in the GUI thread.
-        if (SwingUtilities.isEventDispatchThread()) {
-          block.layout(pw, 0, false, false, RenderState.OVERFLOW_VISIBLE, RenderState.OVERFLOW_VISIBLE, true);
-        } else {
-          try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-              public void run() {
-                block.layout(pw, 0, false, false, RenderState.OVERFLOW_VISIBLE, RenderState.OVERFLOW_VISIBLE, true);
-              }
-            });
-          } catch (final Exception err) {
-            logger.debug("Unable to do preferred size layout.", err);
-          }
-        }
-        // Adjust for permanent vertical scrollbar.
-        final int newPw = Math.max(block.width + block.getVScrollBarWidth(), pw);
-        return new Dimension(newPw, block.height);
+    final RBlock block = this.rblock;
+    if ((pw == -1) || (block == null)) {
+      return new Dimension(600, 400);
+    }
+    // Layout should always be done in the GUI thread.
+    if (SwingUtilities.isEventDispatchThread()) {
+      return this.measureContent(block, pw);
+    }
+    final Dimension[] size = new Dimension[1];
+    try {
+      SwingUtilities.invokeAndWait(() -> size[0] = this.measureContent(block, pw));
+    } catch (final Exception err) {
+      logger.debug("Unable to do preferred size layout.", err);
+    }
+    return size[0] == null ? new Dimension(pw, 0) : size[0];
+  }
+
+  private Dimension measureContent(final RBlock block, final int width) {
+    final NodeImpl rootNode = getRootNode();
+    if (rootNode instanceof HTMLDocumentImpl) {
+      final HTMLDocumentImpl doc = (HTMLDocumentImpl) rootNode;
+      if (!doc.layoutBlocked.get()) {
+        doc.primeNodeData();
       }
     }
-    return new Dimension(600, 400);
+
+    final RenderThreadState state = RenderThreadState.getState();
+    final boolean measuring = state.measuringContent;
+    state.measuringContent = true;
+    try {
+      block.layout(width, 0, false, false, RenderState.OVERFLOW_VISIBLE, RenderState.OVERFLOW_VISIBLE, true);
+    } finally {
+      state.measuringContent = measuring;
+    }
+    final Dimension size = new Dimension(block.width, block.height);
+
+    if ((this.getWidth() > 0) && (this.getHeight() > 0)) {
+      this.doLayout();
+    }
+    return size;
   }
 
   @Override

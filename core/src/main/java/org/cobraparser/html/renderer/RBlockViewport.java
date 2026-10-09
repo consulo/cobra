@@ -134,7 +134,6 @@ public class RBlockViewport extends BaseRCollection {
     el.put("IFRAME", new IFrameLayout());
 
     el.put("CANVAS", new CanvasLayout());
-    el.put("HR", new HrLayout());
   }
 
   /**
@@ -2134,18 +2133,6 @@ public class RBlockViewport extends BaseRCollection {
         canvasNode.setBounds(insets.left, insets.top, width - (insets.left + insets.right), height - (insets.top + insets.bottom));
       }
 
-    }
-  }
-
-  private static class HrLayout extends CommonWidgetLayout {
-    public HrLayout() {
-      super(ADD_AS_BLOCK, false);
-    }
-
-    @Override
-    protected RElement createRenderable(final RBlockViewport bodyLayout, final HTMLElementImpl markupElement) {
-      final HrControl control = new HrControl(markupElement);
-      return new RUIControl(markupElement, control, bodyLayout.container, bodyLayout.frameContext, bodyLayout.userAgentContext);
     }
   }
 

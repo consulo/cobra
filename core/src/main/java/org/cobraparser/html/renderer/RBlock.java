@@ -498,6 +498,10 @@ public class RBlock extends BaseBlockyRenderable {
     if (overflowY == RenderState.OVERFLOW_NONE) {
       overflowY = defaultOverflowY;
     }
+    final boolean isHtmlElem = getModelNode() instanceof HTMLHtmlElement;
+    if (isHtmlElem && RenderThreadState.getState().measuringContent) {
+      overflowY = RenderState.OVERFLOW_VISIBLE;
+    }
     final boolean vauto = overflowY == RenderState.OVERFLOW_AUTO;
     boolean hscroll = overflowX == RenderState.OVERFLOW_SCROLL;
     final boolean hauto = overflowX == RenderState.OVERFLOW_AUTO;
@@ -521,7 +525,6 @@ public class RBlock extends BaseBlockyRenderable {
     }
     */
 
-    final boolean isHtmlElem = getModelNode() instanceof HTMLHtmlElement;
     int actualAvailWidth = tentativeAvailWidth;
 
     final int actualAvailHeight = tentativeAvailHeight;

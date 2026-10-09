@@ -26,6 +26,7 @@ import org.cobraparser.html.domimpl.ModelNode;
 import org.cobraparser.html.style.*;
 import org.cobraparser.ua.ImageResponse;
 import org.cobraparser.ua.ImageResponse.State;
+import org.cobraparser.ua.ImageService;
 import org.cobraparser.ua.NetworkRequest;
 import org.cobraparser.ua.UserAgentContext;
 import org.cobraparser.ua.UserAgentContext.Request;
@@ -682,8 +683,8 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
         if (image != null) {
           bkgBounds = clientG.getClipBounds();
 
-          final int w = image.getWidth(this);
-          final int h = image.getHeight(this);
+          final int w = ImageService.INSTANCE.getWidth(image, this);
+          final int h = ImageService.INSTANCE.getHeight(image, this);
           if ((w != -1) && (h != -1)) {
             final int imageY = getImageY(totalHeight, binfo, h);
             final int imageX = getImageX(totalWidth, binfo, w);
@@ -694,14 +695,14 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
 
             switch (binfo == null ? BackgroundInfo.BR_REPEAT : binfo.backgroundRepeat) {
             case BackgroundInfo.BR_NO_REPEAT: {
-              clientG.drawImage(image, bleft + imageX, btop + imageY, w, h, this);
+              ImageService.INSTANCE.paint(clientG, image, bleft + imageX, btop + imageY, w, h, this);
               break;
             }
             case BackgroundInfo.BR_REPEAT_X: {
               // Modulate starting x.
               final int topX = bkgBounds.x + bkgBounds.width;
               for (int x = baseX; x < topX; x += w) {
-                clientG.drawImage(image, x, btop + imageY, w, h, this);
+                ImageService.INSTANCE.paint(clientG, image, x, btop + imageY, w, h, this);
               }
               break;
             }
@@ -709,7 +710,7 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
               // Modulate starting y.
               final int topY = bkgBounds.y + bkgBounds.height;
               for (int y = baseY; y < topY; y += h) {
-                clientG.drawImage(image, bleft + imageX, y, w, h, this);
+                ImageService.INSTANCE.paint(clientG, image, bleft + imageX, y, w, h, this);
               }
               break;
             }
@@ -720,7 +721,7 @@ abstract class BaseElementRenderable extends BaseRCollection implements RElement
               // Replacing this:
               for (int x = baseX; x < topX; x += w) {
                 for (int y = baseY; y < topY; y += h) {
-                  clientG.drawImage(image, x, y, w, h, this);
+                  ImageService.INSTANCE.paint(clientG, image, x, y, w, h, this);
                 }
               }
               break;

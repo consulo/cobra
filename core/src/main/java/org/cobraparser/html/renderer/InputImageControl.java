@@ -28,6 +28,7 @@ import org.cobraparser.html.domimpl.ImageListener;
 import org.cobraparser.html.style.HtmlValues;
 import org.cobraparser.ua.ImageResponse;
 import org.cobraparser.ua.ImageResponse.State;
+import org.cobraparser.ua.ImageService;
 import org.cobraparser.util.gui.WrapperLayout;
 
 import javax.swing.*;
@@ -102,7 +103,8 @@ class InputImageControl extends BaseInputControl implements ImageListener {
     }
     final ImageResponse imageResponse = this.imageResponse;
     if (imageResponse.state == State.loaded) {
-      g.drawImage(imageResponse.img, insets.left, insets.top, size.width - insets.left - insets.right, size.height - insets.top - insets.bottom, this);
+      ImageService.INSTANCE.paint(g, imageResponse.img, insets.left, insets.top, size.width - insets.left - insets.right,
+          size.height - insets.top - insets.bottom, this);
     } else {
       // TODO: alt
     }
@@ -134,10 +136,10 @@ class InputImageControl extends BaseInputControl implements ImageListener {
     final Image img = imgResponse.img;
 
     if (dw == -1) {
-      dw = HtmlValues.scaleToDevicePixels(img.getWidth(this));
+      dw = ImageService.INSTANCE.getWidth(img, this);
     }
     if (dh == -1) {
-      dh = HtmlValues.scaleToDevicePixels(img.getHeight(this));
+      dh = ImageService.INSTANCE.getHeight(img, this);
     }
     return new Dimension(dw, dh);
   }

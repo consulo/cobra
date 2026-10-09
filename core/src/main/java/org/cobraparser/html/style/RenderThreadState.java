@@ -27,6 +27,7 @@ package org.cobraparser.html.style;
 public class RenderThreadState {
   private static final ThreadLocal<RenderThreadState> stateTL = new ThreadLocal<>();
   public boolean overrideNoWrap;
+  public boolean measuringContent;
 
   private RenderThreadState() {
   }

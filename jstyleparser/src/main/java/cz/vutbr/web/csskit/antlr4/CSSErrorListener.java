@@ -16,21 +16,21 @@ public class CSSErrorListener extends BaseErrorListener {
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object o, int i, int i1, String s, RecognitionException e) {
-        log.error("CSSErrorListener syntaxError | " + s);
+        log.debug("CSSErrorListener syntaxError | " + s);
     }
 
     @Override
     public void reportAmbiguity(Parser parser, DFA dfa, int i, int i1, boolean b, BitSet bitSet, ATNConfigSet atnConfigSet) {
-        log.error("CSSErrorListener ambiguity | ");
+        log.debug("CSSErrorListener ambiguity | ");
     }
 
     @Override
     public void reportAttemptingFullContext(Parser parser, DFA dfa, int i, int i1, BitSet bitSet, ATNConfigSet atnConfigSet) {
-        log.error("CSSErrorListener full context | ");
+        log.debug("CSSErrorListener full context | ");
     }
 
     @Override
     public void reportContextSensitivity(Parser parser, DFA dfa, int i, int i1, int i2, ATNConfigSet atnConfigSet) {
-        log.error("CSSErrorListener context sensitivity | ");
+        log.debug("CSSErrorListener context sensitivity | ");
     }
 }
