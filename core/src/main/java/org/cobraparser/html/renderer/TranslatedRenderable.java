@@ -175,14 +175,6 @@ public class TranslatedRenderable extends BaseBoundableRenderable implements RCo
     return translatedChild.isContainedByNode();
   }
 
-  public boolean paintSelection(final Graphics g, final boolean inSelection, final RenderableSpot startPoint, final RenderableSpot endPoint) {
-    return translatedChild.paintSelection(g, inSelection, startPoint, endPoint);
-  }
-
-  public boolean extractSelectionText(final StringBuffer buffer, final boolean inSelection, final RenderableSpot startPoint, final RenderableSpot endPoint) {
-    return translatedChild.extractSelectionText(buffer, inSelection, startPoint, endPoint);
-  }
-
   public void repaint(final int x, final int y, final int width, final int height) {
     // translatedChild.repaint(x, y, width, height);
     // getParent().repaint(x, y, width, height);

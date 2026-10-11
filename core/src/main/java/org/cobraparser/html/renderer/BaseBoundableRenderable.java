@@ -36,8 +36,6 @@ import java.awt.event.MouseEvent;
  */
 abstract class BaseBoundableRenderable extends BaseRenderable implements BoundableRenderable {
   protected static final Logger logger = LoggerFactory.getLogger(BaseBoundableRenderable.class.getName());
-  protected static final Color SELECTION_COLOR = Color.BLUE;
-  protected static final Color SELECTION_XOR = Color.LIGHT_GRAY;
 
   // protected final Rectangle bounds = new Rectangle();
   protected final RenderableContainer container;

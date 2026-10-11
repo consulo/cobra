@@ -189,37 +189,6 @@ class RUIControl extends BaseElementRenderable {
     return this.widget.getBackgroundColor();
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * org.xamjwg.html.renderer.BoundableRenderable#paintSelection(java.awt.Graphics
-   * , boolean, org.xamjwg.html.renderer.RenderablePoint,
-   * org.xamjwg.html.renderer.RenderablePoint)
-   */
-  @Override
-  public boolean paintSelection(final Graphics g, boolean inSelection, final RenderableSpot startPoint, final RenderableSpot endPoint) {
-    inSelection = super.paintSelection(g, inSelection, startPoint, endPoint);
-    if (inSelection) {
-      final Color over = new Color(0, 0, 255, 50);
-      final Color oldColor = g.getColor();
-      try {
-        g.setColor(over);
-        g.fillRect(0, 0, this.width, this.height);
-      } finally {
-        g.setColor(oldColor);
-      }
-    }
-    return inSelection;
-  }
-
-  @Override
-  public boolean extractSelectionText(final StringBuffer buffer, final boolean inSelection, final RenderableSpot startPoint,
-      final RenderableSpot endPoint) {
-    // No text here
-    return inSelection;
-  }
-
   public RenderableSpot getLowestRenderableSpot(final int x, final int y) {
     // Nothing draggable - return self
     return new RenderableSpot(this, x, y);

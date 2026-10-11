@@ -154,25 +154,6 @@ class RLine extends BaseRCollection {
     }
   }
 
-  @Override
-  public boolean extractSelectionText(final StringBuffer buffer, final boolean inSelection, final RenderableSpot startPoint,
-      final RenderableSpot endPoint) {
-    final boolean result = super.extractSelectionText(buffer, inSelection, startPoint, endPoint);
-    if (result) {
-      final LineBreak br = this.lineBreak;
-      if (br != null) {
-        buffer.append(System.getProperty("line.separator"));
-      } else {
-        final ArrayList<Renderable> renderables = this.renderables;
-        final int size = renderables.size();
-        if ((size > 0) && !(renderables.get(size - 1) instanceof RBlank)) {
-          buffer.append(" ");
-        }
-      }
-    }
-    return result;
-  }
-
   public final void addStyleChanger(final RStyleChanger sc) {
     this.renderables.add(sc);
   }

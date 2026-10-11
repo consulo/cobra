@@ -519,12 +519,12 @@ public class RBlockViewport extends BaseRCollection {
     }
     if (leftSpacing > 0) {
       final RLine line = this.currentLine;
-      line.addSpacing(new RSpacing(node, this.container, leftSpacing, line.height));
+      line.addSpacing(new RSpacing(node, true, this.container, leftSpacing, line.height));
     }
     this.layoutChildren(node);
     if (rightSpacing > 0) {
       final RLine line = this.currentLine;
-      line.addSpacing(new RSpacing(node, this.container, rightSpacing, line.height));
+      line.addSpacing(new RSpacing(node, false, this.container, rightSpacing, line.height));
     }
   }
 
@@ -1249,33 +1249,38 @@ public class RBlockViewport extends BaseRCollection {
       this.currentLine.setAllowOverflow(allowOverflow);
       try {
         final StringBuffer word = new StringBuffer(12);
+        int wordStart = 0;
         for (int i = 0; i < length; i++) {
-          char ch = text.charAt(i);
+          final char ch = text.charAt(i);
           if (Character.isWhitespace(ch)) {
             final int wlen = word.length();
             if (wlen > 0) {
-              final RWord rword = new RWord(textNode, word.toString(), container, fm, descent, ascentPlusLeading, wordHeight, textTransform);
+              final RWord rword = new RWord(textNode, word.toString(), wordStart, container, fm, descent, ascentPlusLeading, wordHeight,
+                  textTransform);
               this.addWordToLine(rword);
               word.delete(0, wlen);
             }
+            int blankEnd = i + 1;
+            while ((blankEnd < length) && Character.isWhitespace(text.charAt(blankEnd))) {
+              blankEnd++;
+            }
             final RLine line = this.currentLine;
             if (line.width > 0) {
-              final RBlank rblank = new RBlank(textNode, fm, container, ascentPlusLeading, blankWidth, wordHeight);
+              final RBlank rblank = new RBlank(textNode, i, blankEnd, fm, container, ascentPlusLeading, blankWidth, wordHeight);
               line.addBlank(rblank);
             }
-            for (i++; i < length; i++) {
-              ch = text.charAt(i);
-              if (!Character.isWhitespace(ch)) {
-                word.append(ch);
-                break;
-              }
-            }
+            // Continue with the first character after the whitespace run.
+            i = blankEnd - 1;
           } else {
+            if (word.length() == 0) {
+              wordStart = i;
+            }
             word.append(ch);
           }
         }
         if (word.length() > 0) {
-          final RWord rword = new RWord(textNode, word.toString(), container, fm, descent, ascentPlusLeading, wordHeight, textTransform);
+          final RWord rword = new RWord(textNode, word.toString(), wordStart, container, fm, descent, ascentPlusLeading, wordHeight,
+              textTransform);
           this.addWordToLine(rword);
         }
       } finally {
@@ -1284,6 +1289,8 @@ public class RBlockViewport extends BaseRCollection {
     } else {
       boolean lastCharSlashR = false;
       final StringBuffer line = new StringBuffer();
+      // Offset in the text node of the first character in the line buffer.
+      int lineStart = 0;
       for (int i = 0; i < length; i++) {
         final char ch = text.charAt(i);
         switch (ch) {
@@ -1291,9 +1298,12 @@ public class RBlockViewport extends BaseRCollection {
           lastCharSlashR = true;
           break;
         case '\n':
-          final RWord rword = new RWord(textNode, line.toString(), container, fm, descent, ascentPlusLeading, wordHeight, textTransform);
+          final RWord rword = new RWord(textNode, line.toString(), lineStart, container, fm, descent, ascentPlusLeading, wordHeight,
+              textTransform);
           this.addWordToLine(rword);
           line.delete(0, line.length());
+          lineStart = i + 1;
+          lastCharSlashR = false;
           final RLine prevLine = this.currentLine;
           prevLine.setLineBreak(new LineBreak(LineBreak.NONE));
           this.addLine(textNode, prevLine, prevLine.y + prevLine.height);
@@ -1304,6 +1314,13 @@ public class RBlockViewport extends BaseRCollection {
             lastCharSlashR = false;
           }
           if (ch == '\t') {
+            // Text preceding the tab must be laid out before it.
+            if (line.length() > 0) {
+              this.addWordToLine(new RWord(textNode, line.toString(), lineStart, container, fm, descent, ascentPlusLeading, wordHeight,
+                  textTransform));
+              line.delete(0, line.length());
+            }
+            lineStart = i + 1;
             /* Tabs are not recognized as advancing width in FontMetrics. There are two approaches possible:
                1. Convert to spaces. Simple, but when copying selection spaces are copied.
                2. Define a new class call RTab, that manages tabs.
@@ -1317,7 +1334,7 @@ public class RBlockViewport extends BaseRCollection {
             // line.append("        ");
 
             // Solution 2.
-            addWordToLine(new RTab(textNode, container, fm, descent, ascentPlusLeading, wordHeight, NUM_SPACES));
+            addWordToLine(new RTab(textNode, i, container, fm, descent, ascentPlusLeading, wordHeight, NUM_SPACES));
           } else {
             line.append(ch);
           }
@@ -1325,7 +1342,8 @@ public class RBlockViewport extends BaseRCollection {
         }
       }
       if (line.length() > 0) {
-        final RWord rword = new RWord(textNode, line.toString(), container, fm, descent, ascentPlusLeading, wordHeight, textTransform);
+        final RWord rword = new RWord(textNode, line.toString(), lineStart, container, fm, descent, ascentPlusLeading, wordHeight,
+            textTransform);
         this.addWordToLine(rword);
       }
     }

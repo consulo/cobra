@@ -133,18 +133,6 @@ public interface BoundableRenderable extends Renderable {
   public boolean isContainedByNode();
 
   /**
-   * Asks the Renderable to paint the selection between two points. Nothing will
-   * be done if the points are outside the Renderable.
-   *
-   * @param g
-   * @param inSelection
-   * @param startPoint
-   * @param endPoint
-   * @return True iff it's in selection when finished painting.
-   */
-  public boolean paintSelection(Graphics g, boolean inSelection, RenderableSpot startPoint, RenderableSpot endPoint);
-
-  /**
    * Paints by either creating a new clipped graphics context corresponding to
    * the bounds of the Renderable, or by translating the origin.
    *
@@ -152,8 +140,6 @@ public interface BoundableRenderable extends Renderable {
    *          Parent's Graphics context.
    */
   public void paintTranslated(Graphics g);
-
-  public boolean extractSelectionText(StringBuffer buffer, boolean inSelection, RenderableSpot startPoint, RenderableSpot endPoint);
 
   public void repaint(int x, int y, int width, int height);
 

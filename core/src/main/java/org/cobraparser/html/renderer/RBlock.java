@@ -61,8 +61,6 @@ public class RBlock extends BaseBlockyRenderable {
 
   // protected final Map<LayoutKey, LayoutValue> cachedLayout = new Hashtable<>(5);
 
-  protected RenderableSpot startSelection;
-  protected RenderableSpot endSelection;
   protected JScrollBar vScrollBar;
   protected JScrollBar hScrollBar;
   protected boolean hasHScrollBar = false;
@@ -185,14 +183,6 @@ public class RBlock extends BaseBlockyRenderable {
     return this.bodyLayout.getFirstBaselineOffset();
   }
 
-  public void setSelectionEnd(final RenderableSpot rpoint) {
-    this.endSelection = rpoint;
-  }
-
-  public void setSelectionStart(final RenderableSpot rpoint) {
-    this.startSelection = rpoint;
-  }
-
   public int getViewportListNesting(final int blockNesting) {
     return blockNesting;
   }
@@ -264,15 +254,6 @@ public class RBlock extends BaseBlockyRenderable {
       }
     }
 
-    // Paint FrameContext selection.
-    // This is only done by root RBlock.
-
-    final RenderableSpot start = this.startSelection;
-    final RenderableSpot end = this.endSelection;
-    final boolean inSelection = false;
-    if ((start != null) && (end != null) && !start.equals(end)) {
-      this.paintSelection(g, inSelection, start, end);
-    }
     // Must paint scrollbars too.
     final JScrollBar hsb = this.hScrollBar;
     if (hsb != null) {
@@ -1187,66 +1168,6 @@ public class RBlock extends BaseBlockyRenderable {
   /*
    * (non-Javadoc)
    *
-   * @see org.xamjwg.html.renderer.UIControl#paintSelection(java.awt.Graphics,
-   * boolean, org.xamjwg.html.renderer.RenderablePoint,
-   * org.xamjwg.html.renderer.RenderablePoint)
-   */
-  @Override
-  public boolean paintSelection(final Graphics g, final boolean inSelection, final RenderableSpot startPoint, final RenderableSpot endPoint) {
-    final Graphics newG = g.create();
-    try {
-      final Insets insets = this.getInsetsMarginBorder(this.hasHScrollBar, this.hasVScrollBar);
-      // Just clip, don't translate.
-      newG.clipRect(insets.left, insets.top, this.width - insets.left - insets.right, this.height - insets.top - insets.bottom);
-      return super.paintSelection(newG, inSelection, startPoint, endPoint);
-    } finally {
-      newG.dispose();
-    }
-    // boolean endSelectionLater = false;
-    // if(inSelection) {
-    // if(startPoint.renderable == this || endPoint.renderable == this) {
-    // return false;
-    // }
-    // }
-    // else {
-    // if(startPoint.renderable == this || endPoint.renderable == this) {
-    // // This can only occur if the selection point
-    // // is on the margin or border or the block.
-    // inSelection = true;
-    // if(startPoint.renderable == this && endPoint.renderable == this) {
-    // // Start and end selection points on margin or border.
-    // endSelectionLater = true;
-    // }
-    // }
-    // }
-    // RBlockViewport bodyLayout = this.bodyLayout;
-    // if(bodyLayout != null) {
-    // Insets insets = this.getInsets(this.hasHScrollBar,
-    // this.hasVScrollBar);
-    // Graphics newG = g.create(insets.left, insets.top, this.width -
-    // insets.left - insets.right, this.height - insets.top -
-    // insets.bottom);
-    // try {
-    // newG.translate(bodyLayout.x - insets.left, bodyLayout.y -
-    // insets.top);
-    // boolean newInSelection = bodyLayout.paintSelection(newG, inSelection,
-    // startPoint, endPoint);
-    // if(endSelectionLater) {
-    // return false;
-    // }
-    // return newInSelection;
-    // } finally {
-    // newG.dispose();
-    // }
-    // }
-    // else {
-    // return inSelection;
-    // }
-  }
-
-  /*
-   * (non-Javadoc)
-   *
    * @see org.xamjwg.html.renderer.BoundableRenderable#getRenderablePoint(int,
    * int)
    */
@@ -1610,20 +1531,6 @@ public class RBlock extends BaseBlockyRenderable {
 
   public RBlockViewport getRBlockViewport() {
     return this.bodyLayout;
-  }
-
-  @Override
-  public boolean extractSelectionText(final StringBuffer buffer, final boolean inSelection, final RenderableSpot startPoint,
-      final RenderableSpot endPoint) {
-    final boolean result = super.extractSelectionText(buffer, inSelection, startPoint, endPoint);
-    final String br = System.getProperty("line.separator");
-    if (inSelection) {
-      buffer.insert(0, br);
-    }
-    if (result) {
-      buffer.append(br);
-    }
-    return result;
   }
 
   @Override

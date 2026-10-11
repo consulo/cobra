@@ -32,8 +32,12 @@ import org.cobraparser.html.domimpl.ModelNode;
  * This is used when there's padding or margins in inline elements.
  */
 final class RSpacing extends BaseBoundableRenderable {
-  public RSpacing(final ModelNode me, final RenderableContainer container, final int width, final int height) {
+  /** True for the spacing before the content of the inline element, false for the spacing after it. */
+  final boolean leading;
+
+  public RSpacing(final ModelNode me, final boolean leading, final RenderableContainer container, final int width, final int height) {
     super(container, me);
+    this.leading = leading;
     // Dimensions set when constructed.
     this.width = width;
     this.height = height;
@@ -96,41 +100,6 @@ final class RSpacing extends BaseBoundableRenderable {
    */
   public final void paint(final Graphics g) {
     // Nothing to paint in spacing.
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * org.xamjwg.html.renderer.BoundableRenderable#paintSelection(java.awt.Graphics
-   * , boolean, org.xamjwg.html.renderer.RenderablePoint,
-   * org.xamjwg.html.renderer.RenderablePoint)
-   */
-  public boolean paintSelection(final Graphics g, final boolean inSelection, final RenderableSpot startPoint, final RenderableSpot endPoint) {
-    if ((this == startPoint.renderable) || (this == endPoint.renderable)) {
-      if (inSelection) {
-        return false;
-      }
-    } else if (!inSelection) {
-      return false;
-    }
-    g.setColor(SELECTION_COLOR);
-    g.setXORMode(SELECTION_XOR);
-    g.fillRect(0, 0, this.width, this.height);
-    g.setPaintMode();
-    return true;
-  }
-
-  public boolean extractSelectionText(final StringBuffer buffer, final boolean inSelection, final RenderableSpot startPoint,
-      final RenderableSpot endPoint) {
-    if ((this == startPoint.renderable) || (this == endPoint.renderable)) {
-      if (inSelection) {
-        return false;
-      }
-    } else if (!inSelection) {
-      return false;
-    }
-    return true;
   }
 
   /*

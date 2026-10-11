@@ -152,6 +152,13 @@ public class PositionedRenderable implements Renderable {
     return isFixed;
   }
 
+  /**
+   * True if the renderable is painted by its delegator rather than through this wrapper.
+   */
+  boolean isDelegated() {
+    return isDelegated;
+  }
+
   @Override
   public String toString() {
     return "PosRndrbl [" + renderable + "]";

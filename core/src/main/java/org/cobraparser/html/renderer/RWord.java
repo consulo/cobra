@@ -33,16 +33,22 @@ import org.cobraparser.html.style.RenderState;
 
 class RWord extends BaseBoundableRenderable {
   final String shownWord;
+  /** Offset of the first source character of this word in the text node. */
+  final int textStart;
+  /** Offset just past the last source character of this word in the text node. */
+  final int textEnd;
   public final FontMetrics fontMetrics;
   public final int descent;
   public final int ascentPlusLeading;
 
-  public RWord(final ModelNode me, final String word, final RenderableContainer container, final FontMetrics fontMetrics,
+  public RWord(final ModelNode me, final String word, final int textStart, final RenderableContainer container, final FontMetrics fontMetrics,
       final int descent, final int ascentPlusLeading,
       final int height, final int textTransform) {
     super(container, me);
     final String renderedWord = textTransform == RenderState.TEXTTRANSFORM_NONE ? word : transformText(word, textTransform);
     this.shownWord = renderedWord;
+    this.textStart = textStart;
+    this.textEnd = textStart + word.length();
     this.fontMetrics = fontMetrics;
     this.descent = descent;
     this.ascentPlusLeading = ascentPlusLeading;
@@ -133,143 +139,6 @@ class RWord extends BaseBoundableRenderable {
       } finally {
         g.setColor(oldColor);
       }
-    }
-  }
-
-  public boolean paintSelection(final Graphics g, final boolean inSelection, final RenderableSpot startPoint, final RenderableSpot endPoint) {
-    int startX = -1;
-    int endX = -1;
-    if (this == startPoint.renderable) {
-      startX = startPoint.x;
-    }
-    if (this == endPoint.renderable) {
-      endX = endPoint.x;
-    }
-    if (!inSelection && (startX == -1) && (endX == -1)) {
-      return false;
-    }
-    if ((startX != -1) && (endX != -1)) {
-      if (endX < startX) {
-        final int temp = startX;
-        startX = endX;
-        endX = temp;
-      }
-    } else if ((startX != -1) && (endX == -1) && inSelection) {
-      endX = startX;
-      startX = -1;
-    } else if ((startX == -1) && (endX != -1) && !inSelection) {
-      startX = endX;
-      endX = -1;
-    }
-    int width1 = -1;
-    int width2 = -1;
-    final char[] wordChars = this.shownWord.toCharArray();
-    if (startX != -1) {
-      width1 = 0;
-      final FontMetrics fm = this.fontMetrics;
-      for (int len = 0; len < wordChars.length; len++) {
-        final int w = fm.charsWidth(wordChars, 0, len);
-        if (w > startX) {
-          break;
-        }
-        width1 = w;
-      }
-    }
-    if (endX != -1) {
-      width2 = 0;
-      final FontMetrics fm = this.fontMetrics;
-      for (int len = 0; len < wordChars.length; len++) {
-        final int w = fm.charsWidth(wordChars, 0, len);
-        if (w > endX) {
-          break;
-        }
-        width2 = w;
-      }
-    }
-    if ((width1 != -1) || (width2 != -1)) {
-      final int startPaint = width1 == -1 ? 0 : width1;
-      final int endPaint = width2 == -1 ? this.width : width2;
-      g.setColor(SELECTION_COLOR);
-      g.setXORMode(SELECTION_XOR);
-      g.fillRect(startPaint, 0, endPaint - startPaint, this.height);
-      g.setPaintMode();
-      return (width2 == -1);
-    } else {
-      if (inSelection) {
-        g.setColor(SELECTION_COLOR);
-        g.setXORMode(SELECTION_XOR);
-        g.fillRect(0, 0, this.width, this.height);
-        g.setPaintMode();
-      }
-      return inSelection;
-    }
-  }
-
-  public boolean extractSelectionText(final StringBuffer buffer, final boolean inSelection, final RenderableSpot startPoint,
-      final RenderableSpot endPoint) {
-    int startX = -1;
-    int endX = -1;
-    if (this == startPoint.renderable) {
-      startX = startPoint.x;
-    }
-    if (this == endPoint.renderable) {
-      endX = endPoint.x;
-    }
-    if (!inSelection && (startX == -1) && (endX == -1)) {
-      return false;
-    }
-    if ((startX != -1) && (endX != -1)) {
-      if (endX < startX) {
-        final int temp = startX;
-        startX = endX;
-        endX = temp;
-      }
-    } else if ((startX != -1) && (endX == -1) && inSelection) {
-      endX = startX;
-      startX = -1;
-    } else if ((startX == -1) && (endX != -1) && !inSelection) {
-      startX = endX;
-      endX = -1;
-    }
-    int index1 = -1;
-    int index2 = -1;
-    final char[] wordChars = this.shownWord.toCharArray();
-    if (startX != -1) {
-      index1 = 0;
-      final FontMetrics fm = this.fontMetrics;
-      for (int len = 0; len < wordChars.length; len++) {
-        final int w = fm.charsWidth(wordChars, 0, len);
-        if (w > startX) {
-          break;
-        }
-        index1 = len;
-      }
-    }
-    if (endX != -1) {
-      index2 = 0;
-      final FontMetrics fm = this.fontMetrics;
-      for (int len = 0; len < wordChars.length; len++) {
-        final int w = fm.charsWidth(wordChars, 0, len);
-        if (w > endX) {
-          break;
-        }
-        index2 = len;
-      }
-    }
-    if ((index1 != -1) || (index2 != -1)) {
-      final int startIndex = index1 == -1 ? 0 : index1;
-      final int endIndex = index2 == -1 ? wordChars.length : index2;
-      buffer.append(wordChars, startIndex, endIndex - startIndex);
-    } else {
-      if (inSelection) {
-        buffer.append(wordChars);
-        return true;
-      }
-    }
-    if ((index1 != -1) && (index2 != -1)) {
-      return false;
-    } else {
-      return !inSelection;
     }
   }
 

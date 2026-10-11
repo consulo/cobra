@@ -27,9 +27,20 @@ import org.cobraparser.html.domimpl.NodeImpl;
  * typically a browser frame of some sort.
  */
 public interface FrameContext {
-  public void resetSelection(RenderableSpot rpoint);
+  /**
+   * Collapses the selection at the given point, or clears it if the point is <code>null</code>.
+   */
+  public void resetSelection(SelectionPoint point);
 
-  public void expandSelection(RenderableSpot rpoint);
+  /**
+   * Moves the focus end of the selection, keeping its anchor.
+   */
+  public void expandSelection(SelectionPoint point);
+
+  /**
+   * Replaces the selection.
+   */
+  public void setSelection(SelectionPoint anchor, SelectionPoint focus);
 
   public void delayedRelayout(NodeImpl node);
 }

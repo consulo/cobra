@@ -35,10 +35,16 @@ final class RBlank extends BaseBoundableRenderable {
   // TODO: Is there a need for RBlank's at all?
   public final int ascentPlusLeading;
   private final FontMetrics fontMetrics;
+  /** Offset of the collapsed whitespace run in the text node. */
+  final int textStart;
+  /** Offset just past the collapsed whitespace run in the text node. */
+  final int textEnd;
 
-  public RBlank(final ModelNode me, final FontMetrics fm, final RenderableContainer container, final int ascentPlusLeading,
-      final int width, final int height) {
+  public RBlank(final ModelNode me, final int textStart, final int textEnd, final FontMetrics fm, final RenderableContainer container,
+      final int ascentPlusLeading, final int width, final int height) {
     super(container, me);
+    this.textStart = textStart;
+    this.textEnd = textEnd;
     this.fontMetrics = fm;
     this.ascentPlusLeading = ascentPlusLeading;
     // Dimensions set when constructed.
@@ -148,42 +154,6 @@ final class RBlank extends BaseBoundableRenderable {
         g.setColor(oldColor);
       }
     }
-  }
-
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * org.xamjwg.html.renderer.BoundableRenderable#paintSelection(java.awt.Graphics
-   * , boolean, org.xamjwg.html.renderer.RenderablePoint,
-   * org.xamjwg.html.renderer.RenderablePoint)
-   */
-  public boolean paintSelection(final Graphics g, final boolean inSelection, final RenderableSpot startPoint, final RenderableSpot endPoint) {
-    if ((this == startPoint.renderable) || (this == endPoint.renderable)) {
-      if (inSelection) {
-        return false;
-      }
-    } else if (!inSelection) {
-      return false;
-    }
-    g.setColor(SELECTION_COLOR);
-    g.setXORMode(SELECTION_XOR);
-    g.fillRect(0, 0, this.width, this.height);
-    g.setPaintMode();
-    return true;
-  }
-
-  public boolean extractSelectionText(final StringBuffer buffer, final boolean inSelection, final RenderableSpot startPoint,
-      final RenderableSpot endPoint) {
-    if ((this == startPoint.renderable) || (this == endPoint.renderable)) {
-      if (inSelection) {
-        return false;
-      }
-    } else if (!inSelection) {
-      return false;
-    }
-    buffer.append(' ');
-    return true;
   }
 
   /*

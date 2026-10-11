@@ -46,7 +46,7 @@ import org.cobraparser.html.parser.InputSourceImpl;
 import org.cobraparser.html.renderer.BoundableRenderable;
 import org.cobraparser.html.renderer.FrameContext;
 import org.cobraparser.html.renderer.NodeRenderer;
-import org.cobraparser.html.renderer.RenderableSpot;
+import org.cobraparser.html.renderer.SelectionPoint;
 import org.cobraparser.html.style.RenderState;
 import org.cobraparser.util.gui.DefferedLayoutSupport;
 import org.cobraparser.ua.UserAgentContext;
@@ -544,11 +544,25 @@ public class HtmlPanel extends JComponent implements FrameContext, DefferedLayou
    * <p>
    * Note: This method should be invoked in the GUI thread.
    */
-  public void expandSelection(final RenderableSpot rpoint) {
+  public void expandSelection(final SelectionPoint point) {
     final HtmlBlockPanel block = this.htmlBlockPanel;
     if (block != null) {
-      block.setSelectionEnd(rpoint);
-      block.repaint();
+      block.setSelectionEnd(point);
+      this.selectionDispatch.fireEvent(new SelectionChangeEvent(this, block.isSelectionAvailable()));
+    }
+  }
+
+  /**
+   * Internal method used to replace the selection, e.g. when a word is double
+   * clicked.
+   * <p>
+   * Note: This method should be invoked in the GUI thread.
+   */
+  public void setSelection(final SelectionPoint anchor, final SelectionPoint focus) {
+    final HtmlBlockPanel block = this.htmlBlockPanel;
+    if (block != null) {
+      block.setSelectionStart(anchor);
+      block.setSelectionEnd(focus);
       this.selectionDispatch.fireEvent(new SelectionChangeEvent(this, block.isSelectionAvailable()));
     }
   }
@@ -560,12 +574,11 @@ public class HtmlPanel extends JComponent implements FrameContext, DefferedLayou
    * <p>
    * Note: This method should be invoked in the GUI thread.
    */
-  public void resetSelection(final RenderableSpot rpoint) {
+  public void resetSelection(final SelectionPoint point) {
     final HtmlBlockPanel block = this.htmlBlockPanel;
     if (block != null) {
-      block.setSelectionStart(rpoint);
-      block.setSelectionEnd(rpoint);
-      block.repaint();
+      block.setSelectionStart(point);
+      block.setSelectionEnd(point);
     }
     this.selectionDispatch.fireEvent(new SelectionChangeEvent(this, false));
   }
@@ -628,6 +641,24 @@ public class HtmlPanel extends JComponent implements FrameContext, DefferedLayou
     } else {
       return false;
     }
+  }
+
+  /**
+   * Selects the whole document. This method has no effect in FRAMESETs at the
+   * moment.
+   */
+  public void selectAll() {
+    final HtmlBlockPanel block = this.htmlBlockPanel;
+    if (block != null) {
+      block.selectAll();
+    }
+  }
+
+  /**
+   * Clears the selection.
+   */
+  public void clearSelection() {
+    this.resetSelection(null);
   }
 
   /**

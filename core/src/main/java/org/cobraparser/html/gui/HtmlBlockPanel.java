@@ -23,6 +23,7 @@
  */
 package org.cobraparser.html.gui;
 
+import org.cobraparser.css.CSSVariableResolver;
 import org.cobraparser.html.HtmlRendererContext;
 import org.cobraparser.html.domimpl.*;
 import org.cobraparser.html.renderer.*;
@@ -33,6 +34,7 @@ import org.cobraparser.util.Nodes;
 import org.cobraparser.util.gui.ColorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
@@ -41,6 +43,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DragSource;
 import java.awt.event.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -63,8 +66,25 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
   protected final UserAgentContext ucontext;
   protected final HtmlRendererContext rcontext;
 
-  protected RenderableSpot startSelection;
-  protected RenderableSpot endSelection;
+  private static final int AUTOSCROLL_DELAY = 40;
+  private static final int AUTOSCROLL_MAX_STEP = 120;
+
+  private enum SelectionUnit {
+    CHARACTER, WORD, BLOCK
+  }
+
+  /** Where the selection started. */
+  protected SelectionPoint startSelection;
+  /** Where the selection currently ends; may be before {@link #startSelection}. */
+  protected SelectionPoint endSelection;
+  private SelectionUnit selectionUnit = SelectionUnit.CHARACTER;
+  /** The word or block selected by a double or triple click, kept while dragging extends the selection by whole units. */
+  private SelectionPoint[] selectionUnitRange;
+  private boolean selecting;
+  private boolean dragged;
+  private Point pressPoint;
+  private Point lastDragPoint;
+  private javax.swing.Timer autoscrollTimer;
   protected RBlock rblock;
   protected int preferredWidth = -1;
   protected int defaultOverflowX = RenderState.OVERFLOW_AUTO;
@@ -78,7 +98,9 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
   public HtmlBlockPanel(final Color background, final boolean opaque, final UserAgentContext pcontext, final HtmlRendererContext rcontext,
       final FrameContext frameContext) {
     this.setLayout(null);
-    this.setAutoscrolls(true);
+    // Blocks are scrolled by Cobra itself, see autoscroll(). Swing's autoscroller cannot scroll them, and it
+    // swallows the first drag event after the mouse comes back into the panel.
+    this.setAutoscrolls(false);
     this.frameContext = frameContext;
     this.ucontext = pcontext;
     this.rcontext = rcontext;
@@ -89,13 +111,19 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
         final String command = e.getActionCommand();
         if ("copy".equals(command)) {
           copy();
+        } else if ("selectAll".equals(command)) {
+          selectAll();
         }
       }
     };
     if (!GraphicsEnvironment.isHeadless()) {
+      final int menuShortcutMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
       this.registerKeyboardAction(actionListener, "copy", KeyStroke.getKeyStroke(KeyEvent.VK_COPY, 0), JComponent.WHEN_FOCUSED);
-      this.registerKeyboardAction(actionListener, "copy",
-          KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), JComponent.WHEN_FOCUSED);
+      this.registerKeyboardAction(actionListener, "copy", KeyStroke.getKeyStroke(KeyEvent.VK_C, menuShortcutMask), JComponent.WHEN_FOCUSED);
+      this.registerKeyboardAction(actionListener, "copy", KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, InputEvent.CTRL_DOWN_MASK),
+          JComponent.WHEN_FOCUSED);
+      this.registerKeyboardAction(actionListener, "selectAll", KeyStroke.getKeyStroke(KeyEvent.VK_A, menuShortcutMask),
+          JComponent.WHEN_FOCUSED);
     }
     this.addMouseListener(new MouseListener() {
       public void mouseClicked(final MouseEvent e) {
@@ -370,14 +398,45 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
     super.finalize();
   }
 
+  /**
+   * Copies the selected text to the system clipboard. Does nothing, leaving
+   * the clipboard untouched, if nothing is selected.
+   */
   public boolean copy() {
-    final String selection = HtmlBlockPanel.this.getSelectionText();
-    if (selection != null) {
-      final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-      clipboard.setContents(new StringSelection(selection), HtmlBlockPanel.this);
-      return true;
-    } else {
+    final String selection = this.getSelectionText();
+    if ((selection == null) || selection.isEmpty()) {
       return false;
+    }
+    final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    clipboard.setContents(new StringSelection(selection), this);
+    return true;
+  }
+
+  /**
+   * Selects the whole document.
+   */
+  public void selectAll() {
+    final NodeImpl rootNode = this.getRootNode();
+    final Document document = rootNode instanceof Document ? (Document) rootNode : rootNode == null ? null : rootNode.getOwnerDocument();
+    if (document != null) {
+      final SelectionPoint[] range = SelectionText.getDocumentRange(document);
+      this.frameContext.setSelection(range[0], range[1]);
+      this.exportSystemSelection();
+    }
+  }
+
+  /**
+   * Puts the selected text into the system selection, used for middle-click
+   * paste on X11. Does nothing on platforms without one.
+   */
+  private void exportSystemSelection() {
+    if (GraphicsEnvironment.isHeadless()) {
+      return;
+    }
+    final Clipboard systemSelection = Toolkit.getDefaultToolkit().getSystemSelection();
+    final String selection = this.getSelectionText();
+    if ((systemSelection != null) && (selection != null) && !selection.isEmpty()) {
+      systemSelection.setContents(new StringSelection(selection), this);
     }
   }
 
@@ -386,25 +445,51 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
     return block == null ? 0 : block.getFirstLineHeight();
   }
 
-  public void setSelectionEnd(final RenderableSpot rpoint) {
-    this.endSelection = rpoint;
+  public void setSelectionEnd(final SelectionPoint point) {
+    this.updateSelection(this.startSelection, point);
   }
 
-  public void setSelectionStart(final RenderableSpot rpoint) {
-    this.startSelection = rpoint;
+  public void setSelectionStart(final SelectionPoint point) {
+    this.updateSelection(point, this.endSelection);
+  }
+
+  /**
+   * Changes the selection and repaints only the text whose highlight changes,
+   * instead of the whole document.
+   */
+  private void updateSelection(final SelectionPoint start, final SelectionPoint end) {
+    final boolean hadSelection = this.hasSelection();
+    final SelectionPoint oldStart = this.startSelection;
+    final SelectionPoint oldEnd = this.endSelection;
+    this.startSelection = start;
+    this.endSelection = end;
+    final boolean hasSelection = this.hasSelection();
+    final RBlock block = this.rblock;
+    if ((block == null) || !(hadSelection || hasSelection)) {
+      return;
+    }
+    final Rectangle changed = SelectionGeometry.getChangedArea(block, hadSelection ? oldStart : null, hadSelection ? oldEnd : null,
+        hasSelection ? start : null, hasSelection ? end : null);
+    if (changed != null) {
+      this.repaint(changed);
+    }
+  }
+
+  /**
+   * Paints pending selection changes right away, so the highlight follows the
+   * mouse without waiting behind other queued events.
+   */
+  private void paintSelectionNow() {
+    RepaintManager.currentManager(this).paintDirtyRegions();
   }
 
   public boolean isSelectionAvailable() {
-    final RenderableSpot start = this.startSelection;
-    final RenderableSpot end = this.endSelection;
-    return (start != null) && (end != null) && !start.equals(end);
+    return this.hasSelection();
   }
 
   public Node getSelectionNode() {
-    final RenderableSpot start = this.startSelection;
-    final RenderableSpot end = this.endSelection;
-    if ((start != null) && (end != null)) {
-      return Nodes.getCommonAncestor((Node) start.renderable.getModelNode(), (Node) end.renderable.getModelNode());
+    if (this.hasSelection()) {
+      return Nodes.getCommonAncestor(this.startSelection.getNode(), this.endSelection.getNode());
     } else {
       return null;
     }
@@ -415,6 +500,8 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
    * dispatch thread.
    */
   public void setRootNode(final NodeImpl node) {
+    this.startSelection = null;
+    this.endSelection = null;
     scrollCompleted = false;
     layoutCompleted = new CompletableFuture<>();
     if (node != null) {
@@ -486,27 +573,96 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
       final int rx = point.x;
       final int ry = point.y;
       block.onMousePressed(event, rx, ry);
-      final RenderableSpot rp = block.getLowestRenderableSpot(rx, ry);
-      if (rp != null) {
-        this.frameContext.resetSelection(rp);
-      } else {
-        this.frameContext.resetSelection(null);
+      // Only the primary button selects, so a context menu can still use the selection.
+      if (SwingUtilities.isLeftMouseButton(event)) {
+        this.startSelection(block, event);
+        this.paintSelectionNow();
       }
     }
   }
 
+  private void startSelection(final RBlock block, final MouseEvent event) {
+    final Point point = event.getPoint();
+    this.selecting = true;
+    this.dragged = false;
+    this.pressPoint = point;
+    this.lastDragPoint = null;
+    final int clickCount = event.getClickCount();
+    if (clickCount >= 2) {
+      final SelectionPoint character = SelectionGeometry.hitTest(block, point.x, point.y, false);
+      if (character != null) {
+        this.selectionUnit = clickCount == 2 ? SelectionUnit.WORD : SelectionUnit.BLOCK;
+        final SelectionPoint[] range = this.getUnitRange(character);
+        this.selectionUnitRange = range;
+        this.frameContext.setSelection(range[0], range[1]);
+        return;
+      }
+    }
+    this.selectionUnit = SelectionUnit.CHARACTER;
+    this.selectionUnitRange = null;
+    final SelectionPoint caret = SelectionGeometry.hitTest(block, point.x, point.y, true);
+    if (event.isShiftDown() && (this.startSelection != null) && (caret != null)) {
+      this.frameContext.expandSelection(caret);
+    } else {
+      this.frameContext.resetSelection(caret);
+    }
+  }
+
+  private SelectionPoint[] getUnitRange(final SelectionPoint character) {
+    return this.selectionUnit == SelectionUnit.WORD ? SelectionText.getWordRange(character) : SelectionText.getBlockRange(character);
+  }
+
+  /**
+   * Moves the focus end of the selection to a point in panel coordinates.
+   */
+  private void extendSelection(final Point point) {
+    final RBlock block = this.rblock;
+    if ((block == null) || (this.startSelection == null)) {
+      return;
+    }
+    if (this.selectionUnit == SelectionUnit.CHARACTER) {
+      final SelectionPoint caret = SelectionGeometry.hitTest(block, point.x, point.y, true);
+      if (caret != null) {
+        this.frameContext.expandSelection(caret);
+      }
+      return;
+    }
+    final SelectionPoint character = SelectionGeometry.hitTest(block, point.x, point.y, false);
+    final SelectionPoint[] anchorRange = this.selectionUnitRange;
+    if ((character == null) || (anchorRange == null)) {
+      return;
+    }
+    // Extend by whole words or blocks, always keeping the originally clicked unit selected.
+    final SelectionPoint[] range = this.getUnitRange(character);
+    if (SelectionPoint.compare(range[0], anchorRange[0]) < 0) {
+      this.frameContext.setSelection(anchorRange[1], range[0]);
+    } else {
+      this.frameContext.setSelection(anchorRange[0], range[1]);
+    }
+  }
+
   private void onMouseReleased(final MouseEvent event) {
+    // A drag that selected text is not a click, e.g. it must not follow a link it ends on.
+    final boolean click = !(SwingUtilities.isLeftMouseButton(event) && this.dragged);
+    if (SwingUtilities.isLeftMouseButton(event) && this.selecting) {
+      this.selecting = false;
+      this.lastDragPoint = null;
+      this.stopAutoscroll();
+      this.exportSystemSelection();
+    }
     final RBlock block = this.rblock;
     if (block != null) {
       final Point point = event.getPoint();
       final int rx = point.x;
       final int ry = point.y;
       if (SwingUtilities.isLeftMouseButton(event)) {
-        // TODO: This will be raised twice on a double-click.
-        if (event.isControlDown()) {
-          block.onMiddleClick(event, rx, ry);
-        } else {
-          block.onMouseClick(event, rx, ry);
+        if (click) {
+          // TODO: This will be raised twice on a double-click.
+          if (event.isControlDown()) {
+            block.onMiddleClick(event, rx, ry);
+          } else {
+            block.onMouseClick(event, rx, ry);
+          }
         }
       } else if (SwingUtilities.isRightMouseButton(event)) {
         block.onRightClick(event, rx, ry);
@@ -595,20 +751,76 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
             innerBlock = getContainingBlock(innerBlock.getParent());
           }
         } while ((!consumed) && (innerBlock != null));
+        if (this.selecting && (this.lastDragPoint != null)) {
+          this.extendSelection(this.lastDragPoint);
+        }
         break;
       }
     }
   }
 
   private void onMouseDragged(final MouseEvent event) {
+    if (!this.selecting || !SwingUtilities.isLeftMouseButton(event) || (this.rblock == null)) {
+      return;
+    }
+    final Point point = event.getPoint();
+    final Point pressPoint = this.pressPoint;
+    if ((pressPoint != null) && !this.dragged) {
+      final int threshold = DragSource.getDragThreshold();
+      this.dragged = (Math.abs(point.x - pressPoint.x) > threshold) || (Math.abs(point.y - pressPoint.y) > threshold);
+    }
+    this.lastDragPoint = point;
+    this.extendSelection(point);
+    this.paintSelectionNow();
+    if ((point.y < 0) || (point.y >= this.getHeight())) {
+      this.startAutoscroll();
+    } else {
+      this.stopAutoscroll();
+    }
+  }
+
+  private void startAutoscroll() {
+    javax.swing.Timer timer = this.autoscrollTimer;
+    if (timer == null) {
+      timer = new javax.swing.Timer(AUTOSCROLL_DELAY, e -> this.autoscroll());
+      this.autoscrollTimer = timer;
+    }
+    if (!timer.isRunning()) {
+      timer.start();
+    }
+  }
+
+  private void stopAutoscroll() {
+    final javax.swing.Timer timer = this.autoscrollTimer;
+    if (timer != null) {
+      timer.stop();
+    }
+  }
+
+  /**
+   * Scrolls while the mouse is dragged above or below the panel, faster the
+   * further away it is, and extends the selection to the newly shown text.
+   */
+  private void autoscroll() {
+    final Point point = this.lastDragPoint;
     final RBlock block = this.rblock;
-    if (block != null) {
-      final Point point = event.getPoint();
-      final RenderableSpot rp = block.getLowestRenderableSpot(point.x, point.y);
-      if (rp != null) {
-        this.frameContext.expandSelection(rp);
-      }
-      block.ensureVisible(point);
+    final int height = this.getHeight();
+    if (!this.selecting || (point == null) || (block == null) || ((point.y >= 0) && (point.y < height))) {
+      this.stopAutoscroll();
+      return;
+    }
+    final int distance = point.y < 0 ? point.y : point.y - height + 1;
+    final int step = Integer.signum(distance) * Math.min(AUTOSCROLL_MAX_STEP, Math.abs(distance) + 8);
+    final int x = Math.max(0, Math.min(this.getWidth() - 1, point.x));
+    final int y = point.y < 0 ? 0 : height - 1;
+    RBlock innerBlock = getContainingBlock(getInnerMostRenderable(x, y));
+    boolean scrolled = false;
+    while (!scrolled && (innerBlock != null)) {
+      scrolled = innerBlock.scrollBy(Adjustable.VERTICAL, step);
+      innerBlock = getContainingBlock(innerBlock.getParent());
+    }
+    if (scrolled) {
+      this.extendSelection(point);
     }
   }
 
@@ -665,12 +877,9 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
     if (block != null) {
       block.paint(g);
 
-      // Paint FrameContext selection
-
-      final RenderableSpot start = this.startSelection;
-      final RenderableSpot end = this.endSelection;
-      if ((start != null) && (end != null) && !start.equals(end)) {
-        block.paintSelection(g, false, start, end);
+      if (this.hasSelection()) {
+        SelectionGeometry.paint(g, block, this.startSelection, this.endSelection, this.getSelectionBackground(),
+            this.getSelectionForeground());
       }
     }
 
@@ -748,26 +957,60 @@ public class HtmlBlockPanel extends JComponent implements NodeRenderer, Renderab
     this.repaint();
   }
 
+  /**
+   * Gets the selected text, or <code>null</code> if nothing is selected.
+   */
   public String getSelectionText() {
-    final RenderableSpot start = this.startSelection;
-    final RenderableSpot end = this.endSelection;
-    if ((start != null) && (end != null)) {
-      final StringBuffer buffer = new StringBuffer();
-      this.rblock.extractSelectionText(buffer, false, start, end);
-      return buffer.toString();
+    if (this.hasSelection()) {
+      return SelectionText.getText(this.startSelection, this.endSelection);
     } else {
       return null;
     }
   }
 
   public boolean hasSelection() {
-    final RenderableSpot start = this.startSelection;
-    final RenderableSpot end = this.endSelection;
-    if ((start != null) && (end != null) && !start.equals(end)) {
-      return true;
-    } else {
+    final SelectionPoint start = this.startSelection;
+    final SelectionPoint end = this.endSelection;
+    final NodeImpl rootNode = this.getRootNode();
+    if ((start == null) || (end == null) || (rootNode == null) || start.equals(end)) {
       return false;
     }
+    // Points left over from a previous document, or in removed nodes, are not a selection.
+    final Node document = rootNode instanceof Document ? rootNode : rootNode.getOwnerDocument();
+    return start.isIn(document) && end.isIn(document);
+  }
+
+  /**
+   * Color behind selected text. Defaults to the <code>--cobra-selection-bg</code>
+   * theme variable, which follows the look and feel.
+   */
+  protected Color getSelectionBackground() {
+    final Color color = resolveThemeColor("--cobra-selection-bg", "TextArea.selectionBackground");
+    return color != null ? color : new Color(0x2675BF);
+  }
+
+  /**
+   * Color of selected text. Defaults to the <code>--cobra-selection-fg</code>
+   * theme variable, which follows the look and feel.
+   */
+  protected Color getSelectionForeground() {
+    final Color color = resolveThemeColor("--cobra-selection-fg", "TextArea.selectionForeground");
+    return color != null ? color : Color.WHITE;
+  }
+
+  private static Color resolveThemeColor(final String variable, final String uiManagerKey) {
+    final String value = CSSVariableResolver.INSTANCE.resolveVar(variable, null);
+    if ((value != null) && !value.isBlank()) {
+      try {
+        final Color color = ColorFactory.getInstance().getColor(value);
+        if (color != null) {
+          return color;
+        }
+      } catch (final RuntimeException e) {
+        logger.debug("Invalid selection color " + variable + ": " + value, e);
+      }
+    }
+    return UIManager.getColor(uiManagerKey);
   }
 
   @Override
