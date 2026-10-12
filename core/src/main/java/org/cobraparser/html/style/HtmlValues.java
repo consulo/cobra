@@ -44,7 +44,7 @@ public class HtmlValues {
   public static final int DEFAULT_FONT_SIZE_INT = (int) DEFAULT_FONT_SIZE;
 
   // TODO: Make the minimum font size configurable
-  public static final int MINIMUM_FONT_SIZE_PIXELS = 14;
+  public static final int MINIMUM_FONT_SIZE_PIXELS = 6;
 
   public static final Float DEFAULT_FONT_SIZE_BOX = new Float(DEFAULT_FONT_SIZE);
   public static final int DEFAULT_BORDER_WIDTH = 2;
