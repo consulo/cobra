@@ -45,6 +45,7 @@ public class HtmlValues {
 
   // TODO: Make the minimum font size configurable
   public static final int MINIMUM_FONT_SIZE_PIXELS = 6;
+  private static final int CSS_DPI = 96;
 
   public static final Float DEFAULT_FONT_SIZE_BOX = new Float(DEFAULT_FONT_SIZE);
   public static final int DEFAULT_BORDER_WIDTH = 2;
@@ -395,7 +396,7 @@ public class HtmlValues {
       final int pixelSize = getPixelSize(spec, parentRenderState, DEFAULT_FONT_SIZE_INT);
 
       /* Disabling for GH-185
-      final int dpi = getDpi();
+      final int dpi = CSS_DPI;
       Normally the factor below should be 72, but the font-size concept in HTML is handled differently.
       return (pixelSize * 96f) / dpi;
       */
@@ -455,7 +456,7 @@ public class HtmlValues {
       final String pxText = lcSpec.substring(0, lcSpec.length() - 2);
       try {
         final double val = Double.parseDouble(pxText);
-        final int dpi = getDpi();
+        final int dpi = CSS_DPI;
         final double inches = val / 96;
         return (int) Math.round(dpi * inches);
       } catch (final NumberFormatException nfe) {
@@ -484,7 +485,7 @@ public class HtmlValues {
          * This is because the font-height is calculated differently in CSS. TODO: Add a reference for this.
          */
         /* Disabling for GH-185
-        final int dpi = getDpi();
+        final int dpi = CSS_DPI;
         final double fontSizeDevicePixels = (fontSizePt * dpi) / 96;
         return (int) Math.round(fontSizeDevicePixels * val);
         */
@@ -496,7 +497,7 @@ public class HtmlValues {
       final String valText = lcSpec.substring(0, lcSpec.length() - 2);
       try {
         final double val = Double.parseDouble(valText);
-        final int dpi = getDpi();
+        final int dpi = CSS_DPI;
         final double inches = val / 72;
         return (int) Math.round(dpi * inches);
       } catch (final NumberFormatException nfe) {
@@ -506,7 +507,7 @@ public class HtmlValues {
       final String valText = lcSpec.substring(0, lcSpec.length() - 2);
       try {
         final double inches = Double.parseDouble(valText);
-        final int dpi = getDpi();
+        final int dpi = CSS_DPI;
         return (int) Math.round(dpi * inches);
       } catch (final NumberFormatException nfe) {
         return errorValue;
@@ -515,7 +516,7 @@ public class HtmlValues {
       final String valText = lcSpec.substring(0, lcSpec.length() - 2);
       try {
         final double val = Double.parseDouble(valText);
-        final int dpi = getDpi();
+        final int dpi = CSS_DPI;
         final double inches = val / 6;
         return (int) Math.round(dpi * inches);
       } catch (final NumberFormatException nfe) {
@@ -525,7 +526,7 @@ public class HtmlValues {
       final String valText = lcSpec.substring(0, lcSpec.length() - 2);
       try {
         final double val = Double.parseDouble(valText);
-        final int dpi = getDpi();
+        final int dpi = CSS_DPI;
         final double inches = val / 2.54;
         return (int) Math.round(dpi * inches);
       } catch (final NumberFormatException nfe) {
@@ -535,7 +536,7 @@ public class HtmlValues {
       final String valText = lcSpec.substring(0, lcSpec.length() - 2);
       try {
         final double val = Double.parseDouble(valText);
-        final int dpi = getDpi();
+        final int dpi = CSS_DPI;
         final double inches = val / 25.4;
         return (int) Math.round(dpi * inches);
       } catch (final NumberFormatException nfe) {
@@ -560,19 +561,9 @@ public class HtmlValues {
     }
   }
 
-  private static int getDpi() {
-    if (GraphicsEnvironment.isHeadless()) {
-      // TODO: Why is this 72? The CSS native resolution seems to be 96, so we could use that instead.
-      return 72;
-    } else {
-      final int screenResolution = Toolkit.getDefaultToolkit().getScreenResolution();
-      // TODO: Hack: converting to a multiple of 16. See GH-185
-      return (screenResolution + 15) & 0xfffffff0;
-    }
-  }
 
   public static int scaleToDevicePixels(final double cssPixels) {
-    return (int) Math.round(cssPixels * getDpi() / 96.0);
+    return (int) Math.round(cssPixels * CSS_DPI / 96.0);
   }
 
   // TODO: move this functionality to the attribute -> CSS style functionality
