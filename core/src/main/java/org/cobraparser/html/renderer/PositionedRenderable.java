@@ -168,6 +168,20 @@ public class PositionedRenderable implements Renderable {
     final Rectangle bounds = renderable.getVisualBounds();
     final Point offset = getOffset();
     bounds.translate(offset.x, offset.y);
+    // a negative margin draws the box out of its own bounds, a click on what is drawn there has to find it too
+    if (renderable instanceof BaseElementRenderable element) {
+      final Insets margins = element.marginInsets;
+      if (margins != null) {
+        if (margins.left < 0) {
+          bounds.x += margins.left;
+          bounds.width -= margins.left;
+        }
+        if (margins.top < 0) {
+          bounds.y += margins.top;
+          bounds.height -= margins.top;
+        }
+      }
+    }
     return bounds;
   }
 
